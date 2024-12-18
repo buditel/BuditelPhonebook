@@ -1,0 +1,50 @@
+﻿@model IEnumerable<Person>
+@{
+    ViewBag.Title = "Указател";
+}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3">Телефонен указател на организацията</h1>
+    <div class="input-group" style="max-width: 300px;">
+        <input id="searchInput" type="text" class="form-control" placeholder="Търсене..." />
+        <button id="searchBtn" class="btn btn-primary">Търси</button>
+    </div>
+</div>
+
+<div id="results">
+    @Html.Partial("_PeopleTablePartial", Model)
+</div>
+
+@section Scripts {
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const input = document.getElementById('searchInput');
+                const btn = document.getElementById('searchBtn');
+                const results = document.getElementById('results');
+
+                btn.addEventListener('click', function () {
+                    const query = input.value.trim();
+                    fetch(`/Phonebook/Index?search=${encodeURIComponent(query)}`, {
+                        method: 'GET',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text();
+                    })
+                    .then(html => {
+                        results.innerHTML = html;
+                    })
+                    .catch(error => {
+                        console.error('There was a problem with the fetch operation:', error);
+                        results.innerHTML = '<p class="text-danger">Възникна грешка при търсенето.</p>';
+                    });
+                });
+
+                input.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter') btn.click();
+                });
+            });
+        </script>
+}

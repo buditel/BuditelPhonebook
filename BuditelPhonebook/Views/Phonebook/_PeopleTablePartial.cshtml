@@ -1,0 +1,23 @@
+﻿@model IEnumerable<Person>
+
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th>Име</th>
+        <th>Имейл</th>
+        <th>Телефон</th>
+        <th>Длъжност</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var person in Model)
+    {
+        <tr>
+            <td>@person.FirstName @person.LastName</td>
+            <td>@person.Email</td>
+            <td>@person.PhoneNumber</td>
+            <td>@person.Role</td>
+        </tr>
+    }
+    </tbody>
+</table>
