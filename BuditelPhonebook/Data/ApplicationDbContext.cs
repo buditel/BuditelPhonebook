@@ -10,6 +10,8 @@ namespace BuditelPhonebook.Data
         }
 
         public DbSet<Person> People { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<Department> Departments { get; set; }
     }
 
 }
