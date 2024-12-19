@@ -37,9 +37,13 @@ namespace BuditelPhonebook.Controllers
 
         public IActionResult Create()
         {
-            var newPerson = new Person(); // Initialize a new Person for the form
-            return View(newPerson);
+            ViewBag.Roles = _personRepository.GetRoles(); // Add a method in IPersonRepository
+            ViewBag.Departments = _personRepository.GetDepartments(); // Add a method in IPersonRepository
+
+            // Pass a new Person instance to the view
+            return View(new Person());
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Person person)
@@ -64,8 +68,14 @@ namespace BuditelPhonebook.Controllers
         {
             try
             {
-                var person = await _personRepository.GetByIdAsync(id);
+                // Fetch the Person using the repository
+                var person = await _personRepository.GetByIdWithRelationsAsync(id); // New repository method
                 if (person == null) return NotFound();
+
+                // Fetch Roles and Departments for the dropdowns
+                ViewBag.Roles = _personRepository.GetRoles();
+                ViewBag.Departments = _personRepository.GetDepartments();
+
                 return View(person);
             }
             catch (Exception ex)
@@ -74,6 +84,7 @@ namespace BuditelPhonebook.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
