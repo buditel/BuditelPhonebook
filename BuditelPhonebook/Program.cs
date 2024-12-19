@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.Google;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using BuditelPhonebook.Repositories;
+using BuditelPhonebook.Services;
 
 namespace BuditelPhonebook
 {
@@ -80,6 +81,9 @@ namespace BuditelPhonebook
             });
 
             builder.Services.AddAuthorization();
+            builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+            builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+
 
             var app = builder.Build();
 

@@ -21,7 +21,14 @@
                             <li class="nav-item"><a class="nav-link" href="/Phonebook">Указател</a></li>
                             @if (User.IsInRole("Admin"))
                             {
-                                <li class="nav-item"><a class="nav-link" href="/Admin">Администраторски панел</a></li>
+                                <li class="nav-item"><a class="nav-link" href="/Admin">Контакти</a></li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Role" asp-action="Index">Роли</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Department" asp-action="Index">Отдели</a>
+                                </li>
+
                             }
                             <li class="nav-item"><a class="nav-link" href="/Account/Logout">Изход (@User.Identity.Name)</a></li>
                         }
