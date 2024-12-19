@@ -21,11 +21,11 @@ namespace BuditelPhonebook.Models
         [MaxLength(20)]
         public string? PhoneNumber { get; set; }
 
-        [MaxLength(50)]
-        public string? Role { get; set; }
+        public int RoleId { get; set; }
+        public Role Role { get; set; }
 
-        [MaxLength(50)]
-        public string? Department { get; set; }
+        public int DepartmentId { get; set; }
+        public Department Department { get; set; }
     }
 
 }
