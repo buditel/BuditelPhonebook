@@ -1,6 +1,7 @@
 ﻿// Updated AdminController.cs with logger and exception handling
 using BuditelPhonebook.Models;
 using BuditelPhonebook.Repositories;
+using BuditelPhonebook.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BuditelPhonebook.Controllers
@@ -17,6 +18,7 @@ namespace BuditelPhonebook.Controllers
             _logger = logger;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             try
@@ -31,34 +33,39 @@ namespace BuditelPhonebook.Controllers
             }
         }
 
+        [HttpGet]
         public IActionResult Create()
         {
-            ViewBag.Roles = _personRepository.GetRoles(); // Add a method in IPersonRepository
-            ViewBag.Departments = _personRepository.GetDepartments(); // Add a method in IPersonRepository
+            var model = new CreatePersonViewModel();
+
+            model.Roles = _personRepository.GetRoles(); // Add a method in IPersonRepository
+            model.Departments = _personRepository.GetDepartments(); // Add a method in IPersonRepository
 
             // Pass a new Person instance to the view
-            return View(new Person());
+            return View(model);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Person person)
-        {
-            if (!ModelState.IsValid)
-                return View(person);
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create(CreatePersonViewModel person)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(person);
+        //    }
 
-            try
-            {
-                await _personRepository.AddAsync(person);
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error creating person in AdminController.Create");
-                ModelState.AddModelError(string.Empty, "An error occurred while saving the person.");
-                return View(person);
-            }
-        }
+        //    try
+        //    {
+        //        await _personRepository.AddAsync(person);
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error creating person in AdminController.Create");
+        //        ModelState.AddModelError(string.Empty, "An error occurred while saving the person.");
+        //        return View(person);
+        //    }
+        //}
 
         public async Task<IActionResult> Edit(int id)
         {
