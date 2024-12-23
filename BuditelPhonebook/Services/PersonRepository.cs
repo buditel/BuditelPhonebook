@@ -77,7 +77,7 @@ namespace BuditelPhonebook.Repositories
                             || (p.MiddleName != null && p.MiddleName.ToLower().Contains(query))
                             || p.LastName.ToLower().Contains(query)
                             || p.Email.ToLower().Contains(query)
-                            || p.PhoneNumber.ToLower().Contains(query)
+                            || p.BusinessPhoneNumber.ToLower().Contains(query)
                             || (p.Role != null && p.Role.Name.ToLower().Contains(query)) // Ensure Role.Name is accessed
                             || (p.Department != null && p.Department.Name.ToLower().Contains(query))) // Ensure Department.Name is accessed
                 .ToListAsync();
@@ -85,12 +85,12 @@ namespace BuditelPhonebook.Repositories
 
         public IEnumerable<Role> GetRoles()
         {
-            return _context.Roles.AsNoTracking().ToList(); 
+            return _context.Roles.AsNoTracking().ToList();
         }
 
         public IEnumerable<Department> GetDepartments()
         {
-            return _context.Departments.AsNoTracking().ToList(); 
+            return _context.Departments.AsNoTracking().ToList();
         }
 
     }

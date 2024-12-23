@@ -1,15 +1,11 @@
 ﻿// Updated AdminController.cs with logger and exception handling
 using BuditelPhonebook.Models;
 using BuditelPhonebook.Repositories;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Threading.Tasks;
 
 namespace BuditelPhonebook.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly IPersonRepository _personRepository;
