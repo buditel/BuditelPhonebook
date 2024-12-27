@@ -21,14 +21,14 @@ public class RoleRepositoryTests
     [Fact]
     public async Task GetAllAsync_ShouldReturnAllRoles()
     {
-        using (var context = new ApplicationDbContext(_options))
+        await using (var context = new ApplicationDbContext(_options))
         {
             context.Roles.Add(new Role { Id = 1, Name = "Admin" });
             context.Roles.Add(new Role { Id = 2, Name = "User" });
             await context.SaveChangesAsync();
         }
 
-        using (var context = new ApplicationDbContext(_options))
+        await using (var context = new ApplicationDbContext(_options))
         {
             var repository = new RoleRepository(context);
             var roles = await repository.GetAllAsync();
@@ -40,13 +40,13 @@ public class RoleRepositoryTests
     [Fact]
     public async Task GetByIdAsync_ShouldReturnRole_WhenRoleExists()
     {
-        using (var context = new ApplicationDbContext(_options))
+        await using (var context = new ApplicationDbContext(_options))
         {
             context.Roles.Add(new Role { Id = 1, Name = "Admin" });
             await context.SaveChangesAsync();
         }
 
-        using (var context = new ApplicationDbContext(_options))
+        await using (var context = new ApplicationDbContext(_options))
         {
             var repository = new RoleRepository(context);
             var role = await repository.GetByIdAsync(1);
@@ -59,7 +59,7 @@ public class RoleRepositoryTests
     [Fact]
     public async Task GetByIdAsync_ShouldReturnNull_WhenRoleDoesNotExist()
     {
-        using (var context = new ApplicationDbContext(_options))
+        await using (var context = new ApplicationDbContext(_options))
         {
             var repository = new RoleRepository(context);
             var role = await repository.GetByIdAsync(999);
@@ -71,7 +71,7 @@ public class RoleRepositoryTests
     [Fact]
     public async Task AddAsync_ShouldAddRole()
     {
-        using (var context = new ApplicationDbContext(_options))
+        await using (var context = new ApplicationDbContext(_options))
         {
             var repository = new RoleRepository(context);
             var role = new Role { Id = 3, Name = "Manager" };
@@ -86,7 +86,7 @@ public class RoleRepositoryTests
     [Fact]
     public async Task AddAsync_ShouldThrow_WhenRoleIsNull()
     {
-        using (var context = new ApplicationDbContext(_options))
+        await using (var context = new ApplicationDbContext(_options))
         {
             var repository = new RoleRepository(context);
 
@@ -101,14 +101,14 @@ public class RoleRepositoryTests
     [Fact]
     public async Task UpdateAsync_ShouldModifyRole()
     {
-        using (var context = new ApplicationDbContext(_options))
+        await using (var context = new ApplicationDbContext(_options))
         {
             var role = new Role { Id = 4, Name = "Operator" };
             context.Roles.Add(role);
             await context.SaveChangesAsync();
         }
 
-        using (var context = new ApplicationDbContext(_options))
+        await using (var context = new ApplicationDbContext(_options))
         {
             var repository = new RoleRepository(context);
             var roleToUpdate = await repository.GetByIdAsync(4);
@@ -123,7 +123,7 @@ public class RoleRepositoryTests
     [Fact]
     public async Task UpdateAsync_ShouldThrow_WhenRoleIsNull()
     {
-        using (var context = new ApplicationDbContext(_options))
+        await using (var context = new ApplicationDbContext(_options))
         {
             var repository = new RoleRepository(context);
 
@@ -138,13 +138,13 @@ public class RoleRepositoryTests
     [Fact]
     public async Task DeleteAsync_ShouldRemoveRole_WhenRoleExists()
     {
-        using (var context = new ApplicationDbContext(_options))
+        await using (var context = new ApplicationDbContext(_options))
         {
             context.Roles.Add(new Role { Id = 5, Name = "TempRole" });
             await context.SaveChangesAsync();
         }
 
-        using (var context = new ApplicationDbContext(_options))
+        await using (var context = new ApplicationDbContext(_options))
         {
             var repository = new RoleRepository(context);
             await repository.DeleteAsync(5);
@@ -157,7 +157,7 @@ public class RoleRepositoryTests
     [Fact]
     public async Task DeleteAsync_ShouldNotThrow_WhenRoleDoesNotExist()
     {
-        using (var context = new ApplicationDbContext(_options))
+        await using (var context = new ApplicationDbContext(_options))
         {
             var repository = new RoleRepository(context);
             var exception = await Record.ExceptionAsync(() => repository.DeleteAsync(999));
@@ -169,7 +169,7 @@ public class RoleRepositoryTests
     [Fact]
     public async Task AddAsync_ShouldHandleConcurrentRequests()
     {
-        using (var context = new ApplicationDbContext(_options))
+        await using (var context = new ApplicationDbContext(_options))
         {
             var repository = new RoleRepository(context);
 
