@@ -31,3 +31,59 @@
     // Add event listener for role selection change
     roleSelect.addEventListener("change", updateVisibility);
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('searchInput');
+    const suggestions = document.getElementById('suggestions');
+
+    // Function to fetch suggestions from the API
+    async function fetchSuggestions(query) {
+        try {
+            const response = await fetch(`/api/Suggestions/GetSuggestions?query=${encodeURIComponent(query)}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch suggestions');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    // Function to handle input event
+    searchInput.addEventListener('input', async function () {
+        const query = searchInput.value.trim();
+
+        if (query.length === 0) {
+            suggestions.style.display = 'none';
+            return;
+        }
+
+        const data = await fetchSuggestions(query);
+        suggestions.innerHTML = ''; // Clear existing suggestions
+
+        if (data.length > 0) {
+            data.forEach(item => {
+                const suggestion = document.createElement('div');
+                suggestion.className = 'dropdown-item';
+                suggestion.innerHTML = `<strong>${item.FullName}</strong><br>${item.Subject || ''} - ${item.Department}`;
+                suggestion.addEventListener('click', function () {
+                    searchInput.value = item.FullName; // Set input value
+                    suggestions.style.display = 'none'; // Hide suggestions
+                });
+                suggestions.appendChild(suggestion);
+            });
+            suggestions.style.display = 'block'; // Show suggestions
+        } else {
+            suggestions.style.display = 'none';
+        }
+    });
+
+    // Hide suggestions when clicking outside
+    document.addEventListener('click', function (event) {
+        if (!event.target.closest('#searchInput') && !event.target.closest('#suggestions')) {
+            suggestions.style.display = 'none';
+        }
+    });
+});
+
