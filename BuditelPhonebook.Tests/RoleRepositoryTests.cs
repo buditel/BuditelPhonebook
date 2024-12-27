@@ -89,10 +89,13 @@ public class RoleRepositoryTests
         using (var context = new ApplicationDbContext(_options))
         {
             var repository = new RoleRepository(context);
+
             Func<Task> act = async () => await repository.AddAsync(null);
+
             await act.Should().ThrowAsync<ArgumentNullException>();
         }
     }
+
 
     // Test: UpdateAsync should modify an existing role
     [Fact]
@@ -123,10 +126,13 @@ public class RoleRepositoryTests
         using (var context = new ApplicationDbContext(_options))
         {
             var repository = new RoleRepository(context);
+
             Func<Task> act = async () => await repository.UpdateAsync(null);
+
             await act.Should().ThrowAsync<ArgumentNullException>();
         }
     }
+
 
     // Test: DeleteAsync should remove a role
     [Fact]
