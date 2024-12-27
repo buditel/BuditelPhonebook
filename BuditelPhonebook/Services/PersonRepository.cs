@@ -1,6 +1,7 @@
 ﻿using BuditelPhonebook.Contracts;
 using BuditelPhonebook.Data;
 using BuditelPhonebook.Models;
+using BuditelPhonebook.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace BuditelPhonebook.Repositories
@@ -94,5 +95,27 @@ namespace BuditelPhonebook.Repositories
             return _context.Departments.AsNoTracking().ToList();
         }
 
+        public async Task<IEnumerable<SuggestionsViewModel>> GetSearchSuggestionsAsync(string query)
+        {
+            query = query.ToLower();
+
+            var results = await _context.People
+            .Include(p => p.Department)
+            .Where(p => !p.IsDeleted &&
+                        (p.FirstName.ToLower().Contains(query) ||
+                         p.LastName.ToLower().Contains(query)) ||
+                         (p.Subject != null && p.Subject.ToLower().Contains(query)) ||
+                         p.Department.Name.ToLower().Contains(query))
+            .Select(p => new SuggestionsViewModel
+            {
+                FullName = $"{p.FirstName} {p.LastName}",
+                Subject = p.Subject,
+                Department = p.Department.Name
+            })
+            .Take(10)
+            .ToListAsync();
+
+            return results;
+        }
     }
 }

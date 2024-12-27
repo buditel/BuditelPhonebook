@@ -2,11 +2,12 @@
 using BuditelPhonebook.Contracts;
 using BuditelPhonebook.Models;
 using BuditelPhonebook.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BuditelPhonebook.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly IPersonRepository _personRepository;
@@ -45,27 +46,45 @@ namespace BuditelPhonebook.Controllers
             return View(model);
         }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create(CreatePersonViewModel person)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return View(person);
-        //    }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CreatePersonViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.Roles = _personRepository.GetRoles();
+                model.Departments = _personRepository.GetDepartments();
+                return View(model);
+            }
 
-        //    try
-        //    {
-        //        await _personRepository.AddAsync(person);
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Error creating person in AdminController.Create");
-        //        ModelState.AddModelError(string.Empty, "An error occurred while saving the person.");
-        //        return View(person);
-        //    }
-        //}
+            Person person = new Person
+            {
+                FirstName = model.FirstName,
+                MiddleName = model.MiddleName,
+                LastName = model.LastName,
+                Birthdate = model.Birthdate,
+                Email = model.Email,
+                BusinessPhoneNumber = model.BusinessPhoneNumber,
+                PersonalPhoneNumber = model.PersonalPhoneNumber,
+                DepartmentId = _personRepository.GetDepartments().FirstOrDefault(d => d.Name == model.Department).Id,
+                RoleId = _personRepository.GetRoles().FirstOrDefault(r => r.Name == model.Role).Id,
+                SubjectGroup = model.SubjectGroup,
+                Subject = model.Subject
+            };
+            try
+            {
+                await _personRepository.AddAsync(person);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating person in AdminController.Create");
+                ModelState.AddModelError(string.Empty, "An error occurred while saving the person.");
+                model.Roles = _personRepository.GetRoles();
+                model.Departments = _personRepository.GetDepartments();
+                return View(model);
+            }
+        }
 
         public async Task<IActionResult> Edit(int id)
         {

@@ -3,7 +3,7 @@
     ViewBag.Title =  "Създай нов контакт";
 }
 <h1 class="h3 mb-4">@ViewBag.Title</h1>
-<form method="post" class="needs-validation" novalidate>
+<form method="post" novalidate>
     <div class="mb-3">
         <label class="form-label">Име</label>
         <input type="text" class="form-control" name="FirstName" value="@Model.FirstName" placeholder="Въведете име..." required>
@@ -26,17 +26,27 @@
     </div>
     <div class="mb-3">
         <label class="form-label">Служебен телефон</label>
-        <input type="text" class="form-control" name="PhoneNumber" value="@Model.BusinessPhoneNumber" placeholder="Въведете служебен телефон (по желание)...">
+        <input type="text" class="form-control" name="BusinessPhoneNumber" value="@Model.BusinessPhoneNumber" placeholder="Въведете служебен телефон (по желание)...">
         <span asp-validation-for="BusinessPhoneNumber" class="text-danger"></span>
     </div>
     <div class="mb-3">
+        <label class="form-label">Личен телефон</label>
+        <input type="text" class="form-control" name="PersonalPhoneNumber" value="@Model.PersonalPhoneNumber" placeholder="Въведете личен телефон (по желание)...">
+        <span asp-validation-for="PersonalPhoneNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Рождена дата</label>
+        <input type="text" class="form-control" name="Birthdate" value="@Model.Birthdate" placeholder="Въведете рождена дата (по желание)...">
+        <span asp-validation-for="Birthdate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
         <label class="form-label">Длъжност</label>
-        <select id="roleSelect" asp-for="Role" asp-items="@(new SelectList(Model.Roles, "Id", "Name"))" class="form-control">
+        <select id="roleSelect" asp-for="Role" asp-items="@(new SelectList(Model.Roles, "Name", "Name"))" class="form-control">
             <option value="">Изберете длъжност...</option>
         </select>
         <span asp-validation-for="Role" class="text-danger"></span>
     </div>
-    <div id="subjectGroup" class="mb-3" style="display:none">
+    <div id="subjectGroup" class="mb-3" style="display: none;">
         <label class="form-label">Група предмети</label>
         <select asp-for="SubjectGroup" class="form-control">
             <option value="">Изберете група предмети...</option>
@@ -45,14 +55,14 @@
         </select>
         <span asp-validation-for="SubjectGroup" class="text-danger"></span>
     </div>
-    <div id="subject" class="mb-3" style="display:none">
+    <div id="subject" class="mb-3" style="display: none;">
         <label class="form-label">Предмет</label>
         <input type="text" class="form-control" name="Subject" value="@Model.Subject" placeholder="Въведете предмета, по който учителят преподава...">
         <span asp-validation-for="Subject" class="text-danger"></span>
     </div>
     <div class="mb-3">
         <label class="form-label">Отдел</label>
-        <select asp-for="Department" asp-items="@(new SelectList(Model.Departments, "Id", "Name"))" class="form-control">
+        <select asp-for="Department" asp-items="@(new SelectList(Model.Departments, "Name", "Name"))" class="form-control">
             <option value="">Изберете отдел...</option>
         </select>
         <span asp-validation-for="Department" class="text-danger"></span>

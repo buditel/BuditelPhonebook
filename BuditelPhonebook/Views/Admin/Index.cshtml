@@ -4,7 +4,7 @@
 }
 <h1 class="h3 mb-4">Управление на контактите</h1>
 <p>
-    <a class="btn btn-success" href="@Url.Action("Create")">Добави нов контакт</a>
+    <a asp-action="Create" class="btn btn-success">Добави нов контакт</a>
 </p>
 
 @if (!Model.Any())
@@ -20,7 +20,7 @@ else
             <th>Презиме</th>
             <th>Фамилия</th>
             <th>Имейл</th>
-            <th>Телефон</th>
+            <th>Служебен телефон</th>
             <th>Роля</th>
             <th>Отдел</th>
             <th style="width:120px;"></th>
@@ -35,8 +35,8 @@ else
                 <td>@p.LastName</td>
                 <td>@p.Email</td>
                 <td>@p.BusinessPhoneNumber</td>
-                <td>@p.Role</td>
-                <td>@p.Department</td>
+                <td>@p.Role.Name</td>
+                <td>@p.Department.Name</td>
                 <td>
                     <a class="btn btn-sm btn-primary" href="@Url.Action("Edit", new { id = p.Id })">Редактирай</a>
                     <a class="btn btn-sm btn-danger" href="@Url.Action("Delete", new { id = p.Id })">Изтрий</a>

@@ -16,6 +16,8 @@
             public const string BirthDateWrongFormatMessage = "Рождената дата трябва да е във формата 01.01";
             public const string RoleRequiredMessage = "Трябва да изберете длъжност.";
             public const string DepartmentRequiredMessage = "Трябва да изберете отдел.";
+            public const string SubjectGroupRequiredMessage = "Трябва да изберете група предмети.";
+            public const string SubjectRequiredMessage = "Трябва да въведете предмет, по който учителят преподава.";
         }
     }
 }

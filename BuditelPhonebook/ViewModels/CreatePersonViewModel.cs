@@ -1,4 +1,5 @@
-﻿using BuditelPhonebook.Models;
+﻿using BuditelPhonebook.Common.CustomAttributtes;
+using BuditelPhonebook.Models;
 using System.ComponentModel.DataAnnotations;
 using static BuditelPhonebook.Common.EntityValidationConstants.Person;
 using static BuditelPhonebook.Common.EntityValidationMessages.Person;
@@ -35,9 +36,11 @@ namespace BuditelPhonebook.ViewModels
             = new List<Role>();
 
         [MaxLength(20)]
+        [RequiredIfTeacher("Учител", SubjectGroupRequiredMessage)]
         public string? SubjectGroup { get; set; }
 
         [MaxLength(40)]
+        [RequiredIfTeacher("Учител", SubjectRequiredMessage)]
         public string? Subject { get; set; }
 
         [Required(ErrorMessage = DepartmentRequiredMessage)]

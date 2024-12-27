@@ -1,12 +1,10 @@
 using BuditelPhonebook.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
 using BuditelPhonebook.Repositories;
 using BuditelPhonebook.Services;
-using BuditelPhonebook.Contracts;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.EntityFrameworkCore;
 
 namespace BuditelPhonebook
 {

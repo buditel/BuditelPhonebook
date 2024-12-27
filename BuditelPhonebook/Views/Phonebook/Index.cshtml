@@ -4,9 +4,10 @@
 }
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="h3">Телефонен указател на организацията</h1>
-    <div class="input-group" style="max-width: 300px;">
+    <div class="input-group" style="max-width: 300px; position: relative;">
         <input id="searchInput" type="text" class="form-control" placeholder="Търсене..." />
         <button id="searchBtn" class="btn btn-primary">Търси</button>
+        <div id="suggestions" class="dropdown-menu w-100" style="display: none; position: absolute; top: 100%; z-index: 1000;"></div>
     </div>
 </div>
 
