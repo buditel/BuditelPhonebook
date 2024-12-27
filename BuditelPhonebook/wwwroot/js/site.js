@@ -11,14 +11,14 @@
         const selectedRole = roleSelect.options[roleSelect.selectedIndex].text;
 
         if (selectedRole === "Учител") {
-            subjectGroup.removeAttribute("hidden");
-            subject.removeAttribute("hidden");
+            subjectGroup.style.display="block";
+            subject.style.display = "block";
 
             subjectGroupInput.setAttribute("required", "true");
             subjectInput.setAttribute("required", "true");
         } else {
-            subjectGroup.setAttribute("hidden", "");
-            subject.setAttribute("hidden", "");
+            subjectGroup.style.display = "none";
+            subject.style.display = "none";
 
             subjectGroupInput.removeAttribute("required");
             subjectInput.removeAttribute("required");

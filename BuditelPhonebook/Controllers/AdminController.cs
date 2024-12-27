@@ -65,8 +65,8 @@ namespace BuditelPhonebook.Controllers
                 Email = model.Email,
                 BusinessPhoneNumber = model.BusinessPhoneNumber,
                 PersonalPhoneNumber = model.PersonalPhoneNumber,
-                DepartmentId = int.Parse(model.Department),
-                RoleId = int.Parse(model.Role),
+                DepartmentId = _personRepository.GetDepartments().FirstOrDefault(d => d.Name == model.Department).Id,
+                RoleId = _personRepository.GetRoles().FirstOrDefault(r => r.Name == model.Role).Id,
                 SubjectGroup = model.SubjectGroup,
                 Subject = model.Subject
             };
@@ -79,6 +79,8 @@ namespace BuditelPhonebook.Controllers
             {
                 _logger.LogError(ex, "Error creating person in AdminController.Create");
                 ModelState.AddModelError(string.Empty, "An error occurred while saving the person.");
+                model.Roles = _personRepository.GetRoles();
+                model.Departments = _personRepository.GetDepartments();
                 return View(model);
             }
         }

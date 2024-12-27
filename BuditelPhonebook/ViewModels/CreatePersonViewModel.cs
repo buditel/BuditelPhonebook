@@ -1,11 +1,12 @@
-﻿using BuditelPhonebook.Models;
+﻿using BuditelPhonebook.Common.CustomAttributtes;
+using BuditelPhonebook.Models;
 using System.ComponentModel.DataAnnotations;
 using static BuditelPhonebook.Common.EntityValidationConstants.Person;
 using static BuditelPhonebook.Common.EntityValidationMessages.Person;
 
 namespace BuditelPhonebook.ViewModels
 {
-    public class CreatePersonViewModel : IValidatableObject
+    public class CreatePersonViewModel
     {
         [Required(ErrorMessage = FirstNameRequiredMessage), StringLength(50, MinimumLength = 2, ErrorMessage = FirstNameLengthMessage)]
         public string FirstName { get; set; } = null!;
@@ -34,12 +35,12 @@ namespace BuditelPhonebook.ViewModels
         public IEnumerable<Role> Roles { get; set; }
             = new List<Role>();
 
-        [Required(ErrorMessage = SubjectGroupRequiredMessage)]
         [MaxLength(20)]
+        [RequiredIfTeacher("Учител", SubjectGroupRequiredMessage)]
         public string? SubjectGroup { get; set; }
 
-        [Required(ErrorMessage = SubjectRequiredMessage)]
         [MaxLength(40)]
+        [RequiredIfTeacher("Учител", SubjectRequiredMessage)]
         public string? Subject { get; set; }
 
         [Required(ErrorMessage = DepartmentRequiredMessage)]
@@ -47,21 +48,5 @@ namespace BuditelPhonebook.ViewModels
 
         public IEnumerable<Department> Departments { get; set; }
             = new List<Department>();
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            if (Role == "Учител")
-            {
-                if (string.IsNullOrWhiteSpace(SubjectGroup))
-                {
-                    yield return new ValidationResult(SubjectGroupRequiredMessage, new[] { "SubjectGroup" });
-                }
-
-                if (string.IsNullOrWhiteSpace(Subject))
-                {
-                    yield return new ValidationResult(SubjectRequiredMessage, new[] { "Subject" });
-                }
-            }
-        }
     }
 }

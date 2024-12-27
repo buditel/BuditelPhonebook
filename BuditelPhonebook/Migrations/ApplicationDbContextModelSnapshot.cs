@@ -35,7 +35,7 @@ namespace BuditelPhonebook.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Departments");
+                    b.ToTable("Departments", (string)null);
                 });
 
             modelBuilder.Entity("BuditelPhonebook.Models.Person", b =>
@@ -97,7 +97,7 @@ namespace BuditelPhonebook.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("People");
+                    b.ToTable("People", (string)null);
                 });
 
             modelBuilder.Entity("BuditelPhonebook.Models.Role", b =>
@@ -114,7 +114,7 @@ namespace BuditelPhonebook.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("BuditelPhonebook.Models.Person", b =>
