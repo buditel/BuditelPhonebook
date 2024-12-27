@@ -10,6 +10,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuditelPhonebook.Core", "BuditelPhonebook.Core\BuditelPhonebook.Core.csproj", "{180EE3D0-1B4A-47DC-888F-5F2C55DFBF51}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuditelPhonebook.Tests", "BuditelPhonebook.Tests\BuditelPhonebook.Tests.csproj", "{8999ACF2-E0D5-470D-82CC-2BC1E21A1B73}"
+	ProjectSection(ProjectDependencies) = postProject
+		{180EE3D0-1B4A-47DC-888F-5F2C55DFBF51} = {180EE3D0-1B4A-47DC-888F-5F2C55DFBF51}
+		{39378A47-8B6E-4A27-82E3-1ECA5D669F12} = {39378A47-8B6E-4A27-82E3-1ECA5D669F12}
+		{95991C66-35EF-4121-AD69-841EE65DFBDB} = {95991C66-35EF-4121-AD69-841EE65DFBDB}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
