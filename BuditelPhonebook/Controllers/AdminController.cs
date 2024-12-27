@@ -45,27 +45,43 @@ namespace BuditelPhonebook.Controllers
             return View(model);
         }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create(CreatePersonViewModel person)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return View(person);
-        //    }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CreatePersonViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.Roles = _personRepository.GetRoles();
+                model.Departments = _personRepository.GetDepartments();
+                return View(model);
+            }
 
-        //    try
-        //    {
-        //        await _personRepository.AddAsync(person);
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Error creating person in AdminController.Create");
-        //        ModelState.AddModelError(string.Empty, "An error occurred while saving the person.");
-        //        return View(person);
-        //    }
-        //}
+            Person person = new Person
+            {
+                FirstName = model.FirstName,
+                MiddleName = model.MiddleName,
+                LastName = model.LastName,
+                Birthdate = model.Birthdate,
+                Email = model.Email,
+                BusinessPhoneNumber = model.BusinessPhoneNumber,
+                PersonalPhoneNumber = model.PersonalPhoneNumber,
+                DepartmentId = int.Parse(model.Department),
+                RoleId = int.Parse(model.Role),
+                SubjectGroup = model.SubjectGroup,
+                Subject = model.Subject
+            };
+            try
+            {
+                await _personRepository.AddAsync(person);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating person in AdminController.Create");
+                ModelState.AddModelError(string.Empty, "An error occurred while saving the person.");
+                return View(model);
+            }
+        }
 
         public async Task<IActionResult> Edit(int id)
         {
