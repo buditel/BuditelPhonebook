@@ -1,4 +1,5 @@
-﻿using BuditelPhonebook.Data;
+﻿using BuditelPhonebook.Contracts;
+using BuditelPhonebook.Data;
 using BuditelPhonebook.Models;
 using Microsoft.EntityFrameworkCore;
 

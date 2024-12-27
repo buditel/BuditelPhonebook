@@ -1,5 +1,5 @@
-﻿using BuditelPhonebook.Models;
-using BuditelPhonebook.Services;
+﻿using BuditelPhonebook.Contracts;
+using BuditelPhonebook.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BuditelPhonebook.Controllers

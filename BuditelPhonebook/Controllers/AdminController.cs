@@ -1,6 +1,6 @@
 ﻿// Updated AdminController.cs with logger and exception handling
+using BuditelPhonebook.Contracts;
 using BuditelPhonebook.Models;
-using BuditelPhonebook.Repositories;
 using BuditelPhonebook.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 

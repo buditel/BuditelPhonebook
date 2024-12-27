@@ -6,6 +6,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using BuditelPhonebook.Repositories;
 using BuditelPhonebook.Services;
+using BuditelPhonebook.Contracts;
 
 namespace BuditelPhonebook
 {

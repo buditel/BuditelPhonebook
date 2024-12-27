@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace BuditelPhonebook.Repositories
+namespace BuditelPhonebook.Contracts
 {
     public interface IPersonRepository
     {
@@ -14,7 +14,7 @@ namespace BuditelPhonebook.Repositories
         Task UpdateAsync(Person person);
         Task DeleteAsync(int id);
         Task<IEnumerable<Person>> SearchAsync(string query);
-        IEnumerable<Role> GetRoles(); 
+        IEnumerable<Role> GetRoles();
         IEnumerable<Department> GetDepartments();
     }
 

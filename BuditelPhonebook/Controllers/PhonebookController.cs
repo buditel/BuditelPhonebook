@@ -1,5 +1,5 @@
-﻿using BuditelPhonebook.Models;
-using BuditelPhonebook.Repositories;
+﻿using BuditelPhonebook.Contracts;
+using BuditelPhonebook.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
