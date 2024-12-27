@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuditelPhonebook", "BuditelPhonebook\BuditelPhonebook.csproj", "{95991C66-35EF-4121-AD69-841EE65DFBDB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuditelPhonebook.Web", "BuditelPhonebook\BuditelPhonebook.Web.csproj", "{95991C66-35EF-4121-AD69-841EE65DFBDB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuditelPhonebook.Infrastructure", "BuditelPhonebook.Infrastructure\BuditelPhonebook.Infrastructure.csproj", "{39378A47-8B6E-4A27-82E3-1ECA5D669F12}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuditelPhonebook.Core", "BuditelPhonebook.Core\BuditelPhonebook.Core.csproj", "{180EE3D0-1B4A-47DC-888F-5F2C55DFBF51}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{95991C66-35EF-4121-AD69-841EE65DFBDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95991C66-35EF-4121-AD69-841EE65DFBDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95991C66-35EF-4121-AD69-841EE65DFBDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39378A47-8B6E-4A27-82E3-1ECA5D669F12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39378A47-8B6E-4A27-82E3-1ECA5D669F12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39378A47-8B6E-4A27-82E3-1ECA5D669F12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39378A47-8B6E-4A27-82E3-1ECA5D669F12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{180EE3D0-1B4A-47DC-888F-5F2C55DFBF51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{180EE3D0-1B4A-47DC-888F-5F2C55DFBF51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{180EE3D0-1B4A-47DC-888F-5F2C55DFBF51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{180EE3D0-1B4A-47DC-888F-5F2C55DFBF51}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
