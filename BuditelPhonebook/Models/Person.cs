@@ -48,6 +48,9 @@ namespace BuditelPhonebook.Models
 
         [Required]
         public Department Department { get; set; } = null!;
+
+        [Required]
+        public bool IsDeleted { get; set; }
     }
 
 }

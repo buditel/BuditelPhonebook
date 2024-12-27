@@ -2,11 +2,12 @@
 using BuditelPhonebook.Models;
 using BuditelPhonebook.Repositories;
 using BuditelPhonebook.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BuditelPhonebook.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly IPersonRepository _personRepository;

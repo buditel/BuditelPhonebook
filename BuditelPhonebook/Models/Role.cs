@@ -7,6 +7,11 @@ namespace BuditelPhonebook.Models
         [Key]
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        [Required]
+        [MaxLength(100)]
+        public string Name { get; set; } = null!;
+
+        [Required]
+        public bool IsDeleted { get; set; }
     }
 }
