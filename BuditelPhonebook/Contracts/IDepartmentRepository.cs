@@ -1,6 +1,6 @@
 ﻿using BuditelPhonebook.Models;
 
-namespace BuditelPhonebook.Services
+namespace BuditelPhonebook.Contracts
 {
     public interface IDepartmentRepository
     {

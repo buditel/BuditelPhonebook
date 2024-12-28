@@ -1,7 +1,7 @@
 ﻿using BuditelPhonebook.Models;
 using BuditelPhonebook.ViewModels;
 
-namespace BuditelPhonebook.Repositories
+namespace BuditelPhonebook.Contracts
 {
     public interface IPersonRepository
     {

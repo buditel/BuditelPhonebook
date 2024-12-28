@@ -1,4 +1,5 @@
-﻿using BuditelPhonebook.Repositories;
+﻿using BuditelPhonebook.Contracts;
+using BuditelPhonebook.Repositories;
 using BuditelPhonebook.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 

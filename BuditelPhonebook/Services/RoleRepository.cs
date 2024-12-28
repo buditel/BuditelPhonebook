@@ -1,4 +1,5 @@
-﻿using BuditelPhonebook.Data;
+﻿using BuditelPhonebook.Contracts;
+using BuditelPhonebook.Data;
 using BuditelPhonebook.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,15 +26,27 @@ namespace BuditelPhonebook.Services
 
         public async Task AddAsync(Role role)
         {
+            if (role == null)
+            {
+                throw new ArgumentNullException(nameof(role));
+            }
+
             _context.Roles.Add(role);
             await _context.SaveChangesAsync();
         }
 
+
         public async Task UpdateAsync(Role role)
         {
+            if (role == null)
+            {
+                throw new ArgumentNullException(nameof(role));
+            }
+
             _context.Roles.Update(role);
             await _context.SaveChangesAsync();
         }
+
 
         public async Task DeleteAsync(int id)
         {
