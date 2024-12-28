@@ -15,7 +15,7 @@ namespace BuditelPhonebook.Controllers
             _personRepository = personRepository;
         }
 
-        [HttpGet]
+        [HttpGet("GetSuggestions")]
         public async Task<IActionResult> GetSuggestions([FromQuery] string query)
         {
             if (string.IsNullOrWhiteSpace(query))

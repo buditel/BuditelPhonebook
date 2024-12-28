@@ -107,6 +107,7 @@ namespace BuditelPhonebook.Repositories
                          p.Department.Name.ToLower().Contains(query))
             .Select(p => new SuggestionsViewModel
             {
+                Id = p.Id,
                 FullName = $"{p.FirstName} {p.LastName}",
                 Subject = p.Subject,
                 Department = p.Department.Name

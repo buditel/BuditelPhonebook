@@ -66,10 +66,9 @@ document.addEventListener('DOMContentLoaded', function () {
             data.forEach(item => {
                 const suggestion = document.createElement('div');
                 suggestion.className = 'dropdown-item';
-                suggestion.innerHTML = `<strong>${item.FullName}</strong><br>${item.Subject || ''} - ${item.Department}`;
+                suggestion.innerHTML = `<strong>${item.fullName}</strong><br>${item.subject || ''} - ${item.department}`;
                 suggestion.addEventListener('click', function () {
-                    searchInput.value = item.FullName; // Set input value
-                    suggestions.style.display = 'none'; // Hide suggestions
+                    window.location.href = `/Phonebook/Details/${item.id}`;
                 });
                 suggestions.appendChild(suggestion);
             });
