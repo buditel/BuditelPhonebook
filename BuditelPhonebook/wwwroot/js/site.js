@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const query = searchInput.value.trim();
 
         if (query.length === 0) {
-            suggestions.style.display = 'none';
+            suggestions.style.display = 'none';  // Hide suggestions when input is empty
             return;
         }
 
@@ -63,6 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
         suggestions.innerHTML = ''; // Clear existing suggestions
 
         if (data.length > 0) {
+            // If there are suggestions, display them
             data.forEach(item => {
                 const suggestion = document.createElement('div');
                 suggestion.className = 'dropdown-item';
@@ -74,7 +75,12 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             suggestions.style.display = 'block'; // Show suggestions
         } else {
-            suggestions.style.display = 'none';
+            // If no data found, show "not found" message
+            const nothingFound = document.createElement('div');
+            nothingFound.className = 'dropdown-item';
+            nothingFound.innerHTML = `Търсенето не е намерено.`;
+            suggestions.appendChild(nothingFound);
+            suggestions.style.display = 'block'; // Show the "not found" message
         }
     });
 
@@ -85,6 +91,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+
 
 document.addEventListener('DOMContentLoaded', function () {
     var fileInput = document.getElementById('fileInput');
