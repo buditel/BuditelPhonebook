@@ -20,3 +20,32 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.contact-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    background-color: #f9f9f9;
+}
+
+/*.contact-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 20px;
+}*/
+
+.contact-details {
+    display: flex;
+    align-items: center;
+}
+
+.contact-info {
+    flex: 1;
+}
+
+.contact-buttons a {
+    margin: 5px;
+}

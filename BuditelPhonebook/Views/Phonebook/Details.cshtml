@@ -1,1 +1,45 @@
 ﻿@model PersonDetailsViewModel
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Phonebook</h1>
+
+    <!-- Contact Card -->
+    <div class="contact-card">
+        <div class="row">
+            <div class="col-md-2 d-flex justify-content-center align-items-center">
+                <!-- Avatar -->
+                @if(Model.PersonPicture != null)
+                {
+                    <img src="@($"data:image/webp;base64,{Convert.ToBase64String(Model.PersonPicture)}")" alt="Avatar" class="contact-avatar" />
+                }
+                else
+                {
+                    <img src="https://buditel.softuni.bg/wp-content/uploads/2023/11/kakvo-e-softuni-buditel-video-image.webp" alt="No Avatar" class="contact-avatar"/>
+                }
+            </div>
+            <div class="col-md-7 contact-details">
+                <!-- Contact Info -->
+                <div class="contact-info">
+                    <h4 class="mb-1">
+                        @($"{Model.FirstName} {(string.IsNullOrWhiteSpace(Model.MiddleName) ? "" : $"{Model.MiddleName} ")}{Model.LastName}")
+                    </h4>
+                    <p class="text-muted mb-1">Отдел: @Model.Department</p>
+                    <p class="text-muted mb-1">Длъжност: @Model.Role</p>
+                    @if(Model.Role == "Учител")
+                    {
+                        <p class="text-muted mb-1">Група предмети: @Model.SubjectGroup</p>
+                        <p class="text-muted mb-1">Предмет: @Model.Subject</p>
+                    }
+                    <p class="mb-1"><strong>Служебен телефон:</strong> @Model.BusinessPhoneNumber</p>
+                    <p class="mb-1"><strong>Личен телефон:</strong> @Model.PersonalPhoneNumber</p>
+                    <p><strong>Имейл:</strong> @Model.Email</p>
+                </div>
+            </div>
+            <div class="col-md-3 text-md-end d-flex flex-column justify-content-center contact-buttons">
+                <!-- Buttons -->
+                <a href="#" class="btn btn-primary btn-sm">Редактиране</a>
+                <a href="#" class="btn btn-danger btn-sm">Изтриване</a>
+            </div>
+        </div>
+    </div>
+</div>
