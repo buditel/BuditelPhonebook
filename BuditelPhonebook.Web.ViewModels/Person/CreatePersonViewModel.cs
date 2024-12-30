@@ -1,5 +1,6 @@
 ﻿using BuditelPhonebook.Common.CustomAttributes;
 using BuditelPhonebook.Infrastructure.Data.Models;
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 using static BuditelPhonebook.Common.EntityValidationConstants.Person;
@@ -29,6 +30,8 @@ namespace BuditelPhonebook.Web.ViewModels.Person
 
         [RegularExpression(PersonBirthDateRegexPattern, ErrorMessage = BirthDateWrongFormatMessage)]
         public string? Birthdate { get; set; }
+
+        public IFormFile? PersonPicture { get; set; }
 
         [Required(ErrorMessage = RoleRequiredMessage)]
         public string Role { get; set; } = null!;

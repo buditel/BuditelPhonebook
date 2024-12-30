@@ -2,6 +2,7 @@
 using BuditelPhonebook.Infrastructure.Data;
 using BuditelPhonebook.Infrastructure.Data.Models;
 using BuditelPhonebook.Web.ViewModels;
+using BuditelPhonebook.Web.ViewModels.Person;
 using Microsoft.EntityFrameworkCore;
 
 namespace BuditelPhonebook.Core.Repositories
@@ -117,6 +118,36 @@ namespace BuditelPhonebook.Core.Repositories
             .ToListAsync();
 
             return results;
+        }
+
+        public async Task<Person> CreateANewPerson(CreatePersonViewModel model)
+        {
+            byte[] personPictureData = null;
+
+            if (model.PersonPicture != null)
+            {
+                using MemoryStream memoryStream = new MemoryStream();
+                await model.PersonPicture.CopyToAsync(memoryStream);
+                personPictureData = memoryStream.ToArray();
+            }
+
+            Person person = new Person
+            {
+                FirstName = model.FirstName,
+                MiddleName = model.MiddleName,
+                LastName = model.LastName,
+                Birthdate = model.Birthdate,
+                Email = model.Email,
+                BusinessPhoneNumber = model.BusinessPhoneNumber,
+                PersonalPhoneNumber = model.PersonalPhoneNumber,
+                PersonPicture = personPictureData,
+                DepartmentId = GetDepartments().FirstOrDefault(d => d.Name == model.Department).Id,
+                RoleId = GetRoles().FirstOrDefault(r => r.Name == model.Role).Id,
+                SubjectGroup = model.SubjectGroup,
+                Subject = model.Subject
+            };
+
+            return person;
         }
     }
 }

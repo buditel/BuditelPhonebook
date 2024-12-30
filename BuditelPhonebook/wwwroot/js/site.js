@@ -86,3 +86,12 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+    var fileInput = document.getElementById('fileInput');
+    var fileNameLabel = document.querySelector('.file-name');
+
+    fileInput.addEventListener('change', function () {
+        var fileName = fileInput.files[0] ? fileInput.files[0].name : 'Изберете файл (по желание)...';
+        fileNameLabel.textContent = fileName;
+    });
+});

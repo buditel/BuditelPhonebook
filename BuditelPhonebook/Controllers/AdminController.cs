@@ -57,20 +57,8 @@ namespace BuditelPhonebook.Web.Controllers
                 return View(model);
             }
 
-            Person person = new Person
-            {
-                FirstName = model.FirstName,
-                MiddleName = model.MiddleName,
-                LastName = model.LastName,
-                Birthdate = model.Birthdate,
-                Email = model.Email,
-                BusinessPhoneNumber = model.BusinessPhoneNumber,
-                PersonalPhoneNumber = model.PersonalPhoneNumber,
-                DepartmentId = _personRepository.GetDepartments().FirstOrDefault(d => d.Name == model.Department).Id,
-                RoleId = _personRepository.GetRoles().FirstOrDefault(r => r.Name == model.Role).Id,
-                SubjectGroup = model.SubjectGroup,
-                Subject = model.Subject
-            };
+            Person person = await _personRepository.CreateANewPerson(model);
+
             try
             {
                 await _personRepository.AddAsync(person);

@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\BuditelPhonebook.Common\BuditelPhonebook.Common.csproj" />
     <ProjectReference Include="..\BuditelPhonebook.Infrastructure\BuditelPhonebook.Infrastructure.csproj" />
   </ItemGroup>

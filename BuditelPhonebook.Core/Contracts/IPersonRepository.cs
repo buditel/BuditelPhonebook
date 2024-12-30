@@ -1,5 +1,6 @@
 ﻿using BuditelPhonebook.Infrastructure.Data.Models;
 using BuditelPhonebook.Web.ViewModels;
+using BuditelPhonebook.Web.ViewModels.Person;
 
 namespace BuditelPhonebook.Core.Contracts
 {
@@ -17,6 +18,8 @@ namespace BuditelPhonebook.Core.Contracts
         IEnumerable<Department> GetDepartments();
 
         Task<IEnumerable<SuggestionsViewModel>> GetSearchSuggestionsAsync(string query);
+
+        Task<Person> CreateANewPerson(CreatePersonViewModel model);
     }
 
 }

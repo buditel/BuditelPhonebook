@@ -29,6 +29,8 @@ namespace BuditelPhonebook.Infrastructure.Data.Models
         [MaxLength(5)]
         public string? Birthdate { get; set; }
 
+        public byte[]? PersonPicture { get; set; }
+
         [Required]
         [ForeignKey(nameof(Role))]
         public int RoleId { get; set; }
