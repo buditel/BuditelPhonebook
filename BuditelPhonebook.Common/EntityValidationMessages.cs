@@ -19,5 +19,15 @@
             public const string SubjectGroupRequiredMessage = "Трябва да изберете група предмети.";
             public const string SubjectRequiredMessage = "Трябва да въведете предмет, по който учителят преподава.";
         }
+
+        public static class Role
+        {
+            public const string NameUniqueMessage = "Вече има такава длъжност.";
+        }
+
+        public static class Department
+        {
+            public const string NameUniqueMessage = "Вече има такъв отдел.";
+        }
     }
 }

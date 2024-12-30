@@ -2,6 +2,8 @@
 using BuditelPhonebook.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 
+using static BuditelPhonebook.Common.EntityValidationMessages.Role;
+
 namespace BuditelPhonebook.Web.Controllers
 {
     public class RoleController : Controller
@@ -28,8 +30,16 @@ namespace BuditelPhonebook.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Role role)
         {
+            var exists = _roleRepository.GetAllAttached().Any(r => r.Name == role.Name);
+            if (exists)
+            {
+                ModelState.AddModelError(nameof(role.Name), NameUniqueMessage);
+            }
+
             if (!ModelState.IsValid)
+            {
                 return View(role);
+            }
 
             await _roleRepository.AddAsync(role);
             return RedirectToAction(nameof(Index));

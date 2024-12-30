@@ -2,6 +2,8 @@
 using BuditelPhonebook.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 
+using static BuditelPhonebook.Common.EntityValidationMessages.Department;
+
 namespace BuditelPhonebook.Web.Controllers
 {
     public class DepartmentController : Controller
@@ -28,8 +30,16 @@ namespace BuditelPhonebook.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Department department)
         {
+            var exists = _departmentRepository.GetAllAttached().Any(d => d.Name == department.Name);
+            if (exists)
+            {
+                ModelState.AddModelError(nameof(department.Name), NameUniqueMessage);
+            }
+
             if (!ModelState.IsValid)
+            {
                 return View(department);
+            }
 
             await _departmentRepository.AddAsync(department);
             return RedirectToAction(nameof(Index));

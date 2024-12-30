@@ -72,6 +72,11 @@ namespace BuditelPhonebook.Core.Repositories
             _context.Roles.Update(role);
             await _context.SaveChangesAsync();
         }
+
+        public IQueryable<Role> GetAllAttached()
+        {
+            return _context.Roles.AsQueryable();
+        }
     }
 
 }

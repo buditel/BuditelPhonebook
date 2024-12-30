@@ -1,7 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace BuditelPhonebook.Infrastructure.Data.Models
 {
+    [Index(nameof(Name), IsUnique = true)]
     public class Department
     {
         [Key]
