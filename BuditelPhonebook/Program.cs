@@ -1,7 +1,6 @@
-using BuditelPhonebook.Contracts;
-using BuditelPhonebook.Data;
-using BuditelPhonebook.Repositories;
-using BuditelPhonebook.Services;
+using BuditelPhonebook.Core.Contracts;
+using BuditelPhonebook.Core.Repositories;
+using BuditelPhonebook.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;

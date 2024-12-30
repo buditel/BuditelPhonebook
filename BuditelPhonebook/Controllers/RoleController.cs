@@ -1,8 +1,8 @@
-﻿using BuditelPhonebook.Contracts;
-using BuditelPhonebook.Models;
+﻿using BuditelPhonebook.Core.Contracts;
+using BuditelPhonebook.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BuditelPhonebook.Controllers
+namespace BuditelPhonebook.Web.Controllers
 {
     public class RoleController : Controller
     {

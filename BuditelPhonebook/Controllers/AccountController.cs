@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BuditelPhonebook.Controllers
+namespace BuditelPhonebook.Web.Controllers
 {
     public class AccountController : Controller
     {

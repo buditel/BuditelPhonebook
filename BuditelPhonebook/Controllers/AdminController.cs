@@ -1,11 +1,11 @@
 ﻿// Updated AdminController.cs with logger and exception handling
-using BuditelPhonebook.Contracts;
-using BuditelPhonebook.Models;
-using BuditelPhonebook.ViewModels;
+using BuditelPhonebook.Core.Contracts;
+using BuditelPhonebook.Infrastructure.Data.Models;
+using BuditelPhonebook.Web.ViewModels.Person;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BuditelPhonebook.Controllers
+namespace BuditelPhonebook.Web.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller

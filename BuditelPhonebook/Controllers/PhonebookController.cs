@@ -1,9 +1,8 @@
-﻿using BuditelPhonebook.Contracts;
-using BuditelPhonebook.Models;
+﻿using BuditelPhonebook.Core.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BuditelPhonebook.Controllers
+namespace BuditelPhonebook.Web.Controllers
 {
     [Authorize]
     public class PhonebookController : Controller
@@ -27,7 +26,10 @@ namespace BuditelPhonebook.Controllers
         }
 
 
-
+        public async Task<IActionResult> Details(int id)
+        {
+            return View();
+        }
 
     }
 }

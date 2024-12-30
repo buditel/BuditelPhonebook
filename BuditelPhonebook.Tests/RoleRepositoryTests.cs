@@ -1,10 +1,8 @@
-using BuditelPhonebook.Data;
-using BuditelPhonebook.Models;
-using BuditelPhonebook.Services;
-using Microsoft.EntityFrameworkCore;
-using Xunit;
+using BuditelPhonebook.Core.Repositories;
+using BuditelPhonebook.Infrastructure.Data;
+using BuditelPhonebook.Infrastructure.Data.Models;
 using FluentAssertions;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 public class RoleRepositoryTests
 {

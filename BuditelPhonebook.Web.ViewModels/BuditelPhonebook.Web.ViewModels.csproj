@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BuditelPhonebook.Common\BuditelPhonebook.Common.csproj" />
     <ProjectReference Include="..\BuditelPhonebook.Infrastructure\BuditelPhonebook.Infrastructure.csproj" />
-    <ProjectReference Include="..\BuditelPhonebook.Web.ViewModels\BuditelPhonebook.Web.ViewModels.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,9 +1,8 @@
-﻿using BuditelPhonebook.Contracts;
-using BuditelPhonebook.Repositories;
-using BuditelPhonebook.ViewModels;
+﻿using BuditelPhonebook.Core.Contracts;
+using BuditelPhonebook.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BuditelPhonebook.Controllers
+namespace BuditelPhonebook.Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
