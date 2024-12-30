@@ -9,6 +9,8 @@ namespace BuditelPhonebook.Core.Contracts
         Task AddAsync(Department department);
         Task UpdateAsync(Department department);
         Task DeleteAsync(int id);
+        Task SoftDeleteAsync(int id);
+
     }
 
 }

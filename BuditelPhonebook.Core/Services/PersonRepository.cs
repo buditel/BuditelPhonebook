@@ -63,6 +63,21 @@ namespace BuditelPhonebook.Core.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task SoftDeleteAsync(int id)
+        {
+            var person = await _context.People.FindAsync(id);
+
+            if (person == null)
+            {
+                throw new ArgumentNullException(nameof(person));
+            }
+
+            person.IsDeleted = true;
+
+            _context.People.Update(person);
+            await _context.SaveChangesAsync();
+        }
+
 
         public async Task<IEnumerable<Person>> SearchAsync(string query)
         {
@@ -88,12 +103,12 @@ namespace BuditelPhonebook.Core.Repositories
 
         public IEnumerable<Role> GetRoles()
         {
-            return _context.Roles.AsNoTracking().ToList();
+            return _context.Roles.Where(r => !r.IsDeleted).AsNoTracking().ToList();
         }
 
         public IEnumerable<Department> GetDepartments()
         {
-            return _context.Departments.AsNoTracking().ToList();
+            return _context.Departments.Where(d => !d.IsDeleted).AsNoTracking().ToList();
         }
 
         public async Task<IEnumerable<SuggestionsViewModel>> GetSearchSuggestionsAsync(string query)

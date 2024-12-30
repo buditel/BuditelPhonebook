@@ -45,5 +45,20 @@ namespace BuditelPhonebook.Core.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task SoftDeleteAsync(int id)
+        {
+            var department = await _context.Departments.FindAsync(id);
+
+            if (department == null)
+            {
+                throw new ArgumentNullException(nameof(department));
+            }
+
+            department.IsDeleted = true;
+
+            _context.Departments.Update(department);
+            await _context.SaveChangesAsync();
+        }
     }
 }

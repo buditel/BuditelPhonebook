@@ -66,7 +66,7 @@ namespace BuditelPhonebook.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _roleRepository.DeleteAsync(id);
+            await _roleRepository.SoftDeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
     }

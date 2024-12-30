@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<Person>
 @{
-    ViewBag.Title = "=Управление на контактите";
+    ViewBag.Title = "Управление на контактите";
 }
 <h1 class="h3 mb-4">Управление на контактите</h1>
 <p>
     <a asp-action="Create" class="btn btn-success">Добави нов контакт</a>
 </p>
 
-@if (!Model.Any())
+@if (!Model.Any(p => !p.IsDeleted))
 {
     <div class="alert alert-info">Няма налични контакти.</div>
 }
@@ -27,7 +27,7 @@ else
         </tr>
         </thead>
         <tbody>
-        @foreach (var p in Model)
+        @foreach (var p in Model.Where(p => !p.IsDeleted))
         {
             <tr>
                 <td>@p.FirstName</td>
@@ -38,8 +38,8 @@ else
                 <td>@p.Role.Name</td>
                 <td>@p.Department.Name</td>
                 <td>
-                    <a class="btn btn-sm btn-primary" href="@Url.Action("Edit", new { id = p.Id })">Редактирай</a>
-                    <a class="btn btn-sm btn-danger" href="@Url.Action("Delete", new { id = p.Id })">Изтрий</a>
+                    <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-sm btn-primary">Редактирай</a>
+                    <a asp-action="Delete" asp-route-id="@p.Id" class="btn btn-sm btn-danger">Изтрий</a>
                 </td>
             </tr>
         }

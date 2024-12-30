@@ -9,6 +9,7 @@ namespace BuditelPhonebook.Core.Contracts
         Task AddAsync(Role role);
         Task UpdateAsync(Role role);
         Task DeleteAsync(int id);
+        Task SoftDeleteAsync(int id);
     }
 
 }

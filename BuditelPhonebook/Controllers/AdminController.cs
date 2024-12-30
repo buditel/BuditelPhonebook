@@ -139,7 +139,7 @@ namespace BuditelPhonebook.Web.Controllers
         {
             try
             {
-                await _personRepository.DeleteAsync(id);
+                await _personRepository.SoftDeleteAsync(id);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)

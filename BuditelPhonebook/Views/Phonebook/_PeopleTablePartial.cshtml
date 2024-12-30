@@ -10,7 +10,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var person in Model)
+    @foreach (var person in Model.Where(p => !p.IsDeleted))
     {
         <tr>
             <td>@person.FirstName @person.MiddleName @person.LastName</td>

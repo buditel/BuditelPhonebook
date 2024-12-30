@@ -1,7 +1,10 @@
 ﻿@model IEnumerable<Department>
 
-<h1>Departments</h1>
-<a asp-action="Create" class="btn btn-primary">Add Department</a>
+@{
+    ViewBag.Title = "Управление на отделите";
+}
+<h1 class="h3 mb-4">Управление на отделите</h1>
+<a asp-action="Create" class="btn btn-success">Добави нов отдел</a>
 
 <table class="table">
     <thead>
@@ -12,14 +15,14 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var department in Model)
+    @foreach (var department in Model.Where(d => !d.IsDeleted))
     {
         <tr>
             <td>@department.Id</td>
             <td>@department.Name</td>
             <td>
-                <a asp-action="Edit" asp-route-id="@department.Id" class="btn btn-warning">Edit</a>
-                <a asp-action="Delete" asp-route-id="@department.Id" class="btn btn-danger">Delete</a>
+                <a asp-action="Edit" asp-route-id="@department.Id" class="btn btn-warning">Редактирай</a>
+                <a asp-action="Delete" asp-route-id="@department.Id" class="btn btn-danger">Изтрий</a>
             </td>
         </tr>
     }
