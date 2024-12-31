@@ -4,41 +4,47 @@
     <h1 class="text-center mb-4">Phonebook</h1>
 
     <!-- Contact Card -->
-    <div class="contact-card">
-        <div class="row">
-            <div class="col-md-2 d-flex justify-content-center align-items-center">
-                <!-- Avatar -->
-                @if(Model.PersonPicture != null)
-                {
-                    <img src="@($"data:image/webp;base64,{Convert.ToBase64String(Model.PersonPicture)}")" alt="Avatar" class="contact-avatar" />
-                }
-                else
-                {
-                        <img src="https://buditel.softuni.bg/wp-content/uploads/2023/11/kakvo-e-softuni-buditel-video-image.webp" alt="No Avatar" class="contact-avatar"/>
-                }
-            </div>
-            <div class="col-md-7 contact-details">
-                <!-- Contact Info -->
-                <div class="contact-info">
-                    <h4 class="mb-1">
-                        @($"{Model.FirstName} {(string.IsNullOrWhiteSpace(Model.MiddleName) ? "" : $"{Model.MiddleName} ")}{Model.LastName}")
-                    </h4>
-                    <p class="text-muted mb-1">Отдел: @Model.Department</p>
-                    <p class="text-muted mb-1">Длъжност: @Model.Role</p>
-                    @if(Model.Role == "Учител")
+    <div class="contact-card card shadow p-3 mb-5 bg-white rounded">
+        <div class="row g-0">
+            <!-- Left Side: Picture -->
+            <div class="col-md-4 text-center">
+                <div class="p-3">
+                    @if (Model.PersonPicture != null)
                     {
-                        <p class="text-muted mb-1">Група предмети: @Model.SubjectGroup</p>
-                        <p class="text-muted mb-1">Предмет: @Model.Subject</p>
+                        <img src="@($"data:image/webp;base64,{Convert.ToBase64String(Model.PersonPicture)}")" alt="Avatar" class="img-fluid rounded-circle border" style="width: 150px; height: 150px; object-fit: cover;" />
                     }
-                    <p class="mb-1"><strong>Служебен телефон:</strong> @Model.BusinessPhoneNumber</p>
-                    <p class="mb-1"><strong>Личен телефон:</strong> @Model.PersonalPhoneNumber</p>
-                    <p><strong>Имейл:</strong> @Model.Email</p>
+                    else
+                    {
+                        <img src="https://buditel.softuni.bg/wp-content/uploads/2020/04/SoftUni-Buditel-favicon.png" alt="No Avatar" class="img-fluid rounded-circle border" style="width: 150px; height: 150px; object-fit: cover;" />
+                    }
                 </div>
             </div>
-            <div class="col-md-3 text-md-end d-flex flex-column justify-content-center contact-buttons">
-                <!-- Buttons -->
-                <a href="#" class="btn btn-primary btn-sm">Редактиране</a>
-                <a href="#" class="btn btn-danger btn-sm">Изтриване</a>
+
+            <!-- Right Side: Details -->
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h4 class="card-title mb-3 text-primary">
+                        @($"{Model.FirstName} {(string.IsNullOrWhiteSpace(Model.MiddleName) ? "" : $"{Model.MiddleName} ")}{Model.LastName}")
+                    </h4>
+                    <p class="card-text text-muted"><strong>Отдел:</strong> @Model.Department</p>
+                    <p class="card-text text-muted"><strong>Длъжност:</strong> @Model.Role</p>
+                    @if (Model.Role == "Учител")
+                    {
+                        <p class="card-text text-muted"><strong>Група предмети:</strong> @Model.SubjectGroup</p>
+                        <p class="card-text text-muted"><strong>Предмет:</strong> @Model.Subject</p>
+                    }
+                    <p class="card-text"><strong>Служебен телефон:</strong> @Model.BusinessPhoneNumber</p>
+                    <p class="card-text"><strong>Личен телефон:</strong> @Model.PersonalPhoneNumber</p>
+                    <p class="card-text"><strong>Имейл:</strong> @Model.Email</p>
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <div class="mt-4">
+                            <a href="#" class="btn btn-primary me-2">Редактиране</a>
+                            <a href="#" class="btn btn-danger">Изтриване</a>
+                        </div>
+                    }
+                </div>
             </div>
         </div>
     </div>

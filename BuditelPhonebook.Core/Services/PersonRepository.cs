@@ -119,9 +119,9 @@ namespace BuditelPhonebook.Core.Repositories
             .Include(p => p.Department)
             .Where(p => !p.IsDeleted &&
                         (p.FirstName.ToLower().Contains(query) ||
-                         p.LastName.ToLower().Contains(query)) ||
+                         p.LastName.ToLower().Contains(query) ||
                          (p.Subject != null && p.Subject.ToLower().Contains(query)) ||
-                         p.Department.Name.ToLower().Contains(query))
+                         p.Department.Name.ToLower().Contains(query)))
             .Select(p => new SuggestionsViewModel
             {
                 Id = p.Id,

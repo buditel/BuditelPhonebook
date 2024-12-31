@@ -100,7 +100,7 @@ namespace BuditelPhonebook
                 context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
                 context.Response.Headers.Add("X-Frame-Options", "DENY");
                 context.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
-                context.Response.Headers.Add("Content-Security-Policy", "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://cdn.jsdelivr.net;");
+                context.Response.Headers.Add("Content-Security-Policy", "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://cdn.jsdelivr.net; img-src 'self' https://buditel.softuni.bg data:;");
                 await next();
             });
 
