@@ -146,6 +146,11 @@ namespace BuditelPhonebook.Core.Repositories
                 personPictureData = memoryStream.ToArray();
             }
 
+            if (model.PersonalPhoneNumber.StartsWith("+359"))
+            {
+                model.PersonalPhoneNumber = model.PersonalPhoneNumber.Replace("+359", "0");
+            }
+
             Person person = new Person
             {
                 FirstName = model.FirstName,

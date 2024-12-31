@@ -20,11 +20,13 @@ namespace BuditelPhonebook.Infrastructure.Data.Models
         [Required, MaxLength(100)]
         public string Email { get; set; } = null!;
 
+        [Required]
+        [MaxLength(20)]
+        public string PersonalPhoneNumber { get; set; } = null!;
+
         [MaxLength(20)]
         public string? BusinessPhoneNumber { get; set; }
 
-        [MaxLength(20)]
-        public string? PersonalPhoneNumber { get; set; }
 
         [MaxLength(5)]
         public string? Birthdate { get; set; }
@@ -53,6 +55,9 @@ namespace BuditelPhonebook.Infrastructure.Data.Models
 
         [Required]
         public bool IsDeleted { get; set; }
+
+        [MaxLength(150)]
+        public string? CommentOnDeletion { get; set; }
     }
 
 }

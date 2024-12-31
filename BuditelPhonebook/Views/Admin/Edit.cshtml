@@ -38,24 +38,5 @@
     </div>
 
     <button type="submit" class="btn btn-primary">Запиши</button>
-    <a href="@Url.Action("Index")" class="btn btn-secondary">Отказ</a>
+    <a asp-action="Index" class="btn btn-secondary">Отказ</a>
 </form>
-
-@section Scripts {
-    <script>
-        // Example of client-side validation (optional)
-        (function () {
-            'use strict'
-            const forms = document.querySelectorAll('.needs-validation')
-            Array.from(forms).forEach(form => {
-                form.addEventListener('submit', event => {
-                    if (!form.checkValidity()) {
-                        event.preventDefault()
-                        event.stopPropagation()
-                    }
-                    form.classList.add('was-validated')
-                }, false)
-            })
-        })()
-    </script>
-}

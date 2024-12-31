@@ -1,12 +1,11 @@
 ﻿@model PersonDetailsViewModel
+@{
+    ViewBag.Title = "Визитка";
+}
 
 <div class="container mt-5">
-    <h1 class="text-center mb-4">Phonebook</h1>
-
-    <!-- Contact Card -->
     <div class="contact-card card shadow p-3 mb-5 bg-white rounded">
         <div class="row g-0">
-            <!-- Left Side: Picture -->
             <div class="col-md-4 text-center">
                 <div class="p-3">
                     @if (Model.PersonPicture != null)
@@ -19,8 +18,6 @@
                     }
                 </div>
             </div>
-
-            <!-- Right Side: Details -->
             <div class="col-md-8">
                 <div class="card-body">
                     <h4 class="card-title mb-3 text-primary">

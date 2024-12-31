@@ -25,14 +25,14 @@
         <span asp-validation-for="Email" class="text-danger"></span>
     </div>
     <div class="mb-3">
+        <label class="form-label">Личен телефон</label>
+        <input type="text" class="form-control" name="PersonalPhoneNumber" value="@Model.PersonalPhoneNumber" placeholder="Въведете личен телефон...">
+        <span asp-validation-for="PersonalPhoneNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
         <label class="form-label">Служебен телефон</label>
         <input type="text" class="form-control" name="BusinessPhoneNumber" value="@Model.BusinessPhoneNumber" placeholder="Въведете служебен телефон (по желание)...">
         <span asp-validation-for="BusinessPhoneNumber" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Личен телефон</label>
-        <input type="text" class="form-control" name="PersonalPhoneNumber" value="@Model.PersonalPhoneNumber" placeholder="Въведете личен телефон (по желание)...">
-        <span asp-validation-for="PersonalPhoneNumber" class="text-danger"></span>
     </div>
     <div class="mb-3">
         <label class="form-label" for="fileInput">Снимка</label>

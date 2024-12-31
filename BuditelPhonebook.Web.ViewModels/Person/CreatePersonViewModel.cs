@@ -22,11 +22,13 @@ namespace BuditelPhonebook.Web.ViewModels.Person
         [Required(ErrorMessage = EmailRequiredMessage), StringLength(100, MinimumLength = 7, ErrorMessage = EmailLengthMessage)]
         public string Email { get; set; } = null!;
 
+
+        [Required(ErrorMessage = PersonalPhoneNumberRequiredMessage)]
+        [StringLength(20, MinimumLength = 7, ErrorMessage = PersonalPhoneNumberLengthMessage)]
+        public string PersonalPhoneNumber { get; set; } = null!;
+
         [StringLength(20, MinimumLength = 7, ErrorMessage = BusinessPhoneNumberLengthMessage)]
         public string? BusinessPhoneNumber { get; set; }
-
-        [StringLength(20, MinimumLength = 7, ErrorMessage = PersonalPhoneNumberLengthMessage)]
-        public string? PersonalPhoneNumber { get; set; }
 
         [RegularExpression(PersonBirthDateRegexPattern, ErrorMessage = BirthDateWrongFormatMessage)]
         public string? Birthdate { get; set; }
