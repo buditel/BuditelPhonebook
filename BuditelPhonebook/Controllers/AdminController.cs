@@ -79,30 +79,7 @@ namespace BuditelPhonebook.Web.Controllers
             try
             {
                 // Fetch the Person using the repository
-                var person = await _personRepository.GetByIdWithRelationsAsync(id); // New repository method
-                if (person == null)
-                {
-                    return NotFound();
-                }
-
-                var model = new EditPersonViewModel
-                {
-                    Id = id,
-                    FirstName = person.FirstName,
-                    MiddleName = person.MiddleName,
-                    LastName = person.LastName,
-                    Birthdate = person.Birthdate,
-                    PersonalPhoneNumber = person.PersonalPhoneNumber,
-                    BusinessPhoneNumber = person.BusinessPhoneNumber,
-                    Email = person.Email,
-                    Department = person.Department.Name,
-                    Role = person.Role.Name,
-                    SubjectGroup = person.SubjectGroup,
-                    Subject = person.Subject,
-                    ExistingPicture = person.PersonPicture,
-                    Roles = _personRepository.GetRoles(),
-                    Departments = _personRepository.GetDepartments()
-                };
+                var model = await _personRepository.MapPersonForEditById(id);
 
                 return View(model);
             }
@@ -125,48 +102,15 @@ namespace BuditelPhonebook.Web.Controllers
                 return View(model);
             }
 
-            var person = await _personRepository.GetByIdWithRelationsAsync(model.Id);
-
             try
             {
+                await _personRepository.EditPerson(model);
 
-                byte[] personPictureData = null;
-
-
-                if (model.PersonPicture != null)
-                {
-                    using MemoryStream memoryStream = new MemoryStream();
-                    await model.PersonPicture.CopyToAsync(memoryStream);
-                    personPictureData = memoryStream.ToArray();
-                }
-
-                if (model.PersonPicture == null && model.ExistingPicture != null)
-                {
-                    person.PersonPicture = model.ExistingPicture;
-                }
-                else
-                {
-                    person.PersonPicture = personPictureData;
-                }
-
-                person.FirstName = model.FirstName;
-                person.MiddleName = model.MiddleName;
-                person.LastName = model.LastName;
-                person.PersonalPhoneNumber = model.PersonalPhoneNumber;
-                person.BusinessPhoneNumber = model.BusinessPhoneNumber;
-                person.Birthdate = model.Birthdate;
-                person.Email = model.Email;
-                person.DepartmentId = _personRepository.GetDepartments().FirstOrDefault(d => d.Name == model.Department).Id;
-                person.RoleId = _personRepository.GetRoles().FirstOrDefault(r => r.Name == model.Role).Id;
-                person.SubjectGroup = model.SubjectGroup;
-                person.Subject = model.Subject;
-
-                await _personRepository.UpdateAsync(person);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error updating person with ID {person.Id} in AdminController.Edit");
+                _logger.LogError(ex, $"Error updating person with ID {model.Id} in AdminController.Edit");
                 ModelState.AddModelError(string.Empty, "An error occurred while updating the person.");
                 model.Roles = _personRepository.GetRoles();
                 model.Departments = _personRepository.GetDepartments();

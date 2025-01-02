@@ -1,5 +1,4 @@
 ﻿using BuditelPhonebook.Common.CustomAttributes;
-using BuditelPhonebook.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
@@ -42,8 +41,8 @@ namespace BuditelPhonebook.Web.ViewModels.Person
         [Required(ErrorMessage = RoleRequiredMessage)]
         public string Role { get; set; } = null!;
 
-        public IEnumerable<Role> Roles { get; set; }
-            = new List<Role>();
+        public IEnumerable<Infrastructure.Data.Models.Role> Roles { get; set; }
+            = new List<Infrastructure.Data.Models.Role>();
 
         [MaxLength(20)]
         [RequiredIfTeacher("Role", "Учител", SubjectGroupRequiredMessage)]
@@ -56,7 +55,7 @@ namespace BuditelPhonebook.Web.ViewModels.Person
         [Required(ErrorMessage = DepartmentRequiredMessage)]
         public string Department { get; set; } = null!;
 
-        public IEnumerable<Department> Departments { get; set; }
-            = new List<Department>();
+        public IEnumerable<Infrastructure.Data.Models.Department> Departments { get; set; }
+            = new List<Infrastructure.Data.Models.Department>();
     }
 }

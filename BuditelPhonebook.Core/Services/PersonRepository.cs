@@ -174,5 +174,74 @@ namespace BuditelPhonebook.Core.Repositories
 
             return person;
         }
+
+        public async Task<EditPersonViewModel> MapPersonForEditById(int id)
+        {
+            var person = await GetByIdWithRelationsAsync(id); // New repository method
+            if (person == null)
+            {
+                //TODO:
+                throw new Exception();
+            }
+
+            var model = new EditPersonViewModel
+            {
+                Id = id,
+                FirstName = person.FirstName,
+                MiddleName = person.MiddleName,
+                LastName = person.LastName,
+                Birthdate = person.Birthdate,
+                PersonalPhoneNumber = person.PersonalPhoneNumber,
+                BusinessPhoneNumber = person.BusinessPhoneNumber,
+                Email = person.Email,
+                Department = person.Department.Name,
+                Role = person.Role.Name,
+                SubjectGroup = person.SubjectGroup,
+                Subject = person.Subject,
+                ExistingPicture = person.PersonPicture,
+                Roles = GetRoles(),
+                Departments = GetDepartments()
+            };
+
+            return model;
+        }
+
+        public async Task EditPerson(EditPersonViewModel model)
+        {
+            var person = await GetByIdWithRelationsAsync(model.Id);
+
+            byte[] personPictureData = null;
+
+
+            if (model.PersonPicture != null)
+            {
+                using MemoryStream memoryStream = new MemoryStream();
+                await model.PersonPicture.CopyToAsync(memoryStream);
+                personPictureData = memoryStream.ToArray();
+            }
+
+            if (model.PersonPicture == null && model.ExistingPicture != null)
+            {
+                person.PersonPicture = model.ExistingPicture;
+            }
+            else
+            {
+                person.PersonPicture = personPictureData;
+            }
+
+            person.FirstName = model.FirstName;
+            person.MiddleName = model.MiddleName;
+            person.LastName = model.LastName;
+            person.PersonalPhoneNumber = model.PersonalPhoneNumber;
+            person.BusinessPhoneNumber = model.BusinessPhoneNumber;
+            person.Birthdate = model.Birthdate;
+            person.Email = model.Email;
+            person.DepartmentId = GetDepartments().FirstOrDefault(d => d.Name == model.Department).Id;
+            person.RoleId = GetRoles().FirstOrDefault(r => r.Name == model.Role).Id;
+            person.SubjectGroup = model.SubjectGroup;
+            person.Subject = model.Subject;
+
+            await UpdateAsync(person);
+        }
     }
 }

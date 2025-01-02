@@ -24,11 +24,15 @@
         public static class Role
         {
             public const string NameUniqueMessage = "Вече има такава длъжност.";
+            public const string NameRequiredMessage = "Трябва да въведете име.";
+            public const string NameLengthMessage = "Дължината на името трябва да е между 2 и 100 символа.";
         }
 
         public static class Department
         {
             public const string NameUniqueMessage = "Вече има такъв отдел.";
+            public const string NameRequiredMessage = "Трябва да въведете име.";
+            public const string NameLengthMessage = "Дължината на името трябва да е между 2 и 100 символа.";
         }
     }
 }

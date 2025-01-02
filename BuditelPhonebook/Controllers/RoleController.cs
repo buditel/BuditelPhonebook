@@ -1,5 +1,6 @@
 ﻿using BuditelPhonebook.Core.Contracts;
 using BuditelPhonebook.Infrastructure.Data.Models;
+using BuditelPhonebook.Web.ViewModels.Role;
 using Microsoft.AspNetCore.Mvc;
 
 using static BuditelPhonebook.Common.EntityValidationMessages.Role;
@@ -23,23 +24,30 @@ namespace BuditelPhonebook.Web.Controllers
 
         public IActionResult Create()
         {
-            return View();
+            var model = new CreateRoleViewModel();
+
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Role role)
+        public async Task<IActionResult> Create(CreateRoleViewModel model)
         {
-            var exists = _roleRepository.GetAllAttached().Any(r => r.Name == role.Name);
+            var exists = _roleRepository.GetAllAttached().Any(r => r.Name == model.Name);
             if (exists)
             {
-                ModelState.AddModelError(nameof(role.Name), NameUniqueMessage);
+                ModelState.AddModelError(nameof(model.Name), NameUniqueMessage);
             }
 
             if (!ModelState.IsValid)
             {
-                return View(role);
+                return View(model);
             }
+
+            var role = new Role
+            {
+                Name = model.Name
+            };
 
             await _roleRepository.AddAsync(role);
             return RedirectToAction(nameof(Index));
@@ -48,17 +56,37 @@ namespace BuditelPhonebook.Web.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var role = await _roleRepository.GetByIdAsync(id);
-            if (role == null) return NotFound();
+            if (role == null)
+            {
+                return NotFound();
+            }
 
-            return View(role);
+            var model = new EditRoleViewModel
+            {
+                Id = id,
+                Name = role.Name
+            };
+
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Role role)
+        public async Task<IActionResult> Edit(EditRoleViewModel model)
         {
+            var exists = _roleRepository.GetAllAttached().Any(d => d.Name == model.Name);
+            if (exists)
+            {
+                ModelState.AddModelError(nameof(model.Name), NameUniqueMessage);
+            }
+
             if (!ModelState.IsValid)
-                return View(role);
+            {
+                return View(model);
+            }
+
+            var role = await _roleRepository.GetByIdAsync(model.Id);
+            role.Name = model.Name;
 
             await _roleRepository.UpdateAsync(role);
             return RedirectToAction(nameof(Index));

@@ -22,6 +22,9 @@ namespace BuditelPhonebook.Core.Contracts
         Task<IEnumerable<SuggestionsViewModel>> GetSearchSuggestionsAsync(string query);
 
         Task<Person> CreateANewPerson(CreatePersonViewModel model);
+        Task<EditPersonViewModel> MapPersonForEditById(int id);
+
+        Task EditPerson(EditPersonViewModel model);
     }
 
 }

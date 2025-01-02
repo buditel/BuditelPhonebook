@@ -1,5 +1,6 @@
 ﻿using BuditelPhonebook.Core.Contracts;
 using BuditelPhonebook.Infrastructure.Data.Models;
+using BuditelPhonebook.Web.ViewModels.Department;
 using Microsoft.AspNetCore.Mvc;
 
 using static BuditelPhonebook.Common.EntityValidationMessages.Department;
@@ -23,23 +24,30 @@ namespace BuditelPhonebook.Web.Controllers
 
         public IActionResult Create()
         {
-            return View();
+            CreateDepartmentViewModel model = new CreateDepartmentViewModel();
+
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Department department)
+        public async Task<IActionResult> Create(CreateDepartmentViewModel model)
         {
-            var exists = _departmentRepository.GetAllAttached().Any(d => d.Name == department.Name);
+            var exists = _departmentRepository.GetAllAttached().Any(d => d.Name == model.Name);
             if (exists)
             {
-                ModelState.AddModelError(nameof(department.Name), NameUniqueMessage);
+                ModelState.AddModelError(nameof(model.Name), NameUniqueMessage);
             }
 
             if (!ModelState.IsValid)
             {
-                return View(department);
+                return View(model);
             }
+
+            var department = new Department
+            {
+                Name = model.Name
+            };
 
             await _departmentRepository.AddAsync(department);
             return RedirectToAction(nameof(Index));
@@ -48,17 +56,38 @@ namespace BuditelPhonebook.Web.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var department = await _departmentRepository.GetByIdAsync(id);
-            if (department == null) return NotFound();
+            if (department == null)
+            {
+                return NotFound();
+            }
 
-            return View(department);
+            var model = new EditDepartmentViewModel
+            {
+                Id = id,
+                Name = department.Name
+            };
+
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Department department)
+        public async Task<IActionResult> Edit(EditDepartmentViewModel model)
         {
+            var exists = _departmentRepository.GetAllAttached().Any(d => d.Name == model.Name);
+            if (exists)
+            {
+                ModelState.AddModelError(nameof(model.Name), NameUniqueMessage);
+            }
+
             if (!ModelState.IsValid)
-                return View(department);
+            {
+                return View(model);
+            }
+
+            var department = await _departmentRepository.GetByIdAsync(model.Id);
+
+            department.Name = model.Name;
 
             await _departmentRepository.UpdateAsync(department);
             return RedirectToAction(nameof(Index));
