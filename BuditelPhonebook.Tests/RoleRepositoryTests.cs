@@ -181,4 +181,77 @@ public class RoleRepositoryTests
             roles.Should().ContainSingle(r => r.Name == "Technician");
         }
     }
+
+    // Test: SoftDeleteAsync should mark role as deleted
+    [Fact]
+    public async Task SoftDeleteAsync_ShouldMarkRoleAsDeleted()
+    {
+        await using (var context = new ApplicationDbContext(_options))
+        {
+            var role = new Role { Id = 8, Name = "SoftDeleteRole", IsDeleted = false };
+            context.Roles.Add(role);
+            await context.SaveChangesAsync();
+        }
+
+        await using (var context = new ApplicationDbContext(_options))
+        {
+            var repository = new RoleRepository(context);
+            await repository.SoftDeleteAsync(8);
+            var softDeletedRole = await context.Roles.FindAsync(8);
+            softDeletedRole.Should().NotBeNull();
+            softDeletedRole.IsDeleted.Should().BeTrue();
+        }
+    }
+
+    // Edge Case: SoftDeleteAsync should throw for non-existing role
+    [Fact]
+    public async Task SoftDeleteAsync_ShouldThrow_WhenRoleDoesNotExist()
+    {
+        await using (var context = new ApplicationDbContext(_options))
+        {
+            var repository = new RoleRepository(context);
+
+            Func<Task> act = async () => await repository.SoftDeleteAsync(999);
+
+            await act.Should().ThrowAsync<ArgumentNullException>();
+        }
+    }
+
+    // Test: GetAllAttached should return IQueryable of all roles
+    [Fact]
+    public async Task GetAllAttached_ShouldReturnQueryableRoles()
+    {
+        await using (var context = new ApplicationDbContext(_options))
+        {
+            context.Roles.Add(new Role { Id = 9, Name = "QueryableRole1" });
+            context.Roles.Add(new Role { Id = 10, Name = "QueryableRole2" });
+            await context.SaveChangesAsync();
+        }
+
+        await using (var context = new ApplicationDbContext(_options))
+        {
+            var repository = new RoleRepository(context);
+            var rolesQuery = repository.GetAllAttached();
+            var roles = rolesQuery.ToList();
+
+            roles.Should().HaveCount(2);
+            roles.Should().ContainSingle(r => r.Name == "QueryableRole1");
+            roles.Should().ContainSingle(r => r.Name == "QueryableRole2");
+        }
+    }
+
+    // Edge Case: GetAllAttached should return empty list when no roles exist
+    [Fact]
+    public async Task GetAllAttached_ShouldReturnEmptyList_WhenNoRolesExist()
+    {
+        await using (var context = new ApplicationDbContext(_options))
+        {
+            var repository = new RoleRepository(context);
+            var rolesQuery = repository.GetAllAttached();
+            var roles = rolesQuery.ToList();
+
+            roles.Should().BeEmpty();
+        }
+    }
+
 }
