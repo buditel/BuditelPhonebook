@@ -1,6 +1,6 @@
 ﻿@model CreatePersonViewModel
 @{
-    ViewBag.Title =  "Създай нов контакт";
+    ViewBag.Title = "Създай нов контакт";
 }
 <h1 class="h3 mb-4">@ViewBag.Title</h1>
 <form method="post" enctype="multipart/form-data" novalidate>
@@ -36,9 +36,16 @@
     </div>
     <div class="mb-3">
         <label class="form-label" for="fileInput">Снимка</label>
-        <input asp-for="PersonPicture" type="file" class="form-control" id="fileInput" name="PersonPicture" />
-        <span class="file-name text-muted">Изберете файл (по желание)...</span>
-        <span asp-validation-for="PersonPicture" class="text-danger"></span>
+        <div class="d-flex align-items-center gap-3">
+            <div id="previewContainer" style="display: none;">
+                <img id="previewImage" src="#" alt="New Picture Preview" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: contain;" />
+            </div>
+        </div>
+        <div class="mt-3">
+            <input asp-for="PersonPicture" type="file" class="form-control" id="fileInput" name="PersonPicture" />
+            <span class="file-name text-muted">Изберете файл (по желание)...</span>
+            <span asp-validation-for="PersonPicture" class="text-danger"></span>
+        </div>
     </div>
     <div class="mb-3">
         <label class="form-label">Рождена дата</label>

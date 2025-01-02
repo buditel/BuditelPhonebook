@@ -11,7 +11,7 @@
         const selectedRole = roleSelect.options[roleSelect.selectedIndex].text;
 
         if (selectedRole === "Учител") {
-            subjectGroup.style.display="block";
+            subjectGroup.style.display = "block";
             subject.style.display = "block";
 
             subjectGroupInput.setAttribute("required", "true");
@@ -102,3 +102,43 @@ document.addEventListener('DOMContentLoaded', function () {
         fileNameLabel.textContent = fileName;
     });
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    const fileInput = document.getElementById("fileInput");
+    const previewContainer = document.getElementById("previewContainer");
+    const previewImage = document.getElementById("previewImage");
+    const existingPictureBase64 = document.getElementById("existingPicture"); // Hidden field holding the existing picture
+    const personPictureInput = document.getElementById("PersonPicture"); // The actual file input for new picture
+
+    previewContainer.style.display = 'none';
+
+    fileInput.addEventListener("change", function (event) {
+        const file = event.target.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                previewImage.src = e.target.result; // Set the preview image source
+                previewContainer.style.display = 'block'; // Show the preview container
+            };
+
+            reader.readAsDataURL(file); // Read the file as a Data URL
+        } else {
+            // Hide the preview container if no file is selected
+            previewContainer.style.display = 'none';
+            previewImage.src = ''; // Clear the preview image source
+        }
+    });
+});
+
+
+
+window.onload = function () {
+    const images = document.querySelectorAll('.img-thumbnail');
+    images.forEach(img => {
+        img.style.width = '150px';
+        img.style.height = '150px';
+        img.style.objectFit = 'contain';
+    });
+};

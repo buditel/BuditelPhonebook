@@ -151,6 +151,11 @@ namespace BuditelPhonebook.Core.Repositories
                 model.PersonalPhoneNumber = model.PersonalPhoneNumber.Replace("+359", "0");
             }
 
+            if (model.BusinessPhoneNumber != null && model.BusinessPhoneNumber.StartsWith("+359"))
+            {
+                model.BusinessPhoneNumber = model.BusinessPhoneNumber.Replace("+359", "0");
+            }
+
             Person person = new Person
             {
                 FirstName = model.FirstName,
