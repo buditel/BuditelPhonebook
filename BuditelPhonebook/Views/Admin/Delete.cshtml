@@ -1,4 +1,4 @@
-﻿@model Person
+﻿@model DeletePersonViewModel
 @{
     ViewBag.Title = "Изтрий контакт";
 }
@@ -7,6 +7,10 @@
     Сигурни ли сте, че искате да изтриете <strong>@Model.FirstName @Model.MiddleName @Model.LastName</strong>?
 </div>
 <form method="post">
+    <div class="mb-3">
+        <textarea asp-for="CommentOnDeletion" class="form-control" rows="3" placeholder="Въведете причина за изтриването (по желание)..."></textarea>
+        <span asp-validation-for="CommentOnDeletion" class="text-danger"></span>
+    </div>
     <button type="submit" class="btn btn-danger">Да, изтрий</button>
     <a asp-action="Index" class="btn btn-secondary">Отказ</a>
 </form>

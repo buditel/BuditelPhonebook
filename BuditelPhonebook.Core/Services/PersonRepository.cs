@@ -63,7 +63,7 @@ namespace BuditelPhonebook.Core.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task SoftDeleteAsync(int id)
+        public async Task SoftDeleteAsync(int id, string? comment)
         {
             var person = await _context.People.FindAsync(id);
 
@@ -73,6 +73,7 @@ namespace BuditelPhonebook.Core.Repositories
             }
 
             person.IsDeleted = true;
+            person.CommentOnDeletion = comment;
 
             _context.People.Update(person);
             await _context.SaveChangesAsync();
@@ -287,6 +288,14 @@ namespace BuditelPhonebook.Core.Repositories
             person.Subject = model.Subject;
 
             await UpdateAsync(person);
+        }
+
+        public IQueryable<Person> GetAllAttached()
+        {
+            return _context.People
+                .Include(p => p.Role)
+                .Include(p => p.Department)
+                .AsQueryable();
         }
     }
 }

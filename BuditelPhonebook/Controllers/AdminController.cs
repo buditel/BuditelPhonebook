@@ -4,6 +4,7 @@ using BuditelPhonebook.Infrastructure.Data.Models;
 using BuditelPhonebook.Web.ViewModels.Person;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BuditelPhonebook.Web.Controllers
 {
@@ -118,13 +119,26 @@ namespace BuditelPhonebook.Web.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
             try
             {
                 var person = await _personRepository.GetByIdAsync(id);
-                if (person == null) return NotFound();
-                return View(person);
+                if (person == null)
+                {
+                    return NotFound();
+                }
+
+                var model = new DeletePersonViewModel
+                {
+                    Id = id,
+                    FirstName = person.FirstName,
+                    MiddleName = person.MiddleName,
+                    LastName = person.LastName
+                };
+
+                return View(model);
             }
             catch (Exception ex)
             {
@@ -135,18 +149,70 @@ namespace BuditelPhonebook.Web.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(DeletePersonViewModel model)
         {
             try
             {
-                await _personRepository.SoftDeleteAsync(id);
+                await _personRepository.SoftDeleteAsync(model.Id, model.CommentOnDeletion);
+
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error deleting person with ID {id} in AdminController.DeleteConfirmed");
+                _logger.LogError(ex, $"Error deleting person with ID {model.Id} in AdminController.DeleteConfirmed");
                 return StatusCode(500, "Internal server error");
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DeletedIndex()
+        {
+            var models = await _personRepository.GetAllAttached()
+                .Where(p => p.IsDeleted)
+                .Select(p => new DeletedIndexPersonViewModel
+                {
+                    Id = p.Id,
+                    FirstName = p.FirstName,
+                    MiddleName = p.MiddleName,
+                    LastName = p.LastName,
+                    Email = p.Email,
+                    PersonalPhoneNumber = p.PersonalPhoneNumber,
+                    Department = p.Department.Name,
+                    Role = p.Role.Name,
+                    CommentOnDeletion = p.CommentOnDeletion
+                })
+                .ToListAsync();
+
+            return View(models);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Restore(int id)
+        {
+            var person = await _personRepository.GetByIdAsync(id);
+
+            var model = new RestorePersonViewModel
+            {
+                Id = id,
+                FirstName = person.FirstName,
+                MiddleName = person.MiddleName,
+                LastName = person.LastName
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Restore(RestorePersonViewModel model)
+        {
+            var person = await _personRepository.GetByIdAsync(model.Id);
+
+            person.CommentOnDeletion = null;
+            person.IsDeleted = false;
+
+            await _personRepository.UpdateAsync(person);
+
+            return RedirectToAction(nameof(DeletedIndex));
         }
     }
 }

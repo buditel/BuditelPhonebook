@@ -7,13 +7,15 @@ namespace BuditelPhonebook.Core.Contracts
     public interface IPersonRepository
     {
         Task<IEnumerable<Person>> GetAllAsync();
+        IQueryable<Person> GetAllAttached();
+
         Task<Person> GetByIdAsync(int id);
         Task<Person> GetByIdWithRelationsAsync(int id);
 
         Task AddAsync(Person person);
         Task UpdateAsync(Person person);
         Task DeleteAsync(int id);
-        Task SoftDeleteAsync(int id);
+        Task SoftDeleteAsync(int id, string? comment);
 
         Task<IEnumerable<PersonDetailsViewModel>> SearchAsync(string query);
         IEnumerable<Role> GetRoles();

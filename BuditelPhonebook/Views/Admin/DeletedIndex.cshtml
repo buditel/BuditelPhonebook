@@ -1,0 +1,50 @@
+﻿@model IEnumerable<DeletedIndexPersonViewModel>
+@{
+    ViewBag.Title = "Изтрити контакти";
+}
+<h1 class="h3 mb-4">Изтрити контакти</h1>
+
+<p>
+    <a asp-action="Index" class="btn btn-primary">Виж актуални</a>
+</p>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Няма изтрити контакти.</div>
+}
+else
+{
+    <table class="table table-striped table-bordered align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Име</th>
+                <th>Презиме</th>
+                <th>Фамилия</th>
+                <th>Коментар</th>
+                <th>Имейл</th>
+                <th>Личен телефон</th>
+                <th>Роля</th>
+                <th>Отдел</th>
+                <th style="width:120px;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td>@p.FirstName</td>
+                    <td>@p.MiddleName</td>
+                    <td>@p.LastName</td>
+                    <td>@p.CommentOnDeletion</td>
+                    <td>@p.Email</td>
+                    <td>@p.PersonalPhoneNumber</td>
+                    <td>@p.Role</td>
+                    <td>@p.Department</td>
+                    <td>
+                        <a asp-action="Restore" asp-route-id="@p.Id" class="btn btn-sm btn-success">Възстанови</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

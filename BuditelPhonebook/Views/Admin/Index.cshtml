@@ -5,7 +5,9 @@
 <h1 class="h3 mb-4">Управление на контактите</h1>
 <p>
     <a asp-action="Create" class="btn btn-success">Добави нов контакт</a>
+    <a asp-action="DeletedIndex" class="btn btn-primary">Виж изтрити</a>
 </p>
+
 
 @if (!Model.Any(p => !p.IsDeleted))
 {
@@ -20,7 +22,7 @@ else
             <th>Презиме</th>
             <th>Фамилия</th>
             <th>Имейл</th>
-            <th>Служебен телефон</th>
+            <th>Личен телефон</th>
             <th>Роля</th>
             <th>Отдел</th>
             <th style="width:120px;"></th>
@@ -34,7 +36,7 @@ else
                 <td>@p.MiddleName</td>
                 <td>@p.LastName</td>
                 <td>@p.Email</td>
-                <td>@p.BusinessPhoneNumber</td>
+                <td>@p.PersonalPhoneNumber</td>
                 <td>@p.Role.Name</td>
                 <td>@p.Department.Name</td>
                 <td>

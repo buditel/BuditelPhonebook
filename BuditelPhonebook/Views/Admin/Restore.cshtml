@@ -1,0 +1,12 @@
+﻿@model RestorePersonViewModel
+@{
+    ViewBag.Title = "Възстанови контакт";
+}
+<h1 class="h3 mb-4">@ViewBag.Title</h1>
+<div class="alert alert-warning">
+    Сигурни ли сте, че искате да възстановите <strong>@Model.FirstName @Model.MiddleName @Model.LastName</strong>?
+</div>
+<form method="post">
+    <button type="submit" class="btn btn-success">Да, възстанови</button>
+    <a asp-action="DeletedIndex" class="btn btn-secondary">Отказ</a>
+</form>
