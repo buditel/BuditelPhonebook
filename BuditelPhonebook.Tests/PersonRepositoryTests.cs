@@ -79,11 +79,21 @@ namespace BuditelPhonebook.Tests
             await using (var context = new ApplicationDbContext(_options))
             {
                 var repository = new PersonRepository(context);
-                var person = new Person { Id = 3, FirstName = "Alice", LastName = "Cooper" };
+                var person = new Person
+                {
+                    Id = 3,
+                    FirstName = "Георги",
+                    LastName = "Иванов",
+                    Email = "georgi.ivanov@buditel.bg",  
+                    PersonalPhoneNumber = "0888123456" 
+                };
+
                 await repository.AddAsync(person);
+
                 var addedPerson = await context.People.FindAsync(3);
                 addedPerson.Should().NotBeNull();
-                addedPerson.FirstName.Should().Be("Alice");
+                addedPerson.FirstName.Should().Be("Георги");
+                addedPerson.Email.Should().Be("georgi.ivanov@buditel.bg");
             }
         }
 
@@ -93,7 +103,7 @@ namespace BuditelPhonebook.Tests
         {
             await using (var context = new ApplicationDbContext(_options))
             {
-                var person = new Person { Id = 4, FirstName = "Bob", LastName = "Jones" };
+                var person = new Person { Id = 4, FirstName = "Георги", LastName = "Георгиев" };
                 context.People.Add(person);
                 await context.SaveChangesAsync();
             }
@@ -102,10 +112,10 @@ namespace BuditelPhonebook.Tests
             {
                 var repository = new PersonRepository(context);
                 var personToUpdate = await repository.GetByIdAsync(4);
-                personToUpdate.LastName = "Smith";
+                personToUpdate.LastName = "Петров";
                 await repository.UpdateAsync(personToUpdate);
                 var updatedPerson = await context.People.FindAsync(4);
-                updatedPerson.LastName.Should().Be("Smith");
+                updatedPerson.LastName.Should().Be("Петров");
             }
         }
 
@@ -118,10 +128,10 @@ namespace BuditelPhonebook.Tests
                 context.People.Add(new Person
                 {
                     Id = 5,
-                    FirstName = "Carlos",
-                    LastName = "Gomez",
-                    Email = "carlos@example.com",  // Добавяне на задължителното поле
-                    PersonalPhoneNumber = "0899123456"  // Добавяне на задължителното поле
+                    FirstName = "Стефан",
+                    LastName = "Чаушев",
+                    Email = "stefan.chaushev@buditel.bg",  
+                    PersonalPhoneNumber = "0899123456"  
                 });
                 await context.SaveChangesAsync();
             }
@@ -142,7 +152,7 @@ namespace BuditelPhonebook.Tests
         {
             await using (var context = new ApplicationDbContext(_options))
             {
-                var person = new Person { Id = 6, FirstName = "Eva", LastName = "Green", IsDeleted = false };
+                var person = new Person { Id = 6, FirstName = "Татяна", LastName = "Попова", IsDeleted = false };
                 context.People.Add(person);
                 await context.SaveChangesAsync();
             }
@@ -163,16 +173,16 @@ namespace BuditelPhonebook.Tests
         {
             await using (var context = new ApplicationDbContext(_options))
             {
-                context.People.Add(new Person { Id = 7, FirstName = "Daniel", LastName = "Radcliffe" });
-                context.People.Add(new Person { Id = 8, FirstName = "Emma", LastName = "Watson" });
+                context.People.Add(new Person { Id = 7, FirstName = "Даниел", LastName = "Йорданов" });
+                context.People.Add(new Person { Id = 8, FirstName = "Вероника", LastName = "Цачева" });
                 await context.SaveChangesAsync();
             }
 
             await using (var context = new ApplicationDbContext(_options))
             {
                 var repository = new PersonRepository(context);
-                var results = await repository.SearchAsync("Daniel");
-                results.Should().ContainSingle(p => p.FirstName == "Daniel");
+                var results = await repository.SearchAsync("Даниел");
+                results.Should().ContainSingle(p => p.FirstName == "Даниел");
             }
         }
     }
