@@ -1,13 +1,8 @@
 ﻿using BuditelPhonebook.Core.Repositories;
 using BuditelPhonebook.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BuditelPhonebook.Infrastructure.Data.Models;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 
 namespace BuditelPhonebook.Tests
 {
@@ -84,8 +79,8 @@ namespace BuditelPhonebook.Tests
                     Id = 3,
                     FirstName = "Георги",
                     LastName = "Иванов",
-                    Email = "georgi.ivanov@buditel.bg",  
-                    PersonalPhoneNumber = "0888123456" 
+                    Email = "georgi.ivanov@buditel.bg",
+                    PersonalPhoneNumber = "0888123456"
                 };
 
                 await repository.AddAsync(person);
@@ -130,8 +125,8 @@ namespace BuditelPhonebook.Tests
                     Id = 5,
                     FirstName = "Стефан",
                     LastName = "Чаушев",
-                    Email = "stefan.chaushev@buditel.bg",  
-                    PersonalPhoneNumber = "0899123456"  
+                    Email = "stefan.chaushev@buditel.bg",
+                    PersonalPhoneNumber = "0899123456"
                 });
                 await context.SaveChangesAsync();
             }
@@ -160,7 +155,7 @@ namespace BuditelPhonebook.Tests
             await using (var context = new ApplicationDbContext(_options))
             {
                 var repository = new PersonRepository(context);
-                await repository.SoftDeleteAsync(6);
+                await repository.SoftDeleteAsync(6, "Майчинство");
                 var softDeletedPerson = await context.People.FindAsync(6);
                 softDeletedPerson.Should().NotBeNull();
                 softDeletedPerson.IsDeleted.Should().BeTrue();

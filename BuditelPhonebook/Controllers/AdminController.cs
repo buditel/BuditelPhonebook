@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+using static BuditelPhonebook.Common.EntityValidationMessages.Person;
+
 namespace BuditelPhonebook.Web.Controllers
 {
     [Authorize(Roles = "Admin")]
@@ -51,6 +53,12 @@ namespace BuditelPhonebook.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreatePersonViewModel model)
         {
+            var exists = _personRepository.GetAllAttached().Any(r => r.Email == model.Email);
+            if (exists)
+            {
+                ModelState.AddModelError(nameof(model.Email), EmailUniqueMessage);
+            }
+
             if (!ModelState.IsValid)
             {
                 model.Roles = _personRepository.GetRoles();
@@ -96,6 +104,12 @@ namespace BuditelPhonebook.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditPersonViewModel model)
         {
+            var exists = _personRepository.GetAllAttached().Any(r => r.Email == model.Email);
+            if (exists)
+            {
+                ModelState.AddModelError(nameof(model.Email), EmailUniqueMessage);
+            }
+
             if (!ModelState.IsValid)
             {
                 model.Roles = _personRepository.GetRoles();

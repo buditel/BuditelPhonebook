@@ -12,6 +12,7 @@
             public const string EmailRequiredMessage = "Трябва да въведете служебен имейл.";
             public const string EmailLengthMessage = "Дължината на служебния имейл трябва да е между 2 и 50 символа.";
             public const string EmailWrongFormatMessage = "Имейлът трябва да завършва на buditel.bg";
+            public const string EmailUniqueMessage = "Вече съществува такъв имейл.";
             public const string PersonalPhoneNumberRequiredMessage = "Трябва да въведете личен телефон.";
             public const string PersonalPhoneNumberLengthMessage = "Личният телефон трябва да е между 7 и 20 символа.";
             public const string BusinessPhoneNumberLengthMessage = "Служебният телефон трябва да е между 7 и 20 символа.";
@@ -24,14 +25,14 @@
 
         public static class Role
         {
-            public const string NameUniqueMessage = "Вече има такава длъжност.";
+            public const string NameUniqueMessage = "Вече съществува такава длъжност.";
             public const string NameRequiredMessage = "Трябва да въведете име.";
             public const string NameLengthMessage = "Дължината на името трябва да е между 2 и 100 символа.";
         }
 
         public static class Department
         {
-            public const string NameUniqueMessage = "Вече има такъв отдел.";
+            public const string NameUniqueMessage = "Вече съществува такъв отдел.";
             public const string NameRequiredMessage = "Трябва да въведете име.";
             public const string NameLengthMessage = "Дължината на името трябва да е между 2 и 100 символа.";
         }
