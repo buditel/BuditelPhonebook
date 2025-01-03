@@ -92,6 +92,41 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("searchInput");
+    const searchBtn = document.getElementById("searchBtn");
+    const resultsDiv = document.getElementById("results");
+
+    function fetchResults(query) {
+        fetch(`/Phonebook/Index?search=${encodeURIComponent(query)}`, {
+            method: 'GET',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(html => {
+                resultsDiv.innerHTML = html; // Replace the results div with the partial view
+            })
+            .catch(error => console.error('There was a problem with the fetch operation:', error));
+    }
+
+    searchBtn.addEventListener("click", function () {
+        const query = searchInput.value.trim();
+        fetchResults(query); // Fetch and update results dynamically
+    });
+
+    searchInput.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            searchBtn.click(); // Trigger the search on pressing Enter
+        }
+    });
+});
+
 
 document.addEventListener('DOMContentLoaded', function () {
     var fileInput = document.getElementById('fileInput');
