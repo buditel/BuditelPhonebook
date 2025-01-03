@@ -32,100 +32,54 @@
     roleSelect.addEventListener("change", updateVisibility);
 });
 
-document.addEventListener('DOMContentLoaded', function () {
-    const searchInput = document.getElementById('searchInput');
-    const suggestions = document.getElementById('suggestions');
-
-    // Function to fetch suggestions from the API
-    async function fetchSuggestions(query) {
-        try {
-            const response = await fetch(`/api/Suggestions/GetSuggestions?query=${encodeURIComponent(query)}`);
-            if (!response.ok) {
-                throw new Error('Failed to fetch suggestions');
-            }
-            return await response.json();
-        } catch (error) {
-            console.error(error);
-            return [];
-        }
-    }
-
-    // Function to handle input event
-    searchInput.addEventListener('input', async function () {
-        const query = searchInput.value.trim();
-
-        if (query.length === 0) {
-            suggestions.style.display = 'none';  // Hide suggestions when input is empty
-            return;
-        }
-
-        const data = await fetchSuggestions(query);
-        suggestions.innerHTML = ''; // Clear existing suggestions
-
-        if (data.length > 0) {
-            // If there are suggestions, display them
-            data.forEach(item => {
-                const suggestion = document.createElement('div');
-                suggestion.className = 'dropdown-item';
-                suggestion.innerHTML = `<strong>${item.fullName}</strong><br>${item.subject || ''} - ${item.department}`;
-                suggestion.addEventListener('click', function () {
-                    window.location.href = `/Phonebook/Details/${item.id}`;
-                });
-                suggestions.appendChild(suggestion);
-            });
-            suggestions.style.display = 'block'; // Show suggestions
-        } else {
-            // If no data found, show "not found" message
-            const nothingFound = document.createElement('div');
-            nothingFound.className = 'dropdown-item';
-            nothingFound.innerHTML = `Търсенето не е намерено.`;
-            suggestions.appendChild(nothingFound);
-            suggestions.style.display = 'block'; // Show the "not found" message
-        }
-    });
-
-    // Hide suggestions when clicking outside
-    document.addEventListener('click', function (event) {
-        if (!event.target.closest('#searchInput') && !event.target.closest('#suggestions')) {
-            suggestions.style.display = 'none';
-        }
-    });
-});
-
 document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById("searchInput");
     const searchBtn = document.getElementById("searchBtn");
-    const resultsDiv = document.getElementById("results");
+    const resultsContainer = document.getElementById("results");
+    const suggestionsDropdown = document.getElementById("suggestions");
 
-    function fetchResults(query) {
-        fetch(`/Phonebook/Index?search=${encodeURIComponent(query)}`, {
-            method: 'GET',
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.text();
-            })
-            .then(html => {
-                resultsDiv.innerHTML = html; // Replace the results div with the partial view
-            })
-            .catch(error => console.error('There was a problem with the fetch operation:', error));
-    }
+    // Function to fetch search results
+    const fetchSearchResults = async (query) => {
+        try {
+            const response = await fetch(`/Phonebook/Index?search=${encodeURIComponent(query)}`, {
+                headers: { "X-Requested-With": "XMLHttpRequest" },
+            });
 
-    searchBtn.addEventListener("click", function () {
+            if (!response.ok) {
+                throw new Error("Failed to fetch results.");
+            }
+
+            const partialViewHtml = await response.text();
+
+            if (partialViewHtml.trim()) {
+                resultsContainer.innerHTML = partialViewHtml;
+            } else {
+                resultsContainer.innerHTML = `<div class="alert alert-info text-center">Няма съвпадения.</div>`;
+            }
+        } catch (error) {
+            console.error("Error fetching search results:", error);
+            resultsContainer.innerHTML = `<div class="alert alert-danger text-center">Възникна грешка при зареждането на резултатите.</div>`;
+        }
+    };
+
+    // Event handler for real-time search
+    searchInput.addEventListener("input", function () {
         const query = searchInput.value.trim();
-        fetchResults(query); // Fetch and update results dynamically
-    });
 
-    searchInput.addEventListener("keypress", function (event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            searchBtn.click(); // Trigger the search on pressing Enter
+        if (query.length > 1) {
+            fetchSearchResults(query);
+        } else {
+            fetchSearchResults("");
         }
     });
+
+    // Event handler for search button
+    searchBtn.addEventListener("click", function () {
+        const query = searchInput.value.trim();
+        fetchSearchResults(query);
+    });
 });
+
 
 
 document.addEventListener('DOMContentLoaded', function () {

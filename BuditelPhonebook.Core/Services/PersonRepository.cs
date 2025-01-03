@@ -82,7 +82,7 @@ namespace BuditelPhonebook.Core.Repositories
 
         public async Task<IEnumerable<PersonDetailsViewModel>> SearchAsync(string query)
         {
-            if (string.IsNullOrWhiteSpace(query))
+            if (string.IsNullOrWhiteSpace(query) || query.Length <= 1)
             {
                 return await _context.People
                     .Include(p => p.Role) // Include Role navigation property
@@ -115,8 +115,9 @@ namespace BuditelPhonebook.Core.Repositories
                             || (p.MiddleName != null && p.MiddleName.ToLower().Contains(query))
                             || p.LastName.ToLower().Contains(query)
                             || p.Email.ToLower().Contains(query)
-                            || p.BusinessPhoneNumber.ToLower().Contains(query)
-                            || (p.Role != null && p.Role.Name.ToLower().Contains(query)) // Ensure Role.Name is accessed
+                            || (p.BusinessPhoneNumber != null && p.BusinessPhoneNumber.ToLower().Contains(query))
+                            || p.PersonalPhoneNumber.ToLower().Contains(query)
+                            || (p.Role != null && p.Role.Name.ToLower().Contains(query))
                             || (p.Department != null && p.Department.Name.ToLower().Contains(query))))
                 .Select(p => new PersonDetailsViewModel
                 {
