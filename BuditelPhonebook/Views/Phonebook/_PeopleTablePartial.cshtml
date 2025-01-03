@@ -1,23 +1,45 @@
-﻿@model IEnumerable<Person>
+﻿@model IEnumerable<PersonDetailsViewModel>
 
-<table class="table table-bordered">
-    <thead>
-    <tr>
-        <th>Име</th>
-        <th>Имейл</th>
-        <th>Служебен телефон</th>
-        <th>Длъжност</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var person in Model.Where(p => !p.IsDeleted))
-    {
-        <tr>
-            <td>@person.FirstName @person.MiddleName @person.LastName</td>
-            <td>@person.Email</td>
-            <td>@person.BusinessPhoneNumber</td>
-            <td>@person.Role.Name</td>
-        </tr>
-    }
-    </tbody>
-</table>
+@foreach (var person in Model)
+{
+    <div class="container mt-5">
+        <div class="contact-card card shadow p-3 mb-5 bg-white rounded person-card">
+            <div class="row g-0">
+                <div class="col-md-4 text-center">
+                    <div class="p-3">
+                        @if (person.PersonPicture != null)
+                        {
+                            <img src="@($"data:image/webp;base64,{Convert.ToBase64String(person.PersonPicture)}")" alt="Avatar" class="img-fluid rounded-circle border person-image" />
+                        }
+                        else
+                        {
+                            <img src="https://buditel.softuni.bg/wp-content/uploads/2020/04/SoftUni-Buditel-favicon.png" alt="No Avatar" class="img-fluid rounded-circle border person-image" />
+                        }
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h4 class="card-title mb-3 text-primary">
+                            @($"{person.FirstName} {(string.IsNullOrWhiteSpace(person.MiddleName) ? "" : $"{person.MiddleName} ")}{person.LastName}")
+                        </h4>
+                        <p class="card-text"><strong>Отдел:</strong> @person.Department</p>
+                        <p class="card-text"><strong>Длъжност:</strong> @person.Role</p>
+                        @if (person.Role == "Учител")
+                        {
+                            <p class="card-text"><strong>Група предмети:</strong> @person.SubjectGroup</p>
+                            <p class="card-text"><strong>Предмет:</strong> @person.Subject</p>
+                        }
+                        <p class="card-text"><strong>Личен телефон:</strong> @person.PersonalPhoneNumber</p>
+                        <p class="card-text"><strong>Служебен телефон:</strong> @(person.BusinessPhoneNumber ?? "липсва")</p>
+                        <p class="card-text"><strong>Имейл:</strong> @person.Email</p>
+
+                        @if (person.Birthdate != null)
+                        {
+                            <p class="card-text"><strong>Рождена дата:</strong> @person.Birthdate</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

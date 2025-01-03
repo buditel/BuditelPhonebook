@@ -79,25 +79,60 @@ namespace BuditelPhonebook.Core.Repositories
         }
 
 
-        public async Task<IEnumerable<Person>> SearchAsync(string query)
+        public async Task<IEnumerable<PersonDetailsViewModel>> SearchAsync(string query)
         {
             if (string.IsNullOrWhiteSpace(query))
+            {
                 return await _context.People
                     .Include(p => p.Role) // Include Role navigation property
-                    .Include(p => p.Department) // Include Department navigation property
+                    .Include(p => p.Department)
+                    .Where(p => !p.IsDeleted)
+                    .Select(p => new PersonDetailsViewModel
+                    {
+                        Id = p.Id,
+                        FirstName = p.FirstName,
+                        MiddleName = p.MiddleName,
+                        LastName = p.LastName,
+                        Birthdate = p.Birthdate,
+                        PersonalPhoneNumber = p.PersonalPhoneNumber,
+                        BusinessPhoneNumber = p.BusinessPhoneNumber,
+                        Email = p.Email,
+                        Department = p.Department.Name,
+                        Role = p.Role.Name,
+                        SubjectGroup = p.SubjectGroup,
+                        Subject = p.Subject,
+                        PersonPicture = p.PersonPicture
+                    })// Include Department navigation property
                     .ToListAsync();
+            }
 
             query = query.ToLower();
             return await _context.People
                 .Include(p => p.Role)
                 .Include(p => p.Department)
-                .Where(p => p.FirstName.ToLower().Contains(query)
+                .Where(p => !p.IsDeleted && (p.FirstName.ToLower().Contains(query)
                             || (p.MiddleName != null && p.MiddleName.ToLower().Contains(query))
                             || p.LastName.ToLower().Contains(query)
                             || p.Email.ToLower().Contains(query)
                             || p.BusinessPhoneNumber.ToLower().Contains(query)
                             || (p.Role != null && p.Role.Name.ToLower().Contains(query)) // Ensure Role.Name is accessed
-                            || (p.Department != null && p.Department.Name.ToLower().Contains(query))) // Ensure Department.Name is accessed
+                            || (p.Department != null && p.Department.Name.ToLower().Contains(query))))
+                .Select(p => new PersonDetailsViewModel
+                {
+                    Id = p.Id,
+                    FirstName = p.FirstName,
+                    MiddleName = p.MiddleName,
+                    LastName = p.LastName,
+                    Birthdate = p.Birthdate,
+                    PersonalPhoneNumber = p.PersonalPhoneNumber,
+                    BusinessPhoneNumber = p.BusinessPhoneNumber,
+                    Email = p.Email,
+                    Department = p.Department.Name,
+                    Role = p.Role.Name,
+                    SubjectGroup = p.SubjectGroup,
+                    Subject = p.Subject,
+                    PersonPicture = p.PersonPicture
+                })// Ensure Department.Name is accessed
                 .ToListAsync();
         }
 

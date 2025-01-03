@@ -15,7 +15,7 @@ namespace BuditelPhonebook.Core.Contracts
         Task DeleteAsync(int id);
         Task SoftDeleteAsync(int id);
 
-        Task<IEnumerable<Person>> SearchAsync(string query);
+        Task<IEnumerable<PersonDetailsViewModel>> SearchAsync(string query);
         IEnumerable<Role> GetRoles();
         IEnumerable<Department> GetDepartments();
 
