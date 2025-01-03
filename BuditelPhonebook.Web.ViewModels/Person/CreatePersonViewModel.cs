@@ -19,6 +19,7 @@ namespace BuditelPhonebook.Web.ViewModels.Person
         public string LastName { get; set; } = null!;
 
         [Required(ErrorMessage = EmailRequiredMessage), StringLength(100, MinimumLength = 7, ErrorMessage = EmailLengthMessage)]
+        [RegularExpression(EmailRegexPattern, ErrorMessage = EmailWrongFormatMessage)]
         public string Email { get; set; } = null!;
 
 
@@ -29,7 +30,7 @@ namespace BuditelPhonebook.Web.ViewModels.Person
         [StringLength(20, MinimumLength = 7, ErrorMessage = BusinessPhoneNumberLengthMessage)]
         public string? BusinessPhoneNumber { get; set; }
 
-        [RegularExpression(PersonBirthDateRegexPattern, ErrorMessage = BirthDateWrongFormatMessage)]
+        [RegularExpression(BirthDateRegexPattern, ErrorMessage = BirthDateWrongFormatMessage)]
         public string? Birthdate { get; set; }
 
         public IFormFile? PersonPicture { get; set; }

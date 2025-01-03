@@ -37,6 +37,14 @@
                         {
                             <p class="card-text"><strong>Рождена дата:</strong> @person.Birthdate</p>
                         }
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <div class="mt-4">
+                                <a asp-controller="Admin" asp-action="Edit" asp-route-id="@person.Id" class="btn btn-primary me-2">Редактиране</a>
+                                <a asp-controller="Admin" asp-action="Delete" asp-route-id="@person.Id" class="btn btn-danger">Изтриване</a>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>

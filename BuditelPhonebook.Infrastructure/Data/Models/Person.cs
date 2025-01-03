@@ -28,7 +28,7 @@ namespace BuditelPhonebook.Infrastructure.Data.Models
         public string? BusinessPhoneNumber { get; set; }
 
 
-        [MaxLength(5)]
+        [MaxLength(6)]
         public string? Birthdate { get; set; }
 
         public byte[]? PersonPicture { get; set; }
