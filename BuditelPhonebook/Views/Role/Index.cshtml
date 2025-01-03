@@ -23,7 +23,7 @@ else
         </tr>
         </thead>
         <tbody>
-        @foreach (var role in Model.Where(r => !r.IsDeleted))
+        @foreach (var role in Model.Where(r => !r.IsDeleted).OrderBy(r => r.Name))
         {
             <tr>
                 <td>@role.Name</td>

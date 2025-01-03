@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<PersonDetailsViewModel>
 
-@foreach (var person in Model)
+@foreach (var person in Model.OrderBy(p => p.FirstName).ThenBy(p => p.LastName))
 {
     <div class="container mt-5">
         <div class="contact-card card shadow p-3 mb-5 bg-white rounded person-card">

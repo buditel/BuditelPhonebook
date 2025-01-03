@@ -1,13 +1,14 @@
 ﻿@model IEnumerable<Person>
+
 @{
     ViewBag.Title = "Управление на контактите";
 }
 <h1 class="h3 mb-4">Управление на контактите</h1>
+
 <p>
     <a asp-action="Create" class="btn btn-success">Добави нов контакт</a>
     <a asp-action="DeletedIndex" class="btn btn-primary">Виж изтрити</a>
 </p>
-
 
 @if (!Model.Any(p => !p.IsDeleted))
 {
@@ -25,11 +26,14 @@ else
             <th>Личен телефон</th>
             <th>Роля</th>
             <th>Отдел</th>
-            <th style="width:120px;"></th>
+            <th style="width:120px;">Действия</th>
         </tr>
         </thead>
         <tbody>
-        @foreach (var p in Model.Where(p => !p.IsDeleted))
+        @foreach (var p in Model
+                      .Where(p => !p.IsDeleted)
+                      .OrderBy(p => p.FirstName)
+                      .ThenBy(p => p.LastName))
         {
             <tr>
                 <td>@p.FirstName</td>
