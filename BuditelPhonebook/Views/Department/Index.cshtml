@@ -4,27 +4,35 @@
     ViewBag.Title = "Управление на отделите";
 }
 <h1 class="h3 mb-4">Управление на отделите</h1>
-<a asp-action="Create" class="btn btn-success">Добави нов отдел</a>
 
-<table class="table">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var department in Model.Where(d => !d.IsDeleted))
-    {
+<p>
+    <a asp-action="Create" class="btn btn-success">Добави нов отдел</a>
+</p>
+
+@if (!Model.Any(d => !d.IsDeleted))
+{
+    <div class="alert alert-info">Няма налични отдели.</div>
+}
+else
+{
+    <table class="table table-striped table-bordered align-middle">
+        <thead class="table-light">
         <tr>
-            <td>@department.Id</td>
-            <td>@department.Name</td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@department.Id" class="btn btn-warning">Редактирай</a>
-                <a asp-action="Delete" asp-route-id="@department.Id" class="btn btn-danger">Изтрий</a>
-            </td>
+            <th>Име</th>
+            <th style="width:120px;">Действия</th>
         </tr>
-    }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+        @foreach (var department in Model.Where(d => !d.IsDeleted))
+        {
+            <tr>
+                <td>@department.Name</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@department.Id" class="btn btn-sm btn-primary">Редактирай</a>
+                    <a asp-action="Delete" asp-route-id="@department.Id" class="btn btn-sm btn-danger">Изтрий</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
