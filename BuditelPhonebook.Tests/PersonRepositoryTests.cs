@@ -98,7 +98,14 @@ namespace BuditelPhonebook.Tests
         {
             await using (var context = new ApplicationDbContext(_options))
             {
-                var person = new Person { Id = 4, FirstName = "Георги", LastName = "Георгиев" };
+                var person = new Person
+                {
+                    Id = 4,
+                    FirstName = "Иван",
+                    LastName = "Христов",
+                    Email = "ivan.ivanov@buditel.bg",  
+                    PersonalPhoneNumber = "0888777654"  
+                };
                 context.People.Add(person);
                 await context.SaveChangesAsync();
             }
@@ -107,12 +114,16 @@ namespace BuditelPhonebook.Tests
             {
                 var repository = new PersonRepository(context);
                 var personToUpdate = await repository.GetByIdAsync(4);
-                personToUpdate.LastName = "Петров";
+
+                personToUpdate.LastName = "Иванов";
                 await repository.UpdateAsync(personToUpdate);
+
                 var updatedPerson = await context.People.FindAsync(4);
-                updatedPerson.LastName.Should().Be("Петров");
+                updatedPerson.LastName.Should().Be("Иванов");
+                updatedPerson.Email.Should().Be("ivan.ivanov@buditel.bg");
             }
         }
+
 
         // Test: DeleteAsync should remove a person
         [Fact]
@@ -147,7 +158,15 @@ namespace BuditelPhonebook.Tests
         {
             await using (var context = new ApplicationDbContext(_options))
             {
-                var person = new Person { Id = 6, FirstName = "Татяна", LastName = "Попова", IsDeleted = false };
+                var person = new Person
+                {
+                    Id = 6,
+                    FirstName = "Петър",
+                    LastName = "Симов",
+                    Email = "petar.simov@buditel.bg",  
+                    PersonalPhoneNumber = "0899988776",  
+                    IsDeleted = false
+                };
                 context.People.Add(person);
                 await context.SaveChangesAsync();
             }
@@ -155,12 +174,15 @@ namespace BuditelPhonebook.Tests
             await using (var context = new ApplicationDbContext(_options))
             {
                 var repository = new PersonRepository(context);
-                await repository.SoftDeleteAsync(6, "Майчинство");
+                await repository.SoftDeleteAsync(6, "напуснал");
                 var softDeletedPerson = await context.People.FindAsync(6);
+
                 softDeletedPerson.Should().NotBeNull();
                 softDeletedPerson.IsDeleted.Should().BeTrue();
+                softDeletedPerson.Email.Should().Be("petar.simov@buditel.bg");
             }
         }
+
 
         // Test: SearchAsync should return matching people by name
         [Fact]
