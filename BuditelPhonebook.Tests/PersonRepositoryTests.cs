@@ -17,43 +17,90 @@ namespace BuditelPhonebook.Tests
                 .Options;
         }
 
-        // Test: GetAllAsync should return all people
         [Fact]
         public async Task GetAllAsync_ShouldReturnAllPeople()
         {
-            await using (var context = new ApplicationDbContext(_options))
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase("TestDb")
+                .Options;
+
+            await using (var initContext = new ApplicationDbContext(options))
             {
-                context.People.Add(new Person { Id = 1, FirstName = "John", LastName = "Doe" });
-                context.People.Add(new Person { Id = 2, FirstName = "Jane", LastName = "Smith" });
+                initContext.Database.EnsureCreated();
+            }
+
+            await using (var context = new ApplicationDbContext(options))
+            {
+                var role = new Role { Id = 1, Name = "Учител" };
+                var department = new Department { Id = 1, Name = "ИТ отдел" };
+                context.Roles.Add(role);
+                context.Departments.Add(department);
+                await context.SaveChangesAsync();
+
+                context.People.Add(new Person
+                {
+                    Id = 1,
+                    FirstName = "Иван",
+                    LastName = "Петров",
+                    Email = "ivan.petrov@buditel.bg",
+                    PersonalPhoneNumber = "0888123456",
+                    RoleId = 1,  
+                    DepartmentId = 1  
+                });
+                context.People.Add(new Person
+                {
+                    Id = 2,
+                    FirstName = "Мария",
+                    LastName = "Иванова",
+                    Email = "maria.ivanova@buditel.bg",
+                    PersonalPhoneNumber = "0888333444",
+                    RoleId = 1,
+                    DepartmentId = 1
+                });
+
                 await context.SaveChangesAsync();
             }
 
-            await using (var context = new ApplicationDbContext(_options))
+            await using (var context = new ApplicationDbContext(options))
             {
                 var repository = new PersonRepository(context);
                 var people = await repository.GetAllAsync();
+
                 people.Should().HaveCount(2);
             }
         }
 
-        // Test: GetByIdAsync should return person by id
+
+        // Test: GetByIdAsync should return person when they exist
         [Fact]
         public async Task GetByIdAsync_ShouldReturnPerson_WhenPersonExists()
         {
             await using (var context = new ApplicationDbContext(_options))
             {
-                context.People.Add(new Person { Id = 1, FirstName = "John", LastName = "Doe" });
+                var person = new Person
+                {
+                    Id = 1,
+                    FirstName = "Иван",
+                    LastName = "Петров",
+                    Email = "ivan.petrov@buditel.bg",  
+                    PersonalPhoneNumber = "0888123456"  
+                };
+
+                context.People.Add(person);
                 await context.SaveChangesAsync();
             }
 
             await using (var context = new ApplicationDbContext(_options))
             {
                 var repository = new PersonRepository(context);
-                var person = await repository.GetByIdAsync(1);
-                person.Should().NotBeNull();
-                person.FirstName.Should().Be("John");
+                var result = await repository.GetByIdAsync(1);
+
+                result.Should().NotBeNull();
+                result.FirstName.Should().Be("Иван");
+                result.LastName.Should().Be("Петров");
             }
         }
+
 
         // Test: GetByIdAsync should return null if person does not exist
         [Fact]
@@ -184,14 +231,39 @@ namespace BuditelPhonebook.Tests
         }
 
 
-        // Test: SearchAsync should return matching people by name
         [Fact]
         public async Task SearchAsync_ShouldReturnMatchingPeople()
         {
             await using (var context = new ApplicationDbContext(_options))
             {
-                context.People.Add(new Person { Id = 7, FirstName = "Даниел", LastName = "Йорданов" });
-                context.People.Add(new Person { Id = 8, FirstName = "Вероника", LastName = "Цачева" });
+                var role = new Role { Id = 1, Name = "Учител" };
+                var department = new Department { Id = 1, Name = "ИТ отдел" };
+
+                context.Roles.Add(role);
+                context.Departments.Add(department);
+                await context.SaveChangesAsync();
+
+                context.People.Add(new Person
+                {
+                    Id = 7,
+                    FirstName = "Даниел",
+                    LastName = "Йорданов",
+                    Email = "daniel.yordanov@buditel.bg",
+                    PersonalPhoneNumber = "0888997766",
+                    RoleId = 1,
+                    DepartmentId = 1
+                });
+                context.People.Add(new Person
+                {
+                    Id = 8,
+                    FirstName = "Вероника",
+                    LastName = "Цачева",
+                    Email = "veronika.tsacheva@buditel.bg",
+                    PersonalPhoneNumber = "0888998877",
+                    RoleId = 1,
+                    DepartmentId = 1
+                });
+
                 await context.SaveChangesAsync();
             }
 
@@ -199,8 +271,11 @@ namespace BuditelPhonebook.Tests
             {
                 var repository = new PersonRepository(context);
                 var results = await repository.SearchAsync("Даниел");
+
                 results.Should().ContainSingle(p => p.FirstName == "Даниел");
+                results.First().Email.Should().Be("daniel.yordanov@buditel.bg");
             }
         }
+
     }
 }
