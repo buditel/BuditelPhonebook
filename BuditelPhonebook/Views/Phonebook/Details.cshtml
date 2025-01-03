@@ -37,8 +37,8 @@
                     @if (User.IsInRole("Admin"))
                     {
                         <div class="mt-4">
-                            <a href="#" class="btn btn-primary me-2">Редактиране</a>
-                            <a href="#" class="btn btn-danger">Изтриване</a>
+                            <a asp-controller="Admin" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary me-2">Редактиране</a>
+                            <a asp-controller="Admin" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Изтриване</a>
                         </div>
                     }
                 </div>

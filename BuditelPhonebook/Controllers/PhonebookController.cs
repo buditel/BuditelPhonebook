@@ -40,6 +40,7 @@ namespace BuditelPhonebook.Web.Controllers
 
             var model = new PersonDetailsViewModel
             {
+                Id = id,
                 FirstName = person.FirstName,
                 MiddleName = person.MiddleName,
                 LastName = person.LastName,

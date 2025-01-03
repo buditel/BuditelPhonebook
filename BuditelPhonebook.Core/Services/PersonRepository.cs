@@ -229,6 +229,16 @@ namespace BuditelPhonebook.Core.Repositories
                 person.PersonPicture = personPictureData;
             }
 
+            if (model.PersonalPhoneNumber.StartsWith("+359"))
+            {
+                model.PersonalPhoneNumber = model.PersonalPhoneNumber.Replace("+359", "0");
+            }
+
+            if (model.BusinessPhoneNumber != null && model.BusinessPhoneNumber.StartsWith("+359"))
+            {
+                model.BusinessPhoneNumber = model.BusinessPhoneNumber.Replace("+359", "0");
+            }
+
             person.FirstName = model.FirstName;
             person.MiddleName = model.MiddleName;
             person.LastName = model.LastName;
