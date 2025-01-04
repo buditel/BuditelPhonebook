@@ -156,5 +156,110 @@ namespace BuditelPhonebook.Tests
                 softDeletedDepartment.IsDeleted.Should().BeTrue();
             }
         }
+
+        [Fact]
+        public async Task AddAsync_ShouldThrow_WhenDepartmentIsNull()
+        {
+            await using (var context = new ApplicationDbContext(_options))
+            {
+                var repository = new DepartmentRepository(context);
+
+                context.Departments.Add(new Department { Id = 1, Name = "ИТ отдел" });
+                await context.SaveChangesAsync();
+
+                Func<Task> act = async () => await repository.AddAsync(null);
+
+                await act.Should().ThrowAsync<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task UpdateAsync_ShouldThrow_WhenDepartmentIsNull()
+        {
+            await using (var context = new ApplicationDbContext(_options))
+            {
+                var repository = new DepartmentRepository(context);
+                Func<Task> act = async () => await repository.UpdateAsync(null);
+                await act.Should().ThrowAsync<NullReferenceException>();  
+            }
+        }
+
+        [Fact]
+        public async Task SoftDeleteAsync_ShouldThrow_WhenDepartmentDoesNotExist()
+        {
+            await using (var context = new ApplicationDbContext(_options))
+            {
+                var repository = new DepartmentRepository(context);
+
+                Func<Task> act = async () => await repository.SoftDeleteAsync(999);
+
+                await act.Should().ThrowAsync<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task GetAllAsync_ShouldReturnOnlyNotDeletedDepartments()
+        {
+            await using (var context = new ApplicationDbContext(_options))
+            {
+                context.Departments.Add(new Department { Id = 1, Name = "Активен", IsDeleted = false });
+                context.Departments.Add(new Department { Id = 2, Name = "Изтрит", IsDeleted = true });
+                context.Departments.Add(new Department { Id = 10, Name = "Конкурентност 1", IsDeleted = false });
+                context.Departments.Add(new Department { Id = 11, Name = "Конкурентност 2", IsDeleted = false });
+                await context.SaveChangesAsync();
+            }
+
+            await using (var context = new ApplicationDbContext(_options))
+            {
+                var repository = new DepartmentRepository(context);
+                var departments = await repository.GetAllAsync();
+
+                var notDeletedDepartments = departments.Where(d => !d.IsDeleted);
+
+                notDeletedDepartments.Should().HaveCount(3);
+            }
+        }
+
+        [Fact]
+        public async Task AddAsync_ShouldHandleConcurrentRequests()
+        {
+            await using (var context = new ApplicationDbContext(_options))
+            {
+                var repository = new DepartmentRepository(context);
+
+                var task1 = repository.AddAsync(new Department { Id = 10, Name = "Конкурентност 1" });
+                var task2 = repository.AddAsync(new Department { Id = 11, Name = "Конкурентност 2" });
+
+                await Task.WhenAll(task1, task2);
+
+                var departments = await context.Departments.ToListAsync();
+                departments.Should().HaveCount(2);
+            }
+        }
+
+        [Fact]
+        public async Task GetAllAttached_ShouldReturnQueryable()
+        {
+            await using (var context = new ApplicationDbContext(_options))
+            {
+                context.Departments.Add(new Department { Id = 10, Name = "Конкурентност 1", IsDeleted = false });
+                context.Departments.Add(new Department { Id = 12, Name = "Запитване 1", IsDeleted = false });
+                await context.SaveChangesAsync();
+            }
+
+            await using (var context = new ApplicationDbContext(_options))
+            {
+                var repository = new DepartmentRepository(context);
+                var query = repository.GetAllAttached();
+
+                var notDeletedDepartments = query.Where(d => !d.IsDeleted).ToList();
+
+                notDeletedDepartments.Should().HaveCount(2);
+                notDeletedDepartments.Should().ContainSingle(d => d.Name == "Конкурентност 1");
+                notDeletedDepartments.Should().ContainSingle(d => d.Name == "Запитване 1");
+            }
+        }
+
+
     }
 }
