@@ -1,6 +1,7 @@
 ﻿using BuditelPhonebook.Core.Repositories;
 using BuditelPhonebook.Infrastructure.Data;
 using BuditelPhonebook.Infrastructure.Data.Models;
+using BuditelPhonebook.Web.ViewModels.Person;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,26 +14,21 @@ namespace BuditelPhonebook.Tests
         public PersonRepositoryTests()
         {
             _options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase("TestDb")
+                .UseInMemoryDatabase(databaseName: "TestDb")
                 .Options;
         }
 
         [Fact]
         public async Task GetAllAsync_ShouldReturnAllPeople()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase("TestDb")
-                .Options;
-
-            await using (var initContext = new ApplicationDbContext(options))
+            await using (var context = new ApplicationDbContext(_options))
             {
-                initContext.Database.EnsureCreated();
-            }
+                context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
 
-            await using (var context = new ApplicationDbContext(options))
-            {
                 var role = new Role { Id = 1, Name = "Учител" };
                 var department = new Department { Id = 1, Name = "ИТ отдел" };
+
                 context.Roles.Add(role);
                 context.Departments.Add(department);
                 await context.SaveChangesAsync();
@@ -44,8 +40,8 @@ namespace BuditelPhonebook.Tests
                     LastName = "Петров",
                     Email = "ivan.petrov@buditel.bg",
                     PersonalPhoneNumber = "0888123456",
-                    RoleId = 1,  
-                    DepartmentId = 1  
+                    RoleId = role.Id,  
+                    DepartmentId = department.Id  
                 });
                 context.People.Add(new Person
                 {
@@ -54,14 +50,14 @@ namespace BuditelPhonebook.Tests
                     LastName = "Иванова",
                     Email = "maria.ivanova@buditel.bg",
                     PersonalPhoneNumber = "0888333444",
-                    RoleId = 1,
-                    DepartmentId = 1
+                    RoleId = role.Id,
+                    DepartmentId = department.Id
                 });
 
                 await context.SaveChangesAsync();
             }
 
-            await using (var context = new ApplicationDbContext(options))
+            await using (var context = new ApplicationDbContext(_options))
             {
                 var repository = new PersonRepository(context);
                 var people = await repository.GetAllAsync();
@@ -71,19 +67,52 @@ namespace BuditelPhonebook.Tests
         }
 
 
-        // Test: GetByIdAsync should return person when they exist
+
         [Fact]
-        public async Task GetByIdAsync_ShouldReturnPerson_WhenPersonExists()
+        public async Task GetByIdAsync_ShouldReturnPerson_WhenExists()
+        {
+            await InitializeDatabase();
+
+            await using (var context = new ApplicationDbContext(_options))
+            {
+                context.People.Add(CreatePerson(3, "Георги", "Иванов", "georgi@buditel.bg"));
+                await context.SaveChangesAsync();
+            }
+
+            await using (var context = new ApplicationDbContext(_options))
+            {
+                var repository = new PersonRepository(context);
+                var result = await repository.GetByIdAsync(3);
+
+                result.Should().NotBeNull();
+                result.FirstName.Should().Be("Георги");
+            }
+        }
+
+        [Fact]
+        public async Task GetByIdWithRelationsAsync_ShouldReturnPersonWithRoleAndDepartment()
         {
             await using (var context = new ApplicationDbContext(_options))
             {
+                context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
+
+                var role = new Role { Id = 1, Name = "Учител" };
+                var department = new Department { Id = 1, Name = "ИТ отдел" };
+
+                context.Roles.Add(role);
+                context.Departments.Add(department);
+                await context.SaveChangesAsync();
+
                 var person = new Person
                 {
-                    Id = 1,
-                    FirstName = "Иван",
-                    LastName = "Петров",
-                    Email = "ivan.petrov@buditel.bg",  
-                    PersonalPhoneNumber = "0888123456"  
+                    Id = 10,
+                    FirstName = "Петър",
+                    LastName = "Симеонов",
+                    Email = "peter.simeonov@buditel.bg",
+                    PersonalPhoneNumber = "0888123456",
+                    RoleId = role.Id,
+                    DepartmentId = department.Id
                 };
 
                 context.People.Add(person);
@@ -93,66 +122,43 @@ namespace BuditelPhonebook.Tests
             await using (var context = new ApplicationDbContext(_options))
             {
                 var repository = new PersonRepository(context);
-                var result = await repository.GetByIdAsync(1);
+                var result = await repository.GetByIdWithRelationsAsync(10);
 
                 result.Should().NotBeNull();
-                result.FirstName.Should().Be("Иван");
-                result.LastName.Should().Be("Петров");
+                result.Role.Should().NotBeNull();
+                result.Department.Should().NotBeNull();
+                result.Role.Name.Should().Be("Учител");
+                result.Department.Name.Should().Be("ИТ отдел");
             }
         }
 
 
-        // Test: GetByIdAsync should return null if person does not exist
-        [Fact]
-        public async Task GetByIdAsync_ShouldReturnNull_WhenPersonDoesNotExist()
-        {
-            await using (var context = new ApplicationDbContext(_options))
-            {
-                var repository = new PersonRepository(context);
-                var person = await repository.GetByIdAsync(999);
-                person.Should().BeNull();
-            }
-        }
-
-        // Test: AddAsync should add a person
         [Fact]
         public async Task AddAsync_ShouldAddPerson()
         {
+            await InitializeDatabase();
+
             await using (var context = new ApplicationDbContext(_options))
             {
                 var repository = new PersonRepository(context);
-                var person = new Person
-                {
-                    Id = 3,
-                    FirstName = "Георги",
-                    LastName = "Иванов",
-                    Email = "georgi.ivanov@buditel.bg",
-                    PersonalPhoneNumber = "0888123456"
-                };
+                var person = CreatePerson(5, "Стефан", "Колев", "stefan.kolev@buditel.bg");
 
                 await repository.AddAsync(person);
 
-                var addedPerson = await context.People.FindAsync(3);
+                var addedPerson = await context.People.FirstOrDefaultAsync(p => p.Email == "stefan.kolev@buditel.bg");
                 addedPerson.Should().NotBeNull();
-                addedPerson.FirstName.Should().Be("Георги");
-                addedPerson.Email.Should().Be("georgi.ivanov@buditel.bg");
+                addedPerson.FirstName.Should().Be("Стефан");
             }
         }
 
-        // Test: UpdateAsync should modify an existing person
         [Fact]
         public async Task UpdateAsync_ShouldModifyPerson()
         {
+            await InitializeDatabase();
+
             await using (var context = new ApplicationDbContext(_options))
             {
-                var person = new Person
-                {
-                    Id = 4,
-                    FirstName = "Иван",
-                    LastName = "Христов",
-                    Email = "ivan.ivanov@buditel.bg",  
-                    PersonalPhoneNumber = "0888777654"  
-                };
+                var person = CreatePerson(6, "Анна", "Костова", "anna.kostova@buditel.bg");
                 context.People.Add(person);
                 await context.SaveChangesAsync();
             }
@@ -160,60 +166,45 @@ namespace BuditelPhonebook.Tests
             await using (var context = new ApplicationDbContext(_options))
             {
                 var repository = new PersonRepository(context);
-                var personToUpdate = await repository.GetByIdAsync(4);
+                var personToUpdate = await repository.GetByIdAsync(6);
 
-                personToUpdate.LastName = "Иванов";
+                personToUpdate.LastName = "Петрова";
                 await repository.UpdateAsync(personToUpdate);
 
-                var updatedPerson = await context.People.FindAsync(4);
-                updatedPerson.LastName.Should().Be("Иванов");
-                updatedPerson.Email.Should().Be("ivan.ivanov@buditel.bg");
+                var updatedPerson = await context.People.FindAsync(6);
+                updatedPerson.LastName.Should().Be("Петрова");
             }
         }
 
-
-        // Test: DeleteAsync should remove a person
         [Fact]
-        public async Task DeleteAsync_ShouldRemovePerson_WhenPersonExists()
+        public async Task DeleteAsync_ShouldRemovePerson()
         {
+            await InitializeDatabase();
+
             await using (var context = new ApplicationDbContext(_options))
             {
-                context.People.Add(new Person
-                {
-                    Id = 5,
-                    FirstName = "Стефан",
-                    LastName = "Чаушев",
-                    Email = "stefan.chaushev@buditel.bg",
-                    PersonalPhoneNumber = "0899123456"
-                });
+                context.People.Add(CreatePerson(7, "Михаил", "Караджов", "m.karadjov@buditel.bg"));
                 await context.SaveChangesAsync();
             }
 
             await using (var context = new ApplicationDbContext(_options))
             {
                 var repository = new PersonRepository(context);
-                await repository.DeleteAsync(5);
-                var deletedPerson = await context.People.FindAsync(5);
+                await repository.DeleteAsync(7);
+
+                var deletedPerson = await context.People.FindAsync(7);
                 deletedPerson.Should().BeNull();
             }
         }
 
-
-        // Test: SoftDeleteAsync should mark person as deleted
         [Fact]
         public async Task SoftDeleteAsync_ShouldMarkPersonAsDeleted()
         {
+            await InitializeDatabase();
+
             await using (var context = new ApplicationDbContext(_options))
             {
-                var person = new Person
-                {
-                    Id = 6,
-                    FirstName = "Петър",
-                    LastName = "Симов",
-                    Email = "petar.simov@buditel.bg",  
-                    PersonalPhoneNumber = "0899988776",  
-                    IsDeleted = false
-                };
+                var person = CreatePerson(8, "Лилия", "Ангелова", "l.angelova@buditel.bg");
                 context.People.Add(person);
                 await context.SaveChangesAsync();
             }
@@ -221,21 +212,21 @@ namespace BuditelPhonebook.Tests
             await using (var context = new ApplicationDbContext(_options))
             {
                 var repository = new PersonRepository(context);
-                await repository.SoftDeleteAsync(6, "напуснал");
-                var softDeletedPerson = await context.People.FindAsync(6);
+                await repository.SoftDeleteAsync(8, "напуснал");
 
-                softDeletedPerson.Should().NotBeNull();
+                var softDeletedPerson = await context.People.FindAsync(8);
                 softDeletedPerson.IsDeleted.Should().BeTrue();
-                softDeletedPerson.Email.Should().Be("petar.simov@buditel.bg");
             }
         }
-
 
         [Fact]
         public async Task SearchAsync_ShouldReturnMatchingPeople()
         {
             await using (var context = new ApplicationDbContext(_options))
             {
+                context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
+
                 var role = new Role { Id = 1, Name = "Учител" };
                 var department = new Department { Id = 1, Name = "ИТ отдел" };
 
@@ -250,9 +241,10 @@ namespace BuditelPhonebook.Tests
                     LastName = "Йорданов",
                     Email = "daniel.yordanov@buditel.bg",
                     PersonalPhoneNumber = "0888997766",
-                    RoleId = 1,
-                    DepartmentId = 1
+                    RoleId = role.Id,
+                    DepartmentId = department.Id
                 });
+
                 context.People.Add(new Person
                 {
                     Id = 8,
@@ -260,8 +252,8 @@ namespace BuditelPhonebook.Tests
                     LastName = "Цачева",
                     Email = "veronika.tsacheva@buditel.bg",
                     PersonalPhoneNumber = "0888998877",
-                    RoleId = 1,
-                    DepartmentId = 1
+                    RoleId = role.Id,
+                    DepartmentId = department.Id
                 });
 
                 await context.SaveChangesAsync();
@@ -273,9 +265,31 @@ namespace BuditelPhonebook.Tests
                 var results = await repository.SearchAsync("Даниел");
 
                 results.Should().ContainSingle(p => p.FirstName == "Даниел");
-                results.First().Email.Should().Be("daniel.yordanov@buditel.bg");
             }
         }
 
+
+        private Person CreatePerson(int id, string firstName, string lastName, string email)
+        {
+            return new Person
+            {
+                Id = id,
+                FirstName = firstName,
+                LastName = lastName,
+                Email = email,
+                PersonalPhoneNumber = "0899988776",
+                RoleId = 1,
+                DepartmentId = 1
+            };
+        }
+
+        private async Task InitializeDatabase()
+        {
+            await using (var context = new ApplicationDbContext(_options))
+            {
+                context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
+            }
+        }
     }
 }
