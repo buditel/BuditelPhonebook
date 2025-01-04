@@ -2,52 +2,52 @@
 
 @foreach (var person in Model.OrderBy(p => p.FirstName).ThenBy(p => p.LastName))
 {
-    <div class="container mt-5">
-        <div class="contact-card card shadow p-3 mb-5 bg-white rounded person-card">
-            <div class="row g-0">
-                <div class="col-md-4 text-center">
-                    <div class="p-3">
+        <div class="container mt-5">
+            <div class="contact-card card shadow p-3 mb-5 bg-white rounded person-card">
+                <div class="row g-0">
+                    <div class="col-md-4 text-center">
+                        <div class="p-3">
                         @if (person.PersonPicture != null)
                         {
-                            <img src="@($"data:image/webp;base64,{Convert.ToBase64String(person.PersonPicture)}")" alt="Avatar" class="img-fluid rounded-circle border person-image" />
+                                    <img src="@($"data:image/webp;base64,{Convert.ToBase64String(person.PersonPicture)}")" alt="Avatar" class="img-fluid rounded-circle border person-image" />
                         }
                         else
                         {
-                            <img src="https://buditel.softuni.bg/wp-content/uploads/2020/04/SoftUni-Buditel-favicon.png" alt="No Avatar" class="img-fluid rounded-circle border person-image" />
+                                    <img src="https://buditel.softuni.bg/wp-content/uploads/2020/04/SoftUni-Buditel-favicon.png" alt="No Avatar" class="img-fluid rounded-circle border person-image" />
                         }
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <h4 class="card-title mb-3 text-primary">
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h4 class="card-title mb-3 text-primary">
                             @($"{person.FirstName} {(string.IsNullOrWhiteSpace(person.MiddleName) ? "" : $"{person.MiddleName} ")}{person.LastName}")
-                        </h4>
-                        <p class="card-text"><strong>Отдел:</strong> @person.Department</p>
-                        <p class="card-text"><strong>Длъжност:</strong> @person.Role</p>
+                            </h4>
+                            <p class="card-text"><strong>Отдел:</strong> @person.Department</p>
+                            <p class="card-text"><strong>Длъжност:</strong> @person.Role</p>
                         @if (person.Role == "Учител")
                         {
-                            <p class="card-text"><strong>Група предмети:</strong> @person.SubjectGroup</p>
-                            <p class="card-text"><strong>Предмет:</strong> @person.Subject</p>
+                                    <p class="card-text"><strong>Група предмети:</strong> @person.SubjectGroup</p>
+                                    <p class="card-text"><strong>Предмет:</strong> @person.Subject</p>
                         }
-                        <p class="card-text"><strong>Личен телефон:</strong> @person.PersonalPhoneNumber</p>
-                        <p class="card-text"><strong>Служебен телефон:</strong> @(person.BusinessPhoneNumber ?? "липсва")</p>
-                        <p class="card-text"><strong>Имейл:</strong> @person.Email</p>
+                            <p class="card-text"><strong>Личен телефон:</strong> @person.PersonalPhoneNumber</p>
+                            <p class="card-text"><strong>Служебен телефон:</strong> @(person.BusinessPhoneNumber ?? "липсва")</p>
+                            <p class="card-text"><strong>Имейл:</strong> @person.Email</p>
 
                         @if (person.Birthdate != null)
                         {
-                            <p class="card-text"><strong>Рождена дата:</strong> @person.Birthdate</p>
+                                    <p class="card-text"><strong>Рождена дата:</strong> @person.Birthdate</p>
                         }
 
                         @if (User.IsInRole("Admin"))
                         {
-                            <div class="mt-4">
-                                <a asp-controller="Admin" asp-action="Edit" asp-route-id="@person.Id" class="btn btn-primary me-2">Редактиране</a>
-                                <a asp-controller="Admin" asp-action="Delete" asp-route-id="@person.Id" class="btn btn-danger">Изтриване</a>
-                            </div>
+                                    <div class="mt-4">
+                                        <a asp-controller="Admin" asp-action="Edit" asp-route-id="@person.Id" class="btn btn-primary me-2">Редактиране</a>
+                                        <a asp-controller="Admin" asp-action="Delete" asp-route-id="@person.Id" class="btn btn-danger">Изтриване</a>
+                                    </div>
                         }
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 }
