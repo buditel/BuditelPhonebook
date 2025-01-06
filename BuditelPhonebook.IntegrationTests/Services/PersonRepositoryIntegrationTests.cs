@@ -239,5 +239,38 @@ namespace BuditelPhonebook.Tests.Integration
                 results.Should().BeEmpty();
             }
         }
+
+        [Fact]
+        public async Task SoftDeleteAsync_ShouldNotThrow_WhenPersonAlreadyDeleted()
+        {
+            await using (var context = new ApplicationDbContext(_options))
+            {
+                var role = new Role { Id = 5, Name = "Developer" };
+                var department = new Department { Id = 6, Name = "Engineering" };
+
+                context.People.Add(new Person
+                {
+                    Id = 7,
+                    FirstName = "Кирил",
+                    LastName = "Димитров",
+                    Email = "kiril.dimitrov@buditel.bg",
+                    PersonalPhoneNumber = "0888333444",
+                    RoleId = 5,
+                    DepartmentId = 6,
+                    IsDeleted = true
+                });
+                await context.SaveChangesAsync();
+            }
+
+            await using (var context = new ApplicationDbContext(_options))
+            {
+                var repository = new PersonRepository(context);
+                await repository.SoftDeleteAsync(7, "напуснал");
+
+                var deletedPerson = await context.People.FindAsync(7);
+                deletedPerson.IsDeleted.Should().BeTrue();
+            }
+        }
+
     }
 }
