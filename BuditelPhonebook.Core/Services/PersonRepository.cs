@@ -134,7 +134,7 @@ namespace BuditelPhonebook.Core.Repositories
                     SubjectGroup = p.SubjectGroup,
                     Subject = p.Subject,
                     PersonPicture = p.PersonPicture
-                })// Ensure Department.Name is accessed
+                })
                 .ToListAsync();
         }
 

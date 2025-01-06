@@ -104,8 +104,9 @@ namespace BuditelPhonebook.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditPersonViewModel model)
         {
-            var exists = _personRepository.GetAllAttached().Any(r => r.Email == model.Email);
-            if (exists)
+            bool exists = _personRepository.GetAllAttached().Any(r => r.Email == model.Email);
+            var currentPerson = await _personRepository.GetByIdAsync(model.Id);
+            if (exists && model.Email != currentPerson.Email)
             {
                 ModelState.AddModelError(nameof(model.Email), EmailUniqueMessage);
             }
