@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BuditelPhonebook.Core\BuditelPhonebook.Core.csproj" />
     <ProjectReference Include="..\BuditelPhonebook.Infrastructure\BuditelPhonebook.Infrastructure.csproj" />
+    <ProjectReference Include="..\BuditelPhonebook\BuditelPhonebook.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>

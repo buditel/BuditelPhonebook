@@ -1,11 +1,10 @@
 ﻿using BuditelPhonebook.Core.Repositories;
 using BuditelPhonebook.Infrastructure.Data;
 using BuditelPhonebook.Infrastructure.Data.Models;
-using BuditelPhonebook.Tests.Integration;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 
-namespace BuditelPhonebook.Tests.Integration
+namespace BuditelPhonebook.IntegrationTests.Services
 {
     public class PersonRepositoryIntegrationTests
     {
