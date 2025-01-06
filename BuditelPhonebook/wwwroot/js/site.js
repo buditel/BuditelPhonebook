@@ -53,8 +53,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (partialViewHtml.trim()) {
                 resultsContainer.innerHTML = partialViewHtml;
-            } else {
-                resultsContainer.innerHTML = `<div class="alert alert-info text-center">Няма съвпадения.</div>`;
             }
         } catch (error) {
             console.error("Error fetching search results:", error);
