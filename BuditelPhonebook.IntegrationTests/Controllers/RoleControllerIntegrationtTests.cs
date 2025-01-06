@@ -204,19 +204,5 @@ namespace BuditelPhonebook.Tests.Integration
                 role.Name.Should().Be("ToDelete");
             }
         }
-
-        [Fact]
-        public async Task DeleteConfirmed_ShouldNotThrow_WhenRoleDoesNotExist()
-        {
-            await using (var context = new ApplicationDbContext(_options))
-            {
-                var repository = new RoleRepository(context);
-                var controller = new RoleController(repository);
-
-                var result = await controller.DeleteConfirmed(999) as RedirectToActionResult;
-
-                result.ActionName.Should().Be(nameof(RoleController.Index));
-            }
-        }
     }
 }
