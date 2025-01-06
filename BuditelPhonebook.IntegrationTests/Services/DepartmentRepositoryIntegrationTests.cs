@@ -4,7 +4,7 @@ using BuditelPhonebook.Infrastructure.Data.Models;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 
-namespace BuditelPhonebook.Tests.Integration
+namespace BuditelPhonebook.IntegrationTests.Services
 {
     public class DepartmentRepositoryIntegrationTests
     {

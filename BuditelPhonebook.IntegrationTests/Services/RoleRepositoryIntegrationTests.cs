@@ -4,7 +4,7 @@ using BuditelPhonebook.Infrastructure.Data.Models;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 
-namespace BuditelPhonebook.Tests.Integration
+namespace BuditelPhonebook.IntegrationTests.Services
 {
     public class RoleRepositoryIntegrationTests
     {
@@ -243,6 +243,31 @@ namespace BuditelPhonebook.Tests.Integration
             {
                 var updatedRole = await context.Roles.FindAsync(6);
                 updatedRole.Name.Should().Be("UpdateFromContext1");
+            }
+        }
+
+        [Fact]
+        public async Task DeleteAsync_ShouldHandleConcurrentDeletes()
+        {
+            await using (var context = new ApplicationDbContext(_options))
+            {
+                context.Roles.Add(new Role { Id = 10, Name = "TemporaryRole" });
+                await context.SaveChangesAsync();
+            }
+
+            await using (var context1 = new ApplicationDbContext(_options))
+            await using (var context2 = new ApplicationDbContext(_options))
+            {
+                var repository1 = new RoleRepository(context1);
+                var repository2 = new RoleRepository(context2);
+
+                var task1 = repository1.DeleteAsync(10);
+                var task2 = repository2.DeleteAsync(10);
+
+                await Task.WhenAll(task1, task2);
+
+                var deletedRole = await context1.Roles.FindAsync(10);
+                deletedRole.Should().BeNull();
             }
         }
 
