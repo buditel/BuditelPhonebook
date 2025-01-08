@@ -16,6 +16,8 @@
 
         public string? PersonalPhoneNumber { get; set; }
 
+        public string? LeaveDate { get; set; }
+
         public string Role { get; set; } = null!;
 
         public string Department { get; set; } = null!;

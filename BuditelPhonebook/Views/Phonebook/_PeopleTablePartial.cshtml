@@ -43,6 +43,10 @@
                                 {
                                     <p class="card-text"><strong>Рождена дата:</strong> @person.Birthdate</p>
                                 }
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <p class="card-text"><strong>Дата на постъпване:</strong> @person.HireDate</p>
+                                }
                             </div>
                             @if (User.IsInRole("Admin"))
                             {

@@ -7,6 +7,11 @@ namespace BuditelPhonebook.Infrastructure.Data.Models
     [Index(nameof(Email), IsUnique = true)]
     public class Person
     {
+        public Person()
+        {
+            HireDate = DateTime.Now;
+        }
+
         [Key]
         public int Id { get; set; }
 
@@ -32,6 +37,11 @@ namespace BuditelPhonebook.Infrastructure.Data.Models
 
         [MaxLength(6)]
         public string? Birthdate { get; set; }
+
+        [Required]
+        public DateTime HireDate { get; set; }
+
+        public DateTime? LeaveDate { get; set; }
 
         public byte[]? PersonPicture { get; set; }
 

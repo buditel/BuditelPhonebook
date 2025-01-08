@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<Person>
+@using static BuditelPhonebook.Common.EntityValidationConstants.Person
 
 @{
     ViewBag.Title = "Управление на контактите";
@@ -26,6 +27,7 @@ else
             <th>Личен телефон</th>
             <th>Роля</th>
             <th>Отдел</th>
+            <th>Дата на постъпване</th>
             <th style="width:120px;">Действия</th>
         </tr>
         </thead>
@@ -43,6 +45,7 @@ else
                 <td>@p.PersonalPhoneNumber</td>
                 <td>@p.Role.Name</td>
                 <td>@p.Department.Name</td>
+                <td>@p.HireDate.ToString(HireAndLeaveDateFormat)</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-sm btn-primary">Редактирай</a>
                     <a asp-action="Delete" asp-route-id="@p.Id" class="btn btn-sm btn-danger">Изтрий</a>

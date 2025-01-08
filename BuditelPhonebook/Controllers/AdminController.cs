@@ -5,7 +5,7 @@ using BuditelPhonebook.Web.ViewModels.Person;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using static BuditelPhonebook.Common.EntityValidationConstants.Person;
 using static BuditelPhonebook.Common.EntityValidationMessages.Person;
 
 namespace BuditelPhonebook.Web.Controllers
@@ -184,6 +184,9 @@ namespace BuditelPhonebook.Web.Controllers
         {
             var models = await _personRepository.GetAllAttached()
                 .Where(p => p.IsDeleted)
+                .ToListAsync();
+
+            var results = models
                 .Select(p => new DeletedIndexPersonViewModel
                 {
                     Id = p.Id,
@@ -192,13 +195,13 @@ namespace BuditelPhonebook.Web.Controllers
                     LastName = p.LastName,
                     Email = p.Email,
                     PersonalPhoneNumber = p.PersonalPhoneNumber,
+                    LeaveDate = p.LeaveDate?.ToString(HireAndLeaveDateFormat),
                     Department = p.Department.Name,
                     Role = p.Role.Name,
                     CommentOnDeletion = p.CommentOnDeletion
-                })
-                .ToListAsync();
+                });
 
-            return View(models);
+            return View(results);
         }
 
         [HttpGet]
@@ -223,6 +226,7 @@ namespace BuditelPhonebook.Web.Controllers
             var person = await _personRepository.GetByIdAsync(model.Id);
 
             person.CommentOnDeletion = null;
+            person.LeaveDate = null;
             person.IsDeleted = false;
 
             await _personRepository.UpdateAsync(person);

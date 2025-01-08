@@ -25,6 +25,7 @@ else
                 <th>Личен телефон</th>
                 <th>Роля</th>
                 <th>Отдел</th>
+                <th>Дата на напускане</th>
                 <th style="width:120px;"></th>
             </tr>
         </thead>
@@ -40,6 +41,7 @@ else
                     <td>@p.PersonalPhoneNumber</td>
                     <td>@p.Role</td>
                     <td>@p.Department</td>
+                    <td>@p.LeaveDate</td>
                     <td>
                         <a asp-action="Restore" asp-route-id="@p.Id" class="btn btn-sm btn-success">Възстанови</a>
                     </td>

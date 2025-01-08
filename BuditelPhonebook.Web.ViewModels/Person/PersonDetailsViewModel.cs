@@ -17,6 +17,8 @@
 
         public string? Birthdate { get; set; }
 
+        public string HireDate { get; set; } = null!;
+
         public byte[]? PersonPicture { get; set; }
 
         public string Role { get; set; } = null!;

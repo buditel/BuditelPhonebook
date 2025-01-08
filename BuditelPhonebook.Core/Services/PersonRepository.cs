@@ -1,9 +1,10 @@
 ﻿using BuditelPhonebook.Core.Contracts;
 using BuditelPhonebook.Infrastructure.Data;
 using BuditelPhonebook.Infrastructure.Data.Models;
-using BuditelPhonebook.Web.ViewModels;
 using BuditelPhonebook.Web.ViewModels.Person;
 using Microsoft.EntityFrameworkCore;
+
+using static BuditelPhonebook.Common.EntityValidationConstants.Person;
 
 namespace BuditelPhonebook.Core.Repositories
 {
@@ -74,6 +75,7 @@ namespace BuditelPhonebook.Core.Repositories
 
             person.IsDeleted = true;
             person.CommentOnDeletion = comment;
+            person.LeaveDate = DateTime.Now;
 
             _context.People.Update(person);
             await _context.SaveChangesAsync();
@@ -85,7 +87,7 @@ namespace BuditelPhonebook.Core.Repositories
             if (string.IsNullOrWhiteSpace(query) || query.Length <= 1)
             {
                 return await _context.People
-                    .Include(p => p.Role) // Include Role navigation property
+                    .Include(p => p.Role)
                     .Include(p => p.Department)
                     .Where(p => !p.IsDeleted)
                     .Select(p => new PersonDetailsViewModel
@@ -97,13 +99,14 @@ namespace BuditelPhonebook.Core.Repositories
                         Birthdate = p.Birthdate,
                         PersonalPhoneNumber = p.PersonalPhoneNumber,
                         BusinessPhoneNumber = p.BusinessPhoneNumber,
+                        HireDate = p.HireDate.ToString(HireAndLeaveDateFormat),
                         Email = p.Email,
                         Department = p.Department.Name,
                         Role = p.Role.Name,
                         SubjectGroup = p.SubjectGroup,
                         Subject = p.Subject,
                         PersonPicture = p.PersonPicture
-                    })// Include Department navigation property
+                    })
                     .ToListAsync();
             }
 
@@ -128,6 +131,7 @@ namespace BuditelPhonebook.Core.Repositories
                     Birthdate = p.Birthdate,
                     PersonalPhoneNumber = p.PersonalPhoneNumber,
                     BusinessPhoneNumber = p.BusinessPhoneNumber,
+                    HireDate = p.HireDate.ToString(HireAndLeaveDateFormat),
                     Email = p.Email,
                     Department = p.Department.Name,
                     Role = p.Role.Name,
@@ -146,30 +150,6 @@ namespace BuditelPhonebook.Core.Repositories
         public IEnumerable<Department> GetDepartments()
         {
             return _context.Departments.Where(d => !d.IsDeleted).AsNoTracking().ToList();
-        }
-
-        public async Task<IEnumerable<SuggestionsViewModel>> GetSearchSuggestionsAsync(string query)
-        {
-            query = query.ToLower();
-
-            var results = await _context.People
-            .Include(p => p.Department)
-            .Where(p => !p.IsDeleted &&
-                        (p.FirstName.ToLower().Contains(query) ||
-                         p.LastName.ToLower().Contains(query) ||
-                         (p.Subject != null && p.Subject.ToLower().Contains(query)) ||
-                         p.Department.Name.ToLower().Contains(query)))
-            .Select(p => new SuggestionsViewModel
-            {
-                Id = p.Id,
-                FullName = $"{p.FirstName} {p.LastName}",
-                Subject = p.Subject,
-                Department = p.Department.Name
-            })
-            .Take(10)
-            .ToListAsync();
-
-            return results;
         }
 
         public async Task<Person> CreateANewPerson(CreatePersonViewModel model)

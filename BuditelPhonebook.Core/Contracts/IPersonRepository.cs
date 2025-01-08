@@ -1,5 +1,4 @@
 ﻿using BuditelPhonebook.Infrastructure.Data.Models;
-using BuditelPhonebook.Web.ViewModels;
 using BuditelPhonebook.Web.ViewModels.Person;
 
 namespace BuditelPhonebook.Core.Contracts
@@ -20,9 +19,6 @@ namespace BuditelPhonebook.Core.Contracts
         Task<IEnumerable<PersonDetailsViewModel>> SearchAsync(string query);
         IEnumerable<Role> GetRoles();
         IEnumerable<Department> GetDepartments();
-
-        Task<IEnumerable<SuggestionsViewModel>> GetSearchSuggestionsAsync(string query);
-
         Task<Person> CreateANewPerson(CreatePersonViewModel model);
         Task<EditPersonViewModel> MapPersonForEditById(int id);
 
