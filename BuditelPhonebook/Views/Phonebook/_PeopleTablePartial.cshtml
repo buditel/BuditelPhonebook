@@ -36,9 +36,20 @@
                                     <p class="card-text"><strong>Група предмети:</strong> @person.SubjectGroup</p>
                                     <p class="card-text"><strong>Предмет:</strong> @person.Subject</p>
                                 }
-                                <p class="card-text"><strong>Личен телефон:</strong> @person.PersonalPhoneNumber</p>
-                                <p class="card-text"><strong>Служебен телефон:</strong> @(person.BusinessPhoneNumber ?? "липсва")</p>
-                                <p class="card-text"><strong>Имейл:</strong> @person.Email</p>
+                                <p class="card-text">
+                                    <strong>Личен телефон:</strong>
+                                    <a href="tel:@person.PersonalPhoneNumber">@person.PersonalPhoneNumber</a>
+                                </p>
+                                <p class="card-text">
+                                    <strong>Служебен телефон:</strong>
+                                    @(person.BusinessPhoneNumber != null
+                                        ? $"<a href=\"tel:{person.BusinessPhoneNumber}\">{person.BusinessPhoneNumber}</a>"
+                                        : "липсва")
+                                </p>
+                                <p class="card-text">
+                                    <strong>Имейл:</strong>
+                                    <a href="https://mail.google.com/mail/?view=cm&to=@person.Email" target="_blank">@person.Email</a>
+                                </p>
                                 @if (person.Birthdate != null)
                                 {
                                     <p class="card-text"><strong>Рождена дата:</strong> @person.Birthdate</p>
