@@ -7,11 +7,6 @@ namespace BuditelPhonebook.Infrastructure.Data.Models
     [Index(nameof(Email), IsUnique = true)]
     public class Person
     {
-        public Person()
-        {
-            HireDate = DateTime.Now;
-        }
-
         [Key]
         public int Id { get; set; }
 

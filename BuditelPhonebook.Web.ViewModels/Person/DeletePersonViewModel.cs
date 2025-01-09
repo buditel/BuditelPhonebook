@@ -11,5 +11,7 @@
         public string LastName { get; set; } = null!;
 
         public string? CommentOnDeletion { get; set; }
+
+        public string LeaveDate { get; set; } = null!;
     }
 }

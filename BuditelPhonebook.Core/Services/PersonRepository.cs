@@ -3,7 +3,7 @@ using BuditelPhonebook.Infrastructure.Data;
 using BuditelPhonebook.Infrastructure.Data.Models;
 using BuditelPhonebook.Web.ViewModels.Person;
 using Microsoft.EntityFrameworkCore;
-
+using System.Globalization;
 using static BuditelPhonebook.Common.EntityValidationConstants.Person;
 
 namespace BuditelPhonebook.Core.Repositories
@@ -64,7 +64,7 @@ namespace BuditelPhonebook.Core.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task SoftDeleteAsync(int id, string? comment)
+        public async Task SoftDeleteAsync(int id, string? comment, string leaveDate)
         {
             var person = await _context.People.FindAsync(id);
 
@@ -73,9 +73,12 @@ namespace BuditelPhonebook.Core.Repositories
                 throw new ArgumentNullException(nameof(person));
             }
 
+            var personLeaveDate = DateTime.ParseExact(leaveDate, HireAndLeaveDateFormat, CultureInfo.CurrentCulture);
+
+
             person.IsDeleted = true;
             person.CommentOnDeletion = comment;
-            person.LeaveDate = DateTime.Now;
+            person.LeaveDate = personLeaveDate;
 
             _context.People.Update(person);
             await _context.SaveChangesAsync();
@@ -173,6 +176,8 @@ namespace BuditelPhonebook.Core.Repositories
                 model.BusinessPhoneNumber = model.BusinessPhoneNumber.Replace("+359", "0");
             }
 
+            var hireDate = DateTime.ParseExact(model.HireDate, HireAndLeaveDateFormat, CultureInfo.CurrentCulture);
+
             Person person = new Person
             {
                 FirstName = model.FirstName,
@@ -182,6 +187,7 @@ namespace BuditelPhonebook.Core.Repositories
                 Email = model.Email,
                 BusinessPhoneNumber = model.BusinessPhoneNumber,
                 PersonalPhoneNumber = model.PersonalPhoneNumber,
+                HireDate = hireDate,
                 PersonPicture = personPictureData,
                 DepartmentId = GetDepartments().FirstOrDefault(d => d.Name == model.Department).Id,
                 RoleId = GetRoles().FirstOrDefault(r => r.Name == model.Role).Id,
@@ -210,6 +216,7 @@ namespace BuditelPhonebook.Core.Repositories
                 Birthdate = person.Birthdate,
                 PersonalPhoneNumber = person.PersonalPhoneNumber,
                 BusinessPhoneNumber = person.BusinessPhoneNumber,
+                HireDate = person.HireDate.ToString(HireAndLeaveDateFormat),
                 Email = person.Email,
                 Department = person.Department.Name,
                 Role = person.Role.Name,
@@ -256,11 +263,14 @@ namespace BuditelPhonebook.Core.Repositories
                 model.BusinessPhoneNumber = model.BusinessPhoneNumber.Replace("+359", "0");
             }
 
+            var hireDate = DateTime.ParseExact(model.HireDate, HireAndLeaveDateFormat, CultureInfo.CurrentCulture);
+
             person.FirstName = model.FirstName;
             person.MiddleName = model.MiddleName;
             person.LastName = model.LastName;
             person.PersonalPhoneNumber = model.PersonalPhoneNumber;
             person.BusinessPhoneNumber = model.BusinessPhoneNumber;
+            person.HireDate = hireDate;
             person.Birthdate = model.Birthdate;
             person.Email = model.Email;
             person.DepartmentId = GetDepartments().FirstOrDefault(d => d.Name == model.Department).Id;

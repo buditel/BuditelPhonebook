@@ -17,6 +17,8 @@
             public const string PersonalPhoneNumberLengthMessage = "Личният телефон трябва да е между 7 и 20 символа.";
             public const string BusinessPhoneNumberLengthMessage = "Служебният телефон трябва да е между 7 и 20 символа.";
             public const string BirthDateWrongFormatMessage = "Рождената дата трябва да е във формата 01.01.";
+            public const string HireDateRequiredMessage = "Трябва да въведете дата на постъпване.";
+            public const string HireDateWrongFormatMessage = "Датата на постъпване трябва да е във формата 01.01.0001.";
             public const string RoleRequiredMessage = "Трябва да изберете длъжност.";
             public const string DepartmentRequiredMessage = "Трябва да изберете отдел.";
             public const string SubjectGroupRequiredMessage = "Трябва да изберете група предмети.";

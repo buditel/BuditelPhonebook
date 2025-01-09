@@ -168,7 +168,7 @@ namespace BuditelPhonebook.Web.Controllers
         {
             try
             {
-                await _personRepository.SoftDeleteAsync(model.Id, model.CommentOnDeletion);
+                await _personRepository.SoftDeleteAsync(model.Id, model.CommentOnDeletion, model.LeaveDate);
 
                 return RedirectToAction(nameof(Index));
             }

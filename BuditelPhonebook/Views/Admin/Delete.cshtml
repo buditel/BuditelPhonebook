@@ -8,9 +8,21 @@
 </div>
 <form method="post">
     <div class="mb-3">
+        <label for="dateSelect" class="form-label">Изберете дата:</label>
+        <select id="dateSelect" class="form-select dropdown-select">
+            <option value="today">Днес</option>
+            <option value="custom">Друга дата</option>
+        </select>
+    </div>
+
+    <div class="mb-3" id="customDateContainer" style="display: none;">
+        <input type="text" id="customDate" name="CustomDate" class="form-control datetime-picker dropdown-select" placeholder="Изберете дата...">
+    </div>
+    <div class="mb-3">
         <textarea asp-for="CommentOnDeletion" class="form-control" rows="3" placeholder="Въведете причина за изтриването (по желание)..."></textarea>
         <span asp-validation-for="CommentOnDeletion" class="text-danger"></span>
     </div>
+    <input type="hidden" asp-for="LeaveDate" id="SelectedDate"/>   
     <button type="submit" class="btn btn-danger">Да, изтрий</button>
     <a asp-action="Index" class="btn btn-secondary">Отказ</a>
 </form>

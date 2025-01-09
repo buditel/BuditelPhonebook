@@ -129,3 +129,54 @@ window.onload = function () {
         img.style.objectFit = 'contain';
     });
 };
+
+document.addEventListener('DOMContentLoaded', function () {
+    flatpickr('.datetime-picker', {
+        dateFormat: "d.m.Y."
+    });
+});
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Ensure the customDateContainer is hidden on page load
+    const customDateContainer = document.getElementById('customDateContainer');
+    if (customDateContainer) {
+        customDateContainer.style.display = 'none';
+    }
+
+    // Initialize Flatpickr
+    flatpickr('#customDate', {
+        dateFormat: "d.m.Y.",
+    });
+
+    const dateSelect = document.getElementById('dateSelect');
+    const selectedDateInput = document.getElementById('SelectedDate');
+    const today = new Date();
+
+    // Format the date as "d.m.Y."
+    const formatDate = (date) => {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}.${month}.${year}.`;
+    };
+
+    // Default to today, formatted as "d.m.Y."
+    selectedDateInput.value = formatDate(today);
+
+    dateSelect.addEventListener('change', function () {
+        if (this.value === 'custom') {
+            customDateContainer.style.display = 'block';
+        } else {
+            customDateContainer.style.display = 'none';
+            selectedDateInput.value = formatDate(today); // Set today's date in "d.m.Y." format
+        }
+    });
+
+    // Update hidden input when a custom date is selected
+    const customDateInput = document.getElementById('customDate');
+    customDateInput.addEventListener('change', function () {
+        selectedDateInput.value = this.value;
+    });
+});
+

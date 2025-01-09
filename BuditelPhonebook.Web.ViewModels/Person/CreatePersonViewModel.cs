@@ -33,6 +33,10 @@ namespace BuditelPhonebook.Web.ViewModels.Person
         [RegularExpression(BirthDateRegexPattern, ErrorMessage = BirthDateWrongFormatMessage)]
         public string? Birthdate { get; set; }
 
+        [Required(ErrorMessage = HireDateRequiredMessage)]
+        [RegularExpression(HireAndLeaveDateRegexPattern, ErrorMessage = HireDateWrongFormatMessage)]
+        public string HireDate { get; set; } = null!;
+
         public IFormFile? PersonPicture { get; set; }
 
         [Required(ErrorMessage = RoleRequiredMessage)]

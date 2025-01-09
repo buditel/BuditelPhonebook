@@ -35,6 +35,11 @@
         <span asp-validation-for="BusinessPhoneNumber" class="text-danger"></span>
     </div>
     <div class="mb-3">
+        <label class="form-label">Дата на постъпване</label>
+        <input type="text" class="form-control datetime-picker dropdown-select" name="HireDate" value="@Model.HireDate" placeholder="Изберете дата на постъпване на работа...">
+        <span asp-validation-for="HireDate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
         <label class="form-label" for="fileInput">Снимка</label>
         <div class="d-flex align-items-center gap-3">
             <div id="previewContainer" style="display: none;">
@@ -54,14 +59,14 @@
     </div>
     <div class="mb-3">
         <label class="form-label">Длъжност</label>
-        <select id="roleSelect" asp-for="Role" asp-items="@(new SelectList(Model.Roles, "Name", "Name"))" class="form-control">
+        <select id="roleSelect" asp-for="Role" asp-items="@(new SelectList(Model.Roles, "Name", "Name"))" class="form-control dropdown-select">
             <option value="">Изберете длъжност...</option>
         </select>
         <span asp-validation-for="Role" class="text-danger"></span>
     </div>
     <div id="subjectGroup" class="mb-3" style="display: none;">
         <label class="form-label">Група предмети</label>
-        <select asp-for="SubjectGroup" class="form-control">
+        <select asp-for="SubjectGroup" class="form-control dropdown-select">
             <option value="">Изберете група предмети...</option>
             <option value="професионални">Професионални</option>
             <option value="общо-образователни">Общо-образователни</option>
@@ -75,7 +80,7 @@
     </div>
     <div class="mb-3">
         <label class="form-label">Отдел</label>
-        <select asp-for="Department" asp-items="@(new SelectList(Model.Departments, "Name", "Name"))" class="form-control">
+        <select asp-for="Department" asp-items="@(new SelectList(Model.Departments, "Name", "Name"))" class="form-control dropdown-select">
             <option value="">Изберете отдел...</option>
         </select>
         <span asp-validation-for="Department" class="text-danger"></span>
