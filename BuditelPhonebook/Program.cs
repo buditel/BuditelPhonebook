@@ -4,6 +4,7 @@ using BuditelPhonebook.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace BuditelPhonebook
@@ -22,14 +23,20 @@ namespace BuditelPhonebook
                 builder.Configuration.AddUserSecrets<Program>();
             }
 
-            // Use the connection string from configuration
+            // Configure database context
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            // Configure Identity
+            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            // Add repositories
             builder.Services.AddScoped<IPersonRepository, PersonRepository>();
+            builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+            builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 
-
-            // We will add repositories and authentication below
-
+            // Google authentication
             var googleConfig = builder.Configuration.GetSection("Authentication:Google");
             var allowedDomain = googleConfig["AllowedDomain"];
             var adminEmails = builder.Configuration.GetSection("AdminEmails").Get<string[]>() ?? new string[0];
@@ -40,7 +47,14 @@ namespace BuditelPhonebook
                 options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
             })
-            .AddCookie()
+            .AddCookie(options =>
+            {
+                options.AccessDeniedPath = "/Account/AccessDenied";
+                options.LoginPath = "/Account/Login";
+                options.LogoutPath = "/Account/Logout";
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Set the expiration time
+                options.SlidingExpiration = true; // Optionally use sliding expiration
+            })
             .AddGoogle(options =>
             {
                 options.ClientId = googleConfig["ClientId"];
@@ -49,21 +63,19 @@ namespace BuditelPhonebook
 
                 options.Events.OnCreatingTicket = ctx =>
                 {
-                    var allowedDomain = googleConfig["AllowedDomain"];
-                    var adminEmails = builder.Configuration.GetSection("AdminEmails").Get<string[]>() ?? new string[0];
-
                     var email = ctx.Principal.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
-                    if (email == null || !email.EndsWith("@" + allowedDomain, StringComparison.OrdinalIgnoreCase))
+
+                    // Ensure the email matches the allowed domain
+                    if (string.IsNullOrEmpty(email) || !email.EndsWith($"@{allowedDomain}", StringComparison.OrdinalIgnoreCase))
                     {
-                        // Redirect user to AccessDenied page
-                        ctx.Response.Redirect("/Account/AccessDenied");
-
-                        // Fail the context to prevent continuing with sign-in
-                        ctx.Fail("Email domain not allowed.");
-
+                        ctx.Fail("Access Denied");
+                        // Fail authentication if the email is from an unauthorized domain
+                        ctx.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                        ctx.HttpContext.Response.Redirect("/Account/AccessDenied");
                         return Task.CompletedTask;
                     }
 
+                    // Add roles for admin users
                     var claimsIdentity = (System.Security.Claims.ClaimsIdentity)ctx.Principal.Identity;
                     if (adminEmails.Contains(email, StringComparer.OrdinalIgnoreCase))
                     {
@@ -76,13 +88,9 @@ namespace BuditelPhonebook
 
                     return Task.CompletedTask;
                 };
-
             });
 
             builder.Services.AddAuthorization();
-            builder.Services.AddScoped<IRoleRepository, RoleRepository>();
-            builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
-
 
             var app = builder.Build();
 
@@ -92,16 +100,30 @@ namespace BuditelPhonebook
             app.UseRouting();
 
             app.UseAuthentication();
+            app.UseMiddleware<DomainRestrictionMiddleware>();
             app.UseAuthorization();
 
+            // Security headers
             app.Use(async (context, next) =>
             {
-                // Security headers
+                context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+                context.Response.Headers["Pragma"] = "no-cache";
+                context.Response.Headers["Expires"] = "0";
                 context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
                 context.Response.Headers.Add("X-Frame-Options", "DENY");
                 context.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
-                context.Response.Headers.Add("Content-Security-Policy", "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://cdn.jsdelivr.net; img-src 'self' https://buditel.softuni.bg data:;");
+                context.Response.Headers.Add("Content-Security-Policy",
+                    "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://cdn.jsdelivr.net; img-src 'self' https://buditel.softuni.bg data:;");
                 await next();
+            });
+
+            app.UseStatusCodePages(context =>
+            {
+                if (context.HttpContext.Response.StatusCode == 403)
+                {
+                    context.HttpContext.Response.Redirect("/Account/AccessDenied");
+                }
+                return Task.CompletedTask;
             });
 
             app.MapControllerRoute(

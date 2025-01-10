@@ -6,10 +6,15 @@
 }
 <h1 class="h3 mb-4">Управление на контактите</h1>
 
-<p>
-    <a asp-action="Create" class="btn btn-success">Добави нов контакт</a>
-    <a asp-action="DeletedIndex" class="btn btn-primary">Виж изтрити</a>
-</p>
+<div class="d-flex justify-content-between mb-3">
+    <div>
+        <a asp-action="Create" class="btn btn-success">Добави нов контакт</a>
+        <a asp-action="DeletedIndex" class="btn btn-primary">Виж изтрити</a>
+    </div>
+    <div>
+        <a asp-action="UserRoles" class="btn btn-secondary ms-auto">Потребителски права</a>
+    </div>
+</div>
 
 @if (!Model.Any(p => !p.IsDeleted))
 {
