@@ -212,7 +212,7 @@ namespace BuditelPhonebook.Tests
             await using (var context = new ApplicationDbContext(_options))
             {
                 var repository = new PersonRepository(context);
-                await repository.SoftDeleteAsync(8, "напуснал");
+                await repository.SoftDeleteAsync(8, "напуснал", "11.01.2021.");
 
                 var softDeletedPerson = await context.People.FindAsync(8);
                 softDeletedPerson.IsDeleted.Should().BeTrue();
