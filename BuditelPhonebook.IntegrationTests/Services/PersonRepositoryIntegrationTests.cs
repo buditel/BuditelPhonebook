@@ -131,7 +131,7 @@ namespace BuditelPhonebook.IntegrationTests.Services
             await using (var context = new ApplicationDbContext(_options))
             {
                 var repository = new PersonRepository(context);
-                await repository.SoftDeleteAsync(4, "напуснал");
+                await repository.SoftDeleteAsync(4, "напуснал", "10.10.2020.");
 
                 var deletedPerson = await context.People.FindAsync(4);
                 deletedPerson.Should().NotBeNull();
@@ -264,7 +264,7 @@ namespace BuditelPhonebook.IntegrationTests.Services
             await using (var context = new ApplicationDbContext(_options))
             {
                 var repository = new PersonRepository(context);
-                await repository.SoftDeleteAsync(7, "напуснал");
+                await repository.SoftDeleteAsync(7, "напуснал", "12.12.2022.");
 
                 var deletedPerson = await context.People.FindAsync(7);
                 deletedPerson.IsDeleted.Should().BeTrue();
