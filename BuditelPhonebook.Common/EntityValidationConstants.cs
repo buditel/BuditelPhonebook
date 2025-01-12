@@ -9,5 +9,11 @@
             public const string HireAndLeaveDateRegexPattern = @"\d{2}.\d{2}.\d{4}.";
             public const string HireAndLeaveDateFormat = "dd.MM.yyyy.";
         }
+
+        public static class UserRole
+        {
+            public const string EmailRegexPattern = @"\S+@buditel\.bg";
+            public const string UserRoleRegexPattern = "Администратор|Модератор";
+        }
     }
 }

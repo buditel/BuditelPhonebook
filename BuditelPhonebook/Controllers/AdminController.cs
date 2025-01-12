@@ -2,6 +2,7 @@
 using BuditelPhonebook.Core.Contracts;
 using BuditelPhonebook.Infrastructure.Data.Models;
 using BuditelPhonebook.Web.ViewModels.Person;
+using BuditelPhonebook.Web.ViewModels.UserRole;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,15 +11,17 @@ using static BuditelPhonebook.Common.EntityValidationMessages.Person;
 
 namespace BuditelPhonebook.Web.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "SuperAdmin")]
     public class AdminController : Controller
     {
         private readonly IPersonRepository _personRepository;
+        private readonly IUserRoleRepository _userRoleRepository;
         private readonly ILogger<AdminController> _logger;
 
-        public AdminController(IPersonRepository personRepository, ILogger<AdminController> logger)
+        public AdminController(IPersonRepository personRepository, IUserRoleRepository userRoleRepository, ILogger<AdminController> logger)
         {
             _personRepository = personRepository;
+            _userRoleRepository = userRoleRepository;
             _logger = logger;
         }
 
@@ -232,6 +235,76 @@ namespace BuditelPhonebook.Web.Controllers
             await _personRepository.UpdateAsync(person);
 
             return RedirectToAction(nameof(DeletedIndex));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UserRoles()
+        {
+            var userRoles = await _userRoleRepository.GetAllRolesAsync();
+
+            var model = new UserRoleViewModel
+            {
+                UserRoles = userRoles
+            };
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult ConfirmUserRole(UserRoleViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("UserRoles", model);
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AssignUserRole(UserRoleViewModel model)
+        {
+            if (model.Role.Equals("Администратор", StringComparison.OrdinalIgnoreCase) || model.Role.Equals("Модератор", StringComparison.OrdinalIgnoreCase))
+            {
+                var userRole = new UserRole()
+                {
+                    Role = model.Role,
+                    Email = model.Email,
+                };
+
+                await _userRoleRepository.AddRoleAsync(userRole);
+            }
+            //TODO: ExceptionHandling
+
+            return RedirectToAction("UserRoles");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ConfirmRemoveFromRole(int id)
+        {
+            var userRole = await _userRoleRepository.GetByIdAsync(id);
+
+            if (userRole == null)
+            {
+                throw new Exception();
+            }
+
+            var model = new RemoveUserRoleViewModel()
+            {
+                Id = id,
+                Email = userRole.Email,
+                Role = userRole.Role
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveFromRole(int id)
+        {
+            await _userRoleRepository.RemoveRoleAsync(id);
+
+            return RedirectToAction("UserRoles");
         }
     }
 }

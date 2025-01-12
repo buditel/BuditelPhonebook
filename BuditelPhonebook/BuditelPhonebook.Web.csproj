@@ -27,8 +27,4 @@
     <ProjectReference Include="..\BuditelPhonebook.Web.ViewModels\BuditelPhonebook.Web.ViewModels.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Areas\Identity\" />
-  </ItemGroup>
-
 </Project>

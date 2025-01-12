@@ -23,7 +23,7 @@
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item"><a class="nav-link" href="/Phonebook">Указател</a></li>
-                            @if (User.IsInRole("Admin"))
+                            @if (User.IsInRole("SuperAdmin"))
                             {
                                 <li class="nav-item">
                                     <a class="nav-link" asp-controller="Admin" asp-action="Index">Контакти</a>

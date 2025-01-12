@@ -1,0 +1,15 @@
+﻿@model UserRoleViewModel
+@{
+    ViewBag.Title = "Възложи роля";
+}
+<h1 class="h3 mb-4">Възложи роля</h1>
+<div class="alert alert-warning">
+    Сигурни ли сте, че искате да възложите <strong>@Model.Role</strong> на <strong>@Model.Email</strong>?
+</div>
+
+<form asp-action="AssignUserRole" method="post">
+    <input type="hidden" asp-for="Role"  value="@Model.Role"/>
+    <input type="hidden" asp-for="Email" value="@Model.Email" />
+    <button type="submit" class="btn btn-danger">Да, възложи</button>
+    <a asp-action="UserRoles" class="btn btn-secondary">Отказ</a>
+</form>

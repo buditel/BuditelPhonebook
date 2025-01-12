@@ -1,5 +1,6 @@
 using BuditelPhonebook.Core.Contracts;
 using BuditelPhonebook.Core.Repositories;
+using BuditelPhonebook.Core.Services;
 using BuditelPhonebook.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -15,6 +16,7 @@ namespace BuditelPhonebook
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Add services to the container
             builder.Services.AddControllersWithViews();
 
             // Add User Secrets in development environment
@@ -35,11 +37,12 @@ namespace BuditelPhonebook
             builder.Services.AddScoped<IPersonRepository, PersonRepository>();
             builder.Services.AddScoped<IRoleRepository, RoleRepository>();
             builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            builder.Services.AddScoped<IUserRoleRepository, UserRoleRepository>();
 
             // Google authentication
             var googleConfig = builder.Configuration.GetSection("Authentication:Google");
             var allowedDomain = googleConfig["AllowedDomain"];
-            var adminEmails = builder.Configuration.GetSection("AdminEmails").Get<string[]>() ?? new string[0];
+            var superAdminEmails = builder.Configuration.GetSection("SuperAdminEmails").Get<string[]>() ?? new string[0];
 
             builder.Services.AddAuthentication(options =>
             {
@@ -52,8 +55,8 @@ namespace BuditelPhonebook
                 options.AccessDeniedPath = "/Account/AccessDenied";
                 options.LoginPath = "/Account/Login";
                 options.LogoutPath = "/Account/Logout";
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Set the expiration time
-                options.SlidingExpiration = true; // Optionally use sliding expiration
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                options.SlidingExpiration = true;
             })
             .AddGoogle(options =>
             {
@@ -61,32 +64,45 @@ namespace BuditelPhonebook
                 options.ClientSecret = googleConfig["ClientSecret"];
                 options.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
 
-                options.Events.OnCreatingTicket = ctx =>
+                options.Events.OnCreatingTicket = async ctx =>
                 {
+                    using var scope = ctx.HttpContext.RequestServices.CreateScope();
+                    var userRoleRepository = scope.ServiceProvider.GetRequiredService<IUserRoleRepository>();
+
                     var email = ctx.Principal.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
 
                     // Ensure the email matches the allowed domain
                     if (string.IsNullOrEmpty(email) || !email.EndsWith($"@{allowedDomain}", StringComparison.OrdinalIgnoreCase))
                     {
                         ctx.Fail("Access Denied");
-                        // Fail authentication if the email is from an unauthorized domain
-                        ctx.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                        await ctx.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
                         ctx.HttpContext.Response.Redirect("/Account/AccessDenied");
-                        return Task.CompletedTask;
+                        return;
                     }
 
-                    // Add roles for admin users
+                    // Fetch roles dynamically from the database
+                    var adminEmails = await userRoleRepository.GetAdminEmailsAsync();
+                    var moderatorEmails = await userRoleRepository.GetModeratorEmailsAsync();
+
                     var claimsIdentity = (System.Security.Claims.ClaimsIdentity)ctx.Principal.Identity;
-                    if (adminEmails.Contains(email, StringComparer.OrdinalIgnoreCase))
+
+                    // Assign roles
+                    if (superAdminEmails.Contains(email, StringComparer.OrdinalIgnoreCase))
+                    {
+                        claimsIdentity.AddClaim(new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Role, "SuperAdmin"));
+                    }
+                    else if (adminEmails.Contains(email, StringComparer.OrdinalIgnoreCase))
                     {
                         claimsIdentity.AddClaim(new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Role, "Admin"));
+                    }
+                    else if (moderatorEmails.Contains(email, StringComparer.OrdinalIgnoreCase))
+                    {
+                        claimsIdentity.AddClaim(new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Role, "Moderator"));
                     }
                     else
                     {
                         claimsIdentity.AddClaim(new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Role, "User"));
                     }
-
-                    return Task.CompletedTask;
                 };
             });
 

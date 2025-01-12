@@ -38,5 +38,14 @@
             public const string NameRequiredMessage = "Трябва да въведете име.";
             public const string NameLengthMessage = "Дължината на името трябва да е между 2 и 100 символа.";
         }
+
+        public static class UserRole
+        {
+            public const string UserRoleRequiredMessage = "Трябва да изберете роля.";
+            public const string EmailRequiredMessage = "Трябва да въведете служебен имейл.";
+            public const string EmailLengthMessage = "Дължината на служебния имейл трябва да е между 2 и 50 символа.";
+            public const string EmailWrongFormatMessage = "Имейлът трябва да завършва на buditel.bg";
+            public const string RoleWrongFormatMessage = "Ролята може да бъде Администратор или Модератор";
+        }
     }
 }
