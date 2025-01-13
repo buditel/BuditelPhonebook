@@ -8,7 +8,10 @@
 
 <div class="d-flex justify-content-between mb-3">
     <div>
-        <a asp-action="Create" class="btn btn-success">Добави нов контакт</a>
+        @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+        {
+            <a asp-action="Create" class="btn btn-success">Добави нов контакт</a>
+        }
         <a asp-action="DeletedIndex" class="btn btn-primary">Виж изтрити</a>
     </div>
     <div>
@@ -24,39 +27,45 @@ else
 {
     <table class="table table-striped table-bordered align-middle">
         <thead class="table-light">
-        <tr>
-            <th>Име</th>
-            <th>Презиме</th>
-            <th>Фамилия</th>
-            <th>Имейл</th>
-            <th>Личен телефон</th>
-            <th>Роля</th>
-            <th>Отдел</th>
-            <th>Дата на постъпване</th>
-            <th style="width:120px;">Действия</th>
-        </tr>
+            <tr>
+                <th>Име</th>
+                <th>Презиме</th>
+                <th>Фамилия</th>
+                <th>Имейл</th>
+                <th>Личен телефон</th>
+                <th>Роля</th>
+                <th>Отдел</th>
+                <th>Дата на постъпване</th>
+                @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                {
+                    <th style="width:120px;">Действия</th>
+                }
+            </tr>
         </thead>
         <tbody>
-        @foreach (var p in Model
-                      .Where(p => !p.IsDeleted)
-                      .OrderBy(p => p.FirstName)
-                      .ThenBy(p => p.LastName))
-        {
-            <tr>
-                <td>@p.FirstName</td>
-                <td>@p.MiddleName</td>
-                <td>@p.LastName</td>
-                <td>@p.Email</td>
-                <td>@p.PersonalPhoneNumber</td>
-                <td>@p.Role.Name</td>
-                <td>@p.Department.Name</td>
-                <td>@p.HireDate.ToString(HireAndLeaveDateFormat)</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-sm btn-primary">Редактирай</a>
-                    <a asp-action="Delete" asp-route-id="@p.Id" class="btn btn-sm btn-danger">Изтрий</a>
-                </td>
-            </tr>
-        }
+            @foreach (var p in Model
+           .Where(p => !p.IsDeleted)
+           .OrderBy(p => p.FirstName)
+           .ThenBy(p => p.LastName))
+            {
+                <tr>
+                    <td>@p.FirstName</td>
+                    <td>@p.MiddleName</td>
+                    <td>@p.LastName</td>
+                    <td>@p.Email</td>
+                    <td>@p.PersonalPhoneNumber</td>
+                    <td>@p.Role.Name</td>
+                    <td>@p.Department.Name</td>
+                    <td>@p.HireDate.ToString(HireAndLeaveDateFormat)</td>
+                    @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                    {
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-sm btn-primary">Редактирай</a>
+                            <a asp-action="Delete" asp-route-id="@p.Id" class="btn btn-sm btn-danger">Изтрий</a>
+                        </td>
+                    }
+                </tr>
+            }
         </tbody>
     </table>
 }

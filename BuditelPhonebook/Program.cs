@@ -50,14 +50,7 @@ namespace BuditelPhonebook
                 options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
             })
-            .AddCookie(options =>
-            {
-                options.AccessDeniedPath = "/Account/AccessDenied";
-                options.LoginPath = "/Account/Login";
-                options.LogoutPath = "/Account/Logout";
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-                options.SlidingExpiration = true;
-            })
+            .AddCookie()
             .AddGoogle(options =>
             {
                 options.ClientId = googleConfig["ClientId"];
@@ -74,10 +67,8 @@ namespace BuditelPhonebook
                     // Ensure the email matches the allowed domain
                     if (string.IsNullOrEmpty(email) || !email.EndsWith($"@{allowedDomain}", StringComparison.OrdinalIgnoreCase))
                     {
-                        ctx.Fail("Access Denied");
-                        await ctx.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-                        ctx.HttpContext.Response.Redirect("/Account/AccessDenied");
-                        return;
+                        ctx.Options.AccessDeniedPath = "/Account/AccessDenied";
+                        ctx.HttpContext.Response.StatusCode = 403;
                     }
 
                     // Fetch roles dynamically from the database
@@ -106,8 +97,6 @@ namespace BuditelPhonebook
                 };
             });
 
-            builder.Services.AddAuthorization();
-
             var app = builder.Build();
 
             app.UseHttpsRedirection();
@@ -122,24 +111,12 @@ namespace BuditelPhonebook
             // Security headers
             app.Use(async (context, next) =>
             {
-                context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
-                context.Response.Headers["Pragma"] = "no-cache";
-                context.Response.Headers["Expires"] = "0";
                 context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
                 context.Response.Headers.Add("X-Frame-Options", "DENY");
                 context.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
                 context.Response.Headers.Add("Content-Security-Policy",
                     "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://cdn.jsdelivr.net; img-src 'self' https://buditel.softuni.bg data:;");
                 await next();
-            });
-
-            app.UseStatusCodePages(context =>
-            {
-                if (context.HttpContext.Response.StatusCode == 403)
-                {
-                    context.HttpContext.Response.Redirect("/Account/AccessDenied");
-                }
-                return Task.CompletedTask;
             });
 
             app.MapControllerRoute(

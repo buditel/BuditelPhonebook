@@ -1,6 +1,7 @@
 ﻿using BuditelPhonebook.Core.Contracts;
 using BuditelPhonebook.Infrastructure.Data.Models;
 using BuditelPhonebook.Web.ViewModels.Role;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using static BuditelPhonebook.Common.EntityValidationMessages.Role;
@@ -16,12 +17,14 @@ namespace BuditelPhonebook.Web.Controllers
             _roleRepository = roleRepository;
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin, Moderator")]
         public async Task<IActionResult> Index()
         {
             var roles = await _roleRepository.GetAllAsync();
             return View(roles);
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin")]
         public IActionResult Create()
         {
             var model = new CreateRoleViewModel();
@@ -29,6 +32,7 @@ namespace BuditelPhonebook.Web.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateRoleViewModel model)
@@ -53,6 +57,7 @@ namespace BuditelPhonebook.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<IActionResult> Edit(int id)
         {
             var role = await _roleRepository.GetByIdAsync(id);
@@ -70,6 +75,7 @@ namespace BuditelPhonebook.Web.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditRoleViewModel model)
@@ -92,6 +98,7 @@ namespace BuditelPhonebook.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var role = await _roleRepository.GetByIdAsync(id);
@@ -100,6 +107,7 @@ namespace BuditelPhonebook.Web.Controllers
             return View(role);
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

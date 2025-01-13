@@ -11,7 +11,6 @@ using static BuditelPhonebook.Common.EntityValidationMessages.Person;
 
 namespace BuditelPhonebook.Web.Controllers
 {
-    [Authorize(Roles = "SuperAdmin")]
     public class AdminController : Controller
     {
         private readonly IPersonRepository _personRepository;
@@ -25,6 +24,7 @@ namespace BuditelPhonebook.Web.Controllers
             _logger = logger;
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin, Moderator")]
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -40,6 +40,7 @@ namespace BuditelPhonebook.Web.Controllers
             }
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpGet]
         public IActionResult Create()
         {
@@ -52,6 +53,7 @@ namespace BuditelPhonebook.Web.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreatePersonViewModel model)
@@ -86,6 +88,7 @@ namespace BuditelPhonebook.Web.Controllers
             }
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<IActionResult> Edit(int id)
         {
             try
@@ -102,7 +105,7 @@ namespace BuditelPhonebook.Web.Controllers
             }
         }
 
-
+        [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditPersonViewModel model)
@@ -137,6 +140,7 @@ namespace BuditelPhonebook.Web.Controllers
             }
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
@@ -165,6 +169,7 @@ namespace BuditelPhonebook.Web.Controllers
             }
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(DeletePersonViewModel model)
@@ -182,6 +187,7 @@ namespace BuditelPhonebook.Web.Controllers
             }
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpGet]
         public async Task<IActionResult> DeletedIndex()
         {
@@ -207,6 +213,7 @@ namespace BuditelPhonebook.Web.Controllers
             return View(results);
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpGet]
         public async Task<IActionResult> Restore(int id)
         {
@@ -223,6 +230,7 @@ namespace BuditelPhonebook.Web.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpPost]
         public async Task<IActionResult> Restore(RestorePersonViewModel model)
         {
@@ -237,6 +245,7 @@ namespace BuditelPhonebook.Web.Controllers
             return RedirectToAction(nameof(DeletedIndex));
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin, Moderator")]
         [HttpGet]
         public async Task<IActionResult> UserRoles()
         {
@@ -250,6 +259,7 @@ namespace BuditelPhonebook.Web.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "SuperAdmin")]
         [HttpGet]
         public IActionResult ConfirmUserRole(UserRoleViewModel model)
         {
@@ -261,10 +271,11 @@ namespace BuditelPhonebook.Web.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "SuperAdmin")]
         [HttpPost]
         public async Task<IActionResult> AssignUserRole(UserRoleViewModel model)
         {
-            if (model.Role.Equals("Администратор", StringComparison.OrdinalIgnoreCase) || model.Role.Equals("Модератор", StringComparison.OrdinalIgnoreCase))
+            if (model.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase) || model.Role.Equals("Moderator", StringComparison.OrdinalIgnoreCase))
             {
                 var userRole = new UserRole()
                 {
@@ -279,6 +290,7 @@ namespace BuditelPhonebook.Web.Controllers
             return RedirectToAction("UserRoles");
         }
 
+        [Authorize(Roles = "SuperAdmin")]
         [HttpGet]
         public async Task<IActionResult> ConfirmRemoveFromRole(int id)
         {
@@ -299,6 +311,7 @@ namespace BuditelPhonebook.Web.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "SuperAdmin")]
         [HttpPost]
         public async Task<IActionResult> RemoveFromRole(int id)
         {
