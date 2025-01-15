@@ -133,14 +133,16 @@ namespace BuditelPhonebook
                 await next();
             });
 
-            app.UseStatusCodePages(context =>
+            if (!app.Environment.IsDevelopment())
             {
-                if (context.HttpContext.Response.StatusCode == 403)
-                {
-                    context.HttpContext.Response.Redirect("/Account/AccessDenied");
-                }
-                return Task.CompletedTask;
-            });
+                app.UseExceptionHandler("/Error");
+            }
+            else
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
+            app.UseStatusCodePagesWithReExecute("/Error/{0}");
 
             app.MapControllerRoute(
                 name: "default",
