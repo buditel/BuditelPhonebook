@@ -1,6 +1,7 @@
 ﻿using BuditelPhonebook.Core.Contracts;
 using BuditelPhonebook.Infrastructure.Data.Models;
 using BuditelPhonebook.Web.ViewModels.Department;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using static BuditelPhonebook.Common.EntityValidationMessages.Department;
@@ -16,12 +17,14 @@ namespace BuditelPhonebook.Web.Controllers
             _departmentRepository = departmentRepository;
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin, Moderator")]
         public async Task<IActionResult> Index()
         {
             var departments = await _departmentRepository.GetAllAsync();
             return View(departments);
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin")]
         public IActionResult Create()
         {
             CreateDepartmentViewModel model = new CreateDepartmentViewModel();
@@ -29,6 +32,7 @@ namespace BuditelPhonebook.Web.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateDepartmentViewModel model)
@@ -53,6 +57,7 @@ namespace BuditelPhonebook.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<IActionResult> Edit(int id)
         {
             var department = await _departmentRepository.GetByIdAsync(id);
@@ -70,6 +75,7 @@ namespace BuditelPhonebook.Web.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditDepartmentViewModel model)
@@ -93,6 +99,7 @@ namespace BuditelPhonebook.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var department = await _departmentRepository.GetByIdAsync(id);
@@ -101,6 +108,7 @@ namespace BuditelPhonebook.Web.Controllers
             return View(department);
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

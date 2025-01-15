@@ -54,12 +54,12 @@
                                 {
                                     <p class="card-text"><strong>Рождена дата:</strong> @person.Birthdate</p>
                                 }
-                                @if (User.IsInRole("Admin"))
+                                @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin") || User.IsInRole("Moderator"))
                                 {
                                     <p class="card-text"><strong>Дата на постъпване:</strong> @person.HireDate</p>
                                 }
                             </div>
-                            @if (User.IsInRole("Admin"))
+                            @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
                             {
                                 <div class="mt-auto text-end">
                                     <a asp-controller="Admin" asp-action="Edit" asp-route-id="@person.Id" class="btn btn-primary me-2">Редактиране</a>

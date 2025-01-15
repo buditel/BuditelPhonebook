@@ -26,7 +26,10 @@ else
                 <th>Роля</th>
                 <th>Отдел</th>
                 <th>Дата на напускане</th>
-                <th style="width:120px;"></th>
+                @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                {
+                    <th style="width:120px;"></th>
+                }
             </tr>
         </thead>
         <tbody>
@@ -42,9 +45,12 @@ else
                     <td>@p.Role</td>
                     <td>@p.Department</td>
                     <td>@p.LeaveDate</td>
-                    <td>
-                        <a asp-action="Restore" asp-route-id="@p.Id" class="btn btn-sm btn-success">Възстанови</a>
-                    </td>
+                    @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                    {
+                        <td>
+                            <a asp-action="Restore" asp-route-id="@p.Id" class="btn btn-sm btn-success">Възстанови</a>
+                        </td>
+                    }
                 </tr>
             }
         </tbody>

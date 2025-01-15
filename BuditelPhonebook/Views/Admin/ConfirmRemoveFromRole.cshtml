@@ -4,7 +4,7 @@
 }
 <h1 class="h3 mb-4">Премахни от роля</h1>
 <div class="alert alert-warning">
-    Сигурни ли сте, че искате да премахнете роля <strong>@Model.Role</strong> от <strong>@Model.Email</strong>?
+    Сигурни ли сте, че искате да премахнете роля <strong>@(Model.Role == "Admin" ? "Администратор" : "Модератор")</strong> от <strong>@Model.Email</strong>?
 </div>
 
 <form asp-action="RemoveFromRole" method="post">

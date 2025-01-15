@@ -13,7 +13,7 @@
         public static class UserRole
         {
             public const string EmailRegexPattern = @"\S+@buditel\.bg";
-            public const string UserRoleRegexPattern = "Администратор|Модератор";
+            public const string UserRoleRegexPattern = "Admin|Moderator";
         }
     }
 }

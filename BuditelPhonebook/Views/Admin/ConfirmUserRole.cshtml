@@ -4,7 +4,7 @@
 }
 <h1 class="h3 mb-4">Възложи роля</h1>
 <div class="alert alert-warning">
-    Сигурни ли сте, че искате да възложите <strong>@Model.Role</strong> на <strong>@Model.Email</strong>?
+    Сигурни ли сте, че искате да възложите <strong>@(Model.Role == "Admin" ? "Администратор" : "Модератор")</strong> на <strong>@Model.Email</strong>?
 </div>
 
 <form asp-action="AssignUserRole" method="post">
