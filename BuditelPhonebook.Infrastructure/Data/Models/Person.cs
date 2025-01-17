@@ -65,6 +65,9 @@ namespace BuditelPhonebook.Infrastructure.Data.Models
 
         [MaxLength(150)]
         public string? CommentOnDeletion { get; set; }
+
+        public ICollection<ChangeLog> ChangeLogs { get; set; }
+            = new List<ChangeLog>();
     }
 
 }

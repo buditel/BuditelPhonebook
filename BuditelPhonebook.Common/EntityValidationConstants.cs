@@ -15,5 +15,10 @@
             public const string EmailRegexPattern = @"\S+@buditel\.bg";
             public const string UserRoleRegexPattern = "Admin|Moderator";
         }
+
+        public static class ChangeLog
+        {
+            public const string ChangeLogDateTimeFormat = "dd.MM.yyyy. HH:mm";
+        }
     }
 }

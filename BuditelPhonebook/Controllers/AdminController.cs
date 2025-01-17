@@ -1,11 +1,13 @@
 ﻿// Updated AdminController.cs with logger and exception handling
 using BuditelPhonebook.Core.Contracts;
 using BuditelPhonebook.Infrastructure.Data.Models;
+using BuditelPhonebook.Web.ViewModels.ChangeLog;
 using BuditelPhonebook.Web.ViewModels.Person;
 using BuditelPhonebook.Web.ViewModels.UserRole;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static BuditelPhonebook.Common.EntityValidationConstants.ChangeLog;
 using static BuditelPhonebook.Common.EntityValidationConstants.Person;
 using static BuditelPhonebook.Common.EntityValidationMessages.Person;
 
@@ -15,12 +17,14 @@ namespace BuditelPhonebook.Web.Controllers
     {
         private readonly IPersonRepository _personRepository;
         private readonly IUserRoleRepository _userRoleRepository;
+        private readonly IChangeLogRepository _changeLogRepository;
         private readonly ILogger<AdminController> _logger;
 
-        public AdminController(IPersonRepository personRepository, IUserRoleRepository userRoleRepository, ILogger<AdminController> logger)
+        public AdminController(IPersonRepository personRepository, IUserRoleRepository userRoleRepository, IChangeLogRepository changeLogRepository, ILogger<AdminController> logger)
         {
             _personRepository = personRepository;
             _userRoleRepository = userRoleRepository;
+            _changeLogRepository = changeLogRepository;
             _logger = logger;
         }
 
@@ -71,11 +75,22 @@ namespace BuditelPhonebook.Web.Controllers
                 return View(model);
             }
 
-            Person person = await _personRepository.CreateANewPerson(model);
-
             try
             {
+                Person person = await _personRepository.CreateANewPerson(model);
+
                 await _personRepository.AddAsync(person);
+
+                ChangeLog change = new ChangeLog()
+                {
+                    ChangedAt = DateTime.Now,
+                    ChangedBy = User.Identity.Name,
+                    ChangesDescriptions = new List<string> { "Създаден нов контакт." },
+                    PersonId = person.Id,
+                };
+
+                await _changeLogRepository.AddChangeAsync(change);
+
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -111,7 +126,7 @@ namespace BuditelPhonebook.Web.Controllers
         public async Task<IActionResult> Edit(EditPersonViewModel model)
         {
             bool exists = _personRepository.GetAllAttached().Any(r => r.Email == model.Email);
-            var currentPerson = await _personRepository.GetByIdAsync(model.Id);
+            var currentPerson = await _personRepository.GetByIdWithRelationsAsync(model.Id);
             if (exists && model.Email != currentPerson.Email)
             {
                 ModelState.AddModelError(nameof(model.Email), EmailUniqueMessage);
@@ -126,7 +141,16 @@ namespace BuditelPhonebook.Web.Controllers
 
             try
             {
+                var change = new ChangeLog
+                {
+                    PersonId = model.Id,
+                    ChangedAt = DateTime.Now,
+                    ChangedBy = User.Identity.Name,
+                    ChangesDescriptions = await _changeLogRepository.GenerateChangeDescription(currentPerson, model)
+                };
+
                 await _personRepository.EditPerson(model);
+                await _changeLogRepository.AddChangeAsync(change);
 
                 return RedirectToAction(nameof(Index));
             }
@@ -318,6 +342,29 @@ namespace BuditelPhonebook.Web.Controllers
             await _userRoleRepository.RemoveRoleAsync(id);
 
             return RedirectToAction("UserRoles");
+        }
+
+        public async Task<IActionResult> SeeLatestChange(int id)
+        {
+            var model = await _changeLogRepository
+                .GetAllAttached()
+                .Where(cl => cl.PersonId == id)
+                .OrderByDescending(cl => cl.ChangedAt)
+                .Select(cl => new ChangeLogViewModel
+                {
+                    ChangesDescriptions = cl.ChangesDescriptions
+                    ,
+                    ChangedAt = cl.ChangedAt.ToString(ChangeLogDateTimeFormat),
+                    ChangedBy = cl.ChangedBy
+                })
+                .FirstOrDefaultAsync();
+
+            if (model == null)
+            {
+                return NotFound("No changes found for this person.");
+            }
+
+            return PartialView("_LatestChange", model);
         }
     }
 }

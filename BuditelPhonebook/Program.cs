@@ -38,6 +38,7 @@ namespace BuditelPhonebook
             builder.Services.AddScoped<IRoleRepository, RoleRepository>();
             builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             builder.Services.AddScoped<IUserRoleRepository, UserRoleRepository>();
+            builder.Services.AddScoped<IChangeLogRepository, ChangeLogRepository>();
 
             // Google authentication
             var googleConfig = builder.Configuration.GetSection("Authentication:Google");

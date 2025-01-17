@@ -4,6 +4,7 @@ using BuditelPhonebook.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BuditelPhonebook.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250113204236_AddedNewTableChangeLog")]
+    partial class AddedNewTableChangeLog
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,6 +33,11 @@ namespace BuditelPhonebook.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ChangeDescription")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
                     b.Property<DateTime>("ChangedAt")
                         .HasColumnType("datetime2");
 
@@ -37,10 +45,6 @@ namespace BuditelPhonebook.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(80)
                         .HasColumnType("nvarchar(80)");
-
-                    b.Property<string>("ChangesDescriptions")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PersonId")
                         .HasColumnType("int");
@@ -208,7 +212,7 @@ namespace BuditelPhonebook.Infrastructure.Migrations
             modelBuilder.Entity("BuditelPhonebook.Infrastructure.Data.Models.ChangeLog", b =>
                 {
                     b.HasOne("BuditelPhonebook.Infrastructure.Data.Models.Person", "Person")
-                        .WithMany("ChangeLogs")
+                        .WithMany()
                         .HasForeignKey("PersonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -219,13 +223,13 @@ namespace BuditelPhonebook.Infrastructure.Migrations
             modelBuilder.Entity("BuditelPhonebook.Infrastructure.Data.Models.Person", b =>
                 {
                     b.HasOne("BuditelPhonebook.Infrastructure.Data.Models.Department", "Department")
-                        .WithMany("People")
+                        .WithMany()
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("BuditelPhonebook.Infrastructure.Data.Models.Role", "Role")
-                        .WithMany("People")
+                        .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -233,21 +237,6 @@ namespace BuditelPhonebook.Infrastructure.Migrations
                     b.Navigation("Department");
 
                     b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("BuditelPhonebook.Infrastructure.Data.Models.Department", b =>
-                {
-                    b.Navigation("People");
-                });
-
-            modelBuilder.Entity("BuditelPhonebook.Infrastructure.Data.Models.Person", b =>
-                {
-                    b.Navigation("ChangeLogs");
-                });
-
-            modelBuilder.Entity("BuditelPhonebook.Infrastructure.Data.Models.Role", b =>
-                {
-                    b.Navigation("People");
                 });
 #pragma warning restore 612, 618
         }

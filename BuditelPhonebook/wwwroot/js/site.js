@@ -180,3 +180,30 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.see-latest-change').forEach(element => {
+        element.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            const personId = this.getAttribute('data-id');
+            const modalBody = document.querySelector('#latestChangeModal .modal-content');
+
+            fetch(`/Admin/SeeLatestChange?id=${personId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch latest change.');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    modalBody.innerHTML = html;
+                })
+                .catch(error => {
+                    modalBody.innerHTML = `<div class="modal-body text-danger">${error.message}</div>`;
+                });
+        });
+    });
+});
+
+

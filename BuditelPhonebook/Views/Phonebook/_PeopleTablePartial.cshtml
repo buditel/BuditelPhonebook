@@ -58,6 +58,19 @@
                                 {
                                     <p class="card-text"><strong>Дата на постъпване:</strong> @person.HireDate</p>
                                 }
+                                @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin") || User.IsInRole("Moderator"))
+                                {
+                                    <a href="#" class="see-latest-change" data-id="@person.Id" data-bs-toggle="modal" data-bs-target="#latestChangeModal">
+                                        <p class="card-text"><strong>Актуализиран на:</strong> @person.ChangedAt</p>
+                                    </a>
+                                    <div class="modal fade" id="latestChangeModal" tabindex="-1" aria-labelledby="latestChangeModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
                             </div>
                             @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
                             {

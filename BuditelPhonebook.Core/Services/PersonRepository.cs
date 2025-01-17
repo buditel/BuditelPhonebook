@@ -92,6 +92,7 @@ namespace BuditelPhonebook.Core.Repositories
                 return await _context.People
                     .Include(p => p.Role)
                     .Include(p => p.Department)
+                    .Include(p => p.ChangeLogs)
                     .Where(p => !p.IsDeleted)
                     .Select(p => new PersonDetailsViewModel
                     {
@@ -108,7 +109,8 @@ namespace BuditelPhonebook.Core.Repositories
                         Role = p.Role.Name,
                         SubjectGroup = p.SubjectGroup,
                         Subject = p.Subject,
-                        PersonPicture = p.PersonPicture
+                        PersonPicture = p.PersonPicture,
+                        ChangedAt = p.ChangeLogs.OrderByDescending(c => c.ChangedAt).FirstOrDefault().ChangedAt.ToString(HireAndLeaveDateFormat)
                     })
                     .ToListAsync();
             }
