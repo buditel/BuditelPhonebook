@@ -206,4 +206,17 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+    const removePictureButton = document.getElementById('removePictureButton');
+    const existingPictureContainer = document.getElementById('existingPictureContainer');
+    const existingPicture = document.getElementById('existingPicture');
+
+    if (removePictureButton) {
+        removePictureButton.addEventListener('click', function () {
+            existingPictureContainer.style.display = 'none';
+            existingPicture.value = null;
+        });
+    }
+});
+
 

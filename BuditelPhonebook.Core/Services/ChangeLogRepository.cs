@@ -160,17 +160,17 @@ namespace BuditelPhonebook.Core.Services
                     var base64Thumbnail = Convert.ToBase64String(CreateThumbnail(personPictureData));
                     changes.Add($"Добавена снимка: <img src='data:image/png;base64,{base64Thumbnail}' alt='Updated Picture' />");
                 }
-                else if (oldPerson.PersonPicture == null && personPictureData == null)
-                {
-                    var base64Thumbnail = Convert.ToBase64String(CreateThumbnail(oldPerson.PersonPicture));
-                    changes.Add($"Премахната снимка: <img src='data:image/png;base64,{base64Thumbnail}' alt='Old Picture' />");
-                }
                 else if (oldPerson.PersonPicture != null && personPictureData != null)
                 {
                     var base64ThumbnailOld = Convert.ToBase64String(CreateThumbnail(oldPerson.PersonPicture));
                     var base64ThumbnailNew = Convert.ToBase64String(CreateThumbnail(personPictureData));
 
                     changes.Add($"Редактирана снимка: <img src='data:image/png;base64,{base64ThumbnailOld}' alt='Old Picture' /> -> <img src='data:image/png;base64,{base64ThumbnailNew}' alt='Updated Picture' />");
+                }
+                else if (oldPerson.PersonPicture != null && newPerson.ExistingPicture == null)
+                {
+                    var base64Thumbnail = Convert.ToBase64String(CreateThumbnail(oldPerson.PersonPicture));
+                    changes.Add($"Премахната снимка: <img src='data:image/png;base64,{base64Thumbnail}' alt='Old Picture' />");
                 }
             }
 

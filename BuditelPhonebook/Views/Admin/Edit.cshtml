@@ -43,19 +43,26 @@
     <div class="mb-3">
         <label class="form-label" for="fileInput">Снимка</label>
 
-        <div class="d-flex align-items-center gap-3">
+        <div class="d-flex align-items-md-start gap-3">
             @if (Model.ExistingPicture != null)
             {
-                <div>
+                <div id="existingPictureContainer">
                     <label class="form-label">Текуща снимка:</label>
-                    <img src="@($"data:image/webp;base64,{Convert.ToBase64String(Model.ExistingPicture)}")" alt="Current Picture" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: contain;" />
+                    <div>
+                        <img src="@($"data:image/webp;base64,{Convert.ToBase64String(Model.ExistingPicture)}")" alt="Current Picture" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: contain;" />
+                        <div class="mt-2">
+                            <button type="button" class="btn btn-danger btn-sm" id="removePictureButton">Премахни</button>
+                        </div>
+                    </div>
                 </div>
 
                 <input asp-for="ExistingPicture" type="hidden" id="existingPicture" />
             }
-            <div id="previewContainer" style="display: none;">
+            <div id="previewContainer" style="display: none;" class="">
                 <label class="form-label">Нова снимка:</label>
-                <img id="previewImage" src="#" alt="New Picture Preview" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: contain;" />
+                <div>
+                    <img id="previewImage" src="#" alt="New Picture Preview" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: contain;" />
+                </div>
             </div>
         </div>
         <div class="mt-3">

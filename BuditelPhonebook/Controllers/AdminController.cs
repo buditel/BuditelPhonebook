@@ -139,6 +139,11 @@ namespace BuditelPhonebook.Web.Controllers
                 return View(model);
             }
 
+            if (Request.Form["RemoveExistingPicture"] == true)
+            {
+
+            }
+
             try
             {
                 var change = new ChangeLog

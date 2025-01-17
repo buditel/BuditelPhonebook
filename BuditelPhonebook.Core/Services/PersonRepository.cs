@@ -250,6 +250,10 @@ namespace BuditelPhonebook.Core.Repositories
             {
                 person.PersonPicture = model.ExistingPicture;
             }
+            else if (model.PersonPicture == null && model.ExistingPicture == null)
+            {
+                person.PersonPicture = model.ExistingPicture;
+            }
             else
             {
                 person.PersonPicture = personPictureData;
