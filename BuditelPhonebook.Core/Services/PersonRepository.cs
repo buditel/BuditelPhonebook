@@ -115,11 +115,13 @@ namespace BuditelPhonebook.Core.Repositories
                     .ToListAsync();
             }
 
+            var queryArray = query.ToLower().Split(" ", StringSplitOptions.RemoveEmptyEntries);
             query = query.ToLower();
             return await _context.People
                 .Include(p => p.Role)
                 .Include(p => p.Department)
-                .Where(p => !p.IsDeleted && (p.FirstName.ToLower().Contains(query)
+                .Where(p => !p.IsDeleted && queryArray.All(query =>
+                                p.FirstName.ToLower().Contains(query)
                             || (p.MiddleName != null && p.MiddleName.ToLower().Contains(query))
                             || p.LastName.ToLower().Contains(query)
                             || p.Email.ToLower().Contains(query)
