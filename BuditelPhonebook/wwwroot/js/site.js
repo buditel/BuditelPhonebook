@@ -192,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function () {
             fetch(`/Admin/SeeLatestChange?id=${personId}`)
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Failed to fetch latest change.');
+                        throw new Error('Грешка при зареждане на последна промяна.');
                     }
                     return response.text();
                 })
