@@ -1,4 +1,5 @@
-﻿@model IEnumerable<PersonDetailsViewModel>
+﻿@using System.Text.RegularExpressions
+@model IEnumerable<PersonDetailsViewModel>
 
 @if (!Model.Any())
 {
@@ -42,8 +43,13 @@
                                 </p>
                                 <p class="card-text">
                                     <strong>Служебен телефон:</strong>
-                                    @(person.BusinessPhoneNumber != null
-                                        ? $"<a href=\"tel:{person.BusinessPhoneNumber}\">{person.BusinessPhoneNumber}</a>"
+                                    @{
+                                        var sanitizedPhoneNumber = person.BusinessPhoneNumber != null && Regex.IsMatch(person.BusinessPhoneNumber, @"[0-9]+")
+                                        ? person.BusinessPhoneNumber
+                                        : null;
+                                    }
+                                    @(sanitizedPhoneNumber != null
+                                        ? Html.Raw($"<a href=\"tel:{sanitizedPhoneNumber}\">{sanitizedPhoneNumber}</a>")
                                         : "липсва")
                                 </p>
                                 <p class="card-text">

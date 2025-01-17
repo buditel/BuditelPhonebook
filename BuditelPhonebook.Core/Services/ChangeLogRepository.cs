@@ -155,17 +155,17 @@ namespace BuditelPhonebook.Core.Services
             if (!ArePicturesEqual(oldPerson.PersonPicture, personPictureData))
             {
                 //TODO:
-                if (oldPerson.PersonPicture == null)
+                if (oldPerson.PersonPicture == null && personPictureData != null)
                 {
                     var base64Thumbnail = Convert.ToBase64String(CreateThumbnail(personPictureData));
                     changes.Add($"Добавена снимка: <img src='data:image/png;base64,{base64Thumbnail}' alt='Updated Picture' />");
                 }
-                else if (personPictureData == null)
+                else if (oldPerson.PersonPicture == null && personPictureData == null)
                 {
                     var base64Thumbnail = Convert.ToBase64String(CreateThumbnail(oldPerson.PersonPicture));
                     changes.Add($"Премахната снимка: <img src='data:image/png;base64,{base64Thumbnail}' alt='Old Picture' />");
                 }
-                else
+                else if (oldPerson.PersonPicture != null && personPictureData != null)
                 {
                     var base64ThumbnailOld = Convert.ToBase64String(CreateThumbnail(oldPerson.PersonPicture));
                     var base64ThumbnailNew = Convert.ToBase64String(CreateThumbnail(personPictureData));
