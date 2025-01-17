@@ -35,8 +35,7 @@ namespace BuditelPhonebook.Web.Controllers
 
             if (person == null)
             {
-                //TODO: Add correct exception
-                throw new Exception();
+                return NotFound();
             }
 
             var model = new PersonDetailsViewModel

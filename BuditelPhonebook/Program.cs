@@ -120,6 +120,15 @@ namespace BuditelPhonebook
                 await next();
             });
 
+            app.UseStatusCodePages(context =>
+            {
+                if (context.HttpContext.Response.StatusCode == 403)
+                {
+                    context.HttpContext.Response.Redirect("/Account/AccessDenied");
+                }
+                return Task.CompletedTask;
+            });
+
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Phonebook}/{action=Index}/{id?}");
