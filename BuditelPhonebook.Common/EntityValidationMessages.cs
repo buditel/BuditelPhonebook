@@ -44,6 +44,8 @@
             public const string UserRoleRequiredMessage = "Трябва да изберете роля.";
             public const string EmailRequiredMessage = "Трябва да въведете служебен имейл.";
             public const string EmailLengthMessage = "Дължината на служебния имейл трябва да е между 2 и 50 символа.";
+            public const string UserInSuperAdminRoleMessage = "{0} е в роля Супер Админ, не може да му се постави допълнителна роля.";
+            public const string UserIsInSameRoleMessage = "{0} вече е в роля {1}";
             public const string EmailWrongFormatMessage = "Имейлът трябва да завършва на buditel.bg";
             public const string RoleWrongFormatMessage = "Ролята може да бъде Администратор или Модератор";
         }

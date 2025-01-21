@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using static BuditelPhonebook.Common.EntityValidationConstants.ChangeLog;
 using static BuditelPhonebook.Common.EntityValidationConstants.Person;
 using static BuditelPhonebook.Common.EntityValidationMessages.Person;
+using static BuditelPhonebook.Common.EntityValidationMessages.UserRole;
 
 namespace BuditelPhonebook.Web.Controllers
 {
@@ -18,13 +19,19 @@ namespace BuditelPhonebook.Web.Controllers
         private readonly IPersonRepository _personRepository;
         private readonly IUserRoleRepository _userRoleRepository;
         private readonly IChangeLogRepository _changeLogRepository;
+        private readonly IConfiguration _configuration;
         private readonly ILogger<AdminController> _logger;
 
-        public AdminController(IPersonRepository personRepository, IUserRoleRepository userRoleRepository, IChangeLogRepository changeLogRepository, ILogger<AdminController> logger)
+        public AdminController(IPersonRepository personRepository,
+            IUserRoleRepository userRoleRepository,
+            IChangeLogRepository changeLogRepository,
+            IConfiguration configuration,
+            ILogger<AdminController> logger)
         {
             _personRepository = personRepository;
             _userRoleRepository = userRoleRepository;
             _changeLogRepository = changeLogRepository;
+            _configuration = configuration;
             _logger = logger;
         }
 
@@ -137,11 +144,6 @@ namespace BuditelPhonebook.Web.Controllers
                 model.Roles = _personRepository.GetRoles();
                 model.Departments = _personRepository.GetDepartments();
                 return View(model);
-            }
-
-            if (Request.Form["RemoveExistingPicture"] == true)
-            {
-
             }
 
             try
@@ -290,11 +292,34 @@ namespace BuditelPhonebook.Web.Controllers
 
         [Authorize(Roles = "SuperAdmin")]
         [HttpGet]
-        public IActionResult ConfirmUserRole(UserRoleViewModel model)
+        public async Task<IActionResult> ConfirmUserRole(UserRoleViewModel model)
         {
+            var superAdminEmails = _configuration.GetSection("SuperAdminEmails").Get<List<string>>();
+            if (superAdminEmails != null && superAdminEmails.Contains(model.Email))
+            {
+                ModelState.AddModelError(nameof(model.Email), string.Format(UserInSuperAdminRoleMessage, model.Email));
+            }
+
+            if (await _userRoleRepository.GetAllRolesAttached().AnyAsync(ur => ur.Email == model.Email && ur.Role == model.Role))
+            {
+                var roleInBulgarian = model.Role == "Admin" ? "Администратор" : "Модератор";
+                ModelState.AddModelError(nameof(model.Role), string.Format(UserIsInSameRoleMessage, model.Email, roleInBulgarian));
+            }
+
             if (!ModelState.IsValid)
             {
+                var userRoles = await _userRoleRepository.GetAllRolesAsync();
+                model.UserRoles = userRoles;
+
                 return View("UserRoles", model);
+            }
+
+            var currentRole = await _userRoleRepository.GetAllRolesAttached()
+                .FirstOrDefaultAsync(ur => ur.Email == model.Email);
+
+            if (currentRole != null)
+            {
+                model.CurrentRole = currentRole.Role;
             }
 
             return View(model);
@@ -306,13 +331,23 @@ namespace BuditelPhonebook.Web.Controllers
         {
             if (model.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase) || model.Role.Equals("Moderator", StringComparison.OrdinalIgnoreCase))
             {
-                var userRole = new UserRole()
-                {
-                    Role = model.Role,
-                    Email = model.Email,
-                };
+                var userToChange = await _userRoleRepository.GetAllRolesAttached().FirstOrDefaultAsync(ur => ur.Email == model.Email);
 
-                await _userRoleRepository.AddRoleAsync(userRole);
+                if (userToChange != null)
+                {
+                    userToChange.Role = model.Role;
+                    await _userRoleRepository.UpdateAsync(userToChange);
+                }
+                else
+                {
+                    var userRole = new UserRole()
+                    {
+                        Role = model.Role,
+                        Email = model.Email,
+                    };
+
+                    await _userRoleRepository.AddRoleAsync(userRole);
+                }
             }
             //TODO: ExceptionHandling
 

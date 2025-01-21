@@ -14,6 +14,8 @@ namespace BuditelPhonebook.Web.ViewModels.UserRole
         [RegularExpression(UserRoleRegexPattern, ErrorMessage = RoleWrongFormatMessage)]
         public string Role { get; set; } = null!;
 
+        public string? CurrentRole { get; set; }
+
         public IEnumerable<Infrastructure.Data.Models.UserRole> UserRoles { get; set; }
             = new List<Infrastructure.Data.Models.UserRole>();
     }

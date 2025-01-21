@@ -3,13 +3,29 @@
     ViewBag.Title = "Възложи роля";
 }
 <h1 class="h3 mb-4">Възложи роля</h1>
-<div class="alert alert-warning">
-    Сигурни ли сте, че искате да възложите <strong>@(Model.Role == "Admin" ? "Администратор" : "Модератор")</strong> на <strong>@Model.Email</strong>?
-</div>
+@if (Model.CurrentRole != null)
+{
+    <div class="alert alert-warning">
+        "Сигурни ли сте, че искате да промените ролята на <strong>@Model.Email</strong> от <strong>@(Model.CurrentRole == "Admin" ? "Администратор" : "Модератор")</strong> на <strong>@(Model.Role == "Admin" ? "Администратор" : "Модератор")</strong>?"
+    </div>
 
-<form asp-action="AssignUserRole" method="post">
-    <input type="hidden" asp-for="Role"  value="@Model.Role"/>
-    <input type="hidden" asp-for="Email" value="@Model.Email" />
-    <button type="submit" class="btn btn-danger">Да, възложи</button>
-    <a asp-action="UserRoles" class="btn btn-secondary">Отказ</a>
-</form>
+    <form asp-action="AssignUserRole" method="post">
+        <input type="hidden" asp-for="Role" value="@Model.Role" />
+        <input type="hidden" asp-for="Email" value="@Model.Email" />
+        <button type="submit" class="btn btn-danger">Да, промени</button>
+        <a asp-action="UserRoles" class="btn btn-secondary">Отказ</a>
+    </form>
+}
+else
+{
+    <div class="alert alert-warning">
+        "Сигурни ли сте, че искате да възложите <strong>@(Model.Role == "Admin" ? "Администратор" : "Модератор")</strong> на <strong>@Model.Email</strong>?"
+    </div>
+
+    <form asp-action="AssignUserRole" method="post">
+        <input type="hidden" asp-for="Role" value="@Model.Role" />
+        <input type="hidden" asp-for="Email" value="@Model.Email" />
+        <button type="submit" class="btn btn-danger">Да, възложи</button>
+        <a asp-action="UserRoles" class="btn btn-secondary">Отказ</a>
+    </form>
+}

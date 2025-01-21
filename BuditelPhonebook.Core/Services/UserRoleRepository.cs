@@ -64,5 +64,21 @@ namespace BuditelPhonebook.Core.Services
                 .Select(ur => ur.Email)
                 .ToListAsync();
         }
+
+        public IQueryable<UserRole> GetAllRolesAttached()
+        {
+            return _context.UsersRoles.AsQueryable();
+        }
+
+        public async Task UpdateAsync(UserRole userRole)
+        {
+            if (userRole == null)
+            {
+                throw new ArgumentNullException(nameof(userRole));
+            }
+
+            _context.UsersRoles.Update(userRole);
+            await _context.SaveChangesAsync();
+        }
     }
 }
