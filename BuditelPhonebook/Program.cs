@@ -51,7 +51,11 @@ namespace BuditelPhonebook
                 options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
             })
-            .AddCookie()
+            .AddCookie(options =>
+            {
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                options.SlidingExpiration = true;
+            })
             .AddGoogle(options =>
             {
                 options.ClientId = googleConfig["ClientId"];
