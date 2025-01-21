@@ -133,3 +133,11 @@ footer {
 .horizontal-logo{
     max-width: 150px;
 }
+
+.action-headings-table{
+    text-align: center;
+}
+
+.table-data{
+    max-width: 1000px;
+}

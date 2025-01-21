@@ -12,7 +12,7 @@
     <form asp-action="AssignUserRole" method="post">
         <input type="hidden" asp-for="Role" value="@Model.Role" />
         <input type="hidden" asp-for="Email" value="@Model.Email" />
-        <button type="submit" class="btn btn-danger">Да, промени</button>
+        <button type="submit" class="btn btn-danger m-1">Да, промени</button>
         <a asp-action="UserRoles" class="btn btn-secondary">Отказ</a>
     </form>
 }
@@ -25,7 +25,7 @@ else
     <form asp-action="AssignUserRole" method="post">
         <input type="hidden" asp-for="Role" value="@Model.Role" />
         <input type="hidden" asp-for="Email" value="@Model.Email" />
-        <button type="submit" class="btn btn-danger">Да, възложи</button>
+        <button type="submit" class="btn btn-danger m-1">Да, възложи</button>
         <a asp-action="UserRoles" class="btn btn-secondary">Отказ</a>
     </form>
 }

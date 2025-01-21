@@ -10,7 +10,7 @@
     <div class="row">
         @foreach (var person in Model.OrderBy(p => p.FirstName).ThenBy(p => p.LastName))
         {
-            <div class="col-md-6 mb-4 d-flex">
+            <div class="col-lg-6 col-md-12 mb-4 d-flex">
                 <div class="contact-card card shadow p-3 bg-white rounded person-card w-100 h-100">
                     <div class="row g-0 h-100">
                         <div class="col-md-4 text-center">
