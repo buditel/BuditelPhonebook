@@ -5,7 +5,6 @@ using BuditelPhonebook.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace BuditelPhonebook
@@ -30,8 +29,8 @@ namespace BuditelPhonebook
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // Configure Identity
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            //    .AddEntityFrameworkStores<ApplicationDbContext>();
 
             // Add repositories
             builder.Services.AddScoped<IPersonRepository, PersonRepository>();
@@ -60,7 +59,20 @@ namespace BuditelPhonebook
             {
                 options.ClientId = googleConfig["ClientId"];
                 options.ClientSecret = googleConfig["ClientSecret"];
+                options.SaveTokens = true; // Save tokens to ensure proper state handling
                 options.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
+
+                options.Events.OnRemoteFailure = context =>
+                {
+                    // This handles the failed authentication scenario (like a correlation error)
+                    if (context.Failure != null)
+                    {
+                        context.Response.Redirect("/Account/Login");
+                        context.HandleResponse();
+                    }
+
+                    return Task.CompletedTask;
+                };
 
                 options.Events.OnCreatingTicket = async ctx =>
                 {
@@ -72,8 +84,9 @@ namespace BuditelPhonebook
                     // Ensure the email matches the allowed domain
                     if (string.IsNullOrEmpty(email) || !email.EndsWith($"@{allowedDomain}", StringComparison.OrdinalIgnoreCase))
                     {
-                        ctx.Options.AccessDeniedPath = "/Account/AccessDenied";
-                        ctx.HttpContext.Response.StatusCode = 403;
+                        ctx.Fail("Email domain not allowed.");
+
+                        return;
                     }
 
                     // Fetch roles dynamically from the database
@@ -99,8 +112,11 @@ namespace BuditelPhonebook
                     {
                         claimsIdentity.AddClaim(new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Role, "User"));
                     }
+
+                    return;
                 };
             });
+
 
             var app = builder.Build();
 
@@ -109,9 +125,32 @@ namespace BuditelPhonebook
 
             app.UseRouting();
 
+
             app.UseAuthentication();
-            app.UseMiddleware<DomainRestrictionMiddleware>();
+
+            app.Use(async (context, next) =>
+            {
+                // Check if the user is authenticated
+                if (context.User.Identity?.IsAuthenticated == true)
+                {
+                    var email = context.User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Email)?.Value;
+
+                    if (string.IsNullOrEmpty(email) || !email.EndsWith($"@{allowedDomain}", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // If email is invalid, sign out and redirect to Access Denied
+                        await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                        context.Response.Redirect("/Account/AccessDenied");
+                        return; // Stop further processing
+                    }
+                }
+
+                // Continue to the next middleware
+                await next.Invoke();
+            });
+
             app.UseAuthorization();
+
+
 
             // Security headers
             app.Use(async (context, next) =>
@@ -122,15 +161,6 @@ namespace BuditelPhonebook
                 context.Response.Headers.Add("Content-Security-Policy",
                     "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://cdn.jsdelivr.net; img-src 'self' https://buditel.softuni.bg data:;");
                 await next();
-            });
-
-            app.UseStatusCodePages(context =>
-            {
-                if (context.HttpContext.Response.StatusCode == 403)
-                {
-                    context.HttpContext.Response.Redirect("/Account/AccessDenied");
-                }
-                return Task.CompletedTask;
             });
 
             app.MapControllerRoute(
