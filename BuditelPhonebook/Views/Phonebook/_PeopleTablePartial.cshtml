@@ -1,14 +1,14 @@
 ﻿@using System.Text.RegularExpressions
-@model IEnumerable<PersonDetailsViewModel>
+@model PaginatedPersonViewModel
 
-@if (!Model.Any())
+@if (!Model.People.Any())
 {
     <div class="alert alert-info text-center">Няма съвпадения.</div>
 }
 
 <div class="container mt-5">
     <div class="row">
-        @foreach (var person in Model.OrderBy(p => p.FirstName).ThenBy(p => p.LastName))
+        @foreach (var person in Model.People.OrderBy(p => p.FirstName).ThenBy(p => p.LastName))
         {
             <div class="col-lg-6 col-md-12 mb-4 d-flex">
                 <div class="contact-card card shadow p-3 bg-white rounded person-card w-100 h-100">
@@ -92,3 +92,14 @@
         }
     </div>
 </div>
+
+<nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                <a class="page-link" href="#" data-page="@i">@i</a>
+            </li>
+        }
+    </ul>
+</nav>

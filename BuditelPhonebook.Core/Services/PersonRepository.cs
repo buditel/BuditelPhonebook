@@ -85,50 +85,36 @@ namespace BuditelPhonebook.Core.Repositories
         }
 
 
-        public async Task<IEnumerable<PersonDetailsViewModel>> SearchAsync(string query)
+        public async Task<(IEnumerable<PersonDetailsViewModel> People, int TotalCount)> SearchAsync(string query, int page = 1, int pageSize = 10)
         {
-            if (string.IsNullOrWhiteSpace(query) || query.Length <= 1)
-            {
-                return await _context.People
-                    .Include(p => p.Role)
-                    .Include(p => p.Department)
-                    .Include(p => p.ChangeLogs)
-                    .Where(p => !p.IsDeleted)
-                    .Select(p => new PersonDetailsViewModel
-                    {
-                        Id = p.Id,
-                        FirstName = p.FirstName,
-                        MiddleName = p.MiddleName,
-                        LastName = p.LastName,
-                        Birthdate = p.Birthdate,
-                        PersonalPhoneNumber = p.PersonalPhoneNumber,
-                        BusinessPhoneNumber = p.BusinessPhoneNumber,
-                        HireDate = p.HireDate.ToString(HireAndLeaveDateFormat),
-                        Email = p.Email,
-                        Department = p.Department.Name,
-                        Role = p.Role.Name,
-                        SubjectGroup = p.SubjectGroup,
-                        Subject = p.Subject,
-                        PersonPicture = p.PersonPicture,
-                        ChangedAt = p.ChangeLogs.OrderByDescending(c => c.ChangedAt).FirstOrDefault().ChangedAt.ToString(HireAndLeaveDateFormat)
-                    })
-                    .ToListAsync();
-            }
-
-            var queryArray = query.ToLower().Split(" ", StringSplitOptions.RemoveEmptyEntries);
-            query = query.ToLower();
-            return await _context.People
+            IQueryable<Person> queryable = _context.People
                 .Include(p => p.Role)
                 .Include(p => p.Department)
-                .Where(p => !p.IsDeleted && queryArray.All(query =>
-                                p.FirstName.ToLower().Contains(query)
-                            || (p.MiddleName != null && p.MiddleName.ToLower().Contains(query))
-                            || p.LastName.ToLower().Contains(query)
-                            || p.Email.ToLower().Contains(query)
-                            || (p.BusinessPhoneNumber != null && p.BusinessPhoneNumber.ToLower().Contains(query))
-                            || p.PersonalPhoneNumber.ToLower().Contains(query)
-                            || (p.Role != null && p.Role.Name.ToLower().Contains(query))
-                            || (p.Department != null && p.Department.Name.ToLower().Contains(query))))
+                .Include(p => p.ChangeLogs)
+                .Where(p => !p.IsDeleted);
+
+            if (!string.IsNullOrWhiteSpace(query) && query.Length > 1)
+            {
+                var queryArray = query.ToLower().Split(" ", StringSplitOptions.RemoveEmptyEntries);
+                queryable = queryable.Where(p =>
+                    queryArray.All(q =>
+                        p.FirstName.ToLower().Contains(q)
+                        || (p.MiddleName != null && p.MiddleName.ToLower().Contains(q))
+                        || p.LastName.ToLower().Contains(q)
+                        || p.Email.ToLower().Contains(q)
+                        || (p.BusinessPhoneNumber != null && p.BusinessPhoneNumber.ToLower().Contains(q))
+                        || p.PersonalPhoneNumber.ToLower().Contains(q)
+                        || (p.Role != null && p.Role.Name.ToLower().Contains(q))
+                        || (p.Department != null && p.Department.Name.ToLower().Contains(q))));
+            }
+
+            int totalCount = await queryable.CountAsync();
+
+            var people = await queryable
+                .OrderBy(p => p.FirstName)
+                .ThenBy(p => p.LastName)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .Select(p => new PersonDetailsViewModel
                 {
                     Id = p.Id,
@@ -144,9 +130,12 @@ namespace BuditelPhonebook.Core.Repositories
                     Role = p.Role.Name,
                     SubjectGroup = p.SubjectGroup,
                     Subject = p.Subject,
-                    PersonPicture = p.PersonPicture
+                    PersonPicture = p.PersonPicture,
+                    ChangedAt = p.ChangeLogs.OrderByDescending(c => c.ChangedAt).FirstOrDefault().ChangedAt.ToString(HireAndLeaveDateFormat)
                 })
                 .ToListAsync();
+
+            return (people, totalCount);
         }
 
         public IEnumerable<Role> GetRoles()

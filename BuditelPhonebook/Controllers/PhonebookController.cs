@@ -17,15 +17,24 @@ namespace BuditelPhonebook.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string search)
+        public async Task<IActionResult> Index(string search, int page = 1, int pageSize = 10)
         {
-            IEnumerable<PersonDetailsViewModel> people = await _personRepository.SearchAsync(search); // Filter results based on the search query
+            var (people, totalCount) = await _personRepository.SearchAsync(search, page, pageSize);
+
+            var model = new PaginatedPersonViewModel
+            {
+                People = people,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalCount = totalCount
+            };
+
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                return PartialView("_PeopleTablePartial", people); // Return the partial view for AJAX
+                return PartialView("_PeopleTablePartial", model); // Return the partial view for AJAX
             }
 
-            return View(people); // Return the full view for standard requests
+            return View(model); // Return the full view for standard requests
         }
 
         [HttpGet]

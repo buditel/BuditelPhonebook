@@ -36,12 +36,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById("searchInput");
     const searchBtn = document.getElementById("searchBtn");
     const resultsContainer = document.getElementById("results");
-    const suggestionsDropdown = document.getElementById("suggestions");
 
-    // Function to fetch search results
-    const fetchSearchResults = async (query) => {
+    let currentPage = 1;
+
+    // Function to fetch search results with pagination
+    const fetchSearchResults = async (query, page = 1) => {
         try {
-            const response = await fetch(`/Phonebook/Index?search=${encodeURIComponent(query)}`, {
+            const response = await fetch(`/Phonebook/Index?search=${encodeURIComponent(query)}&page=${page}`, {
                 headers: { "X-Requested-With": "XMLHttpRequest" },
             });
 
@@ -53,6 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (partialViewHtml.trim()) {
                 resultsContainer.innerHTML = partialViewHtml;
+                currentPage = page; // Update current page
             }
         } catch (error) {
             console.error("Error fetching search results:", error);
@@ -65,18 +67,29 @@ document.addEventListener("DOMContentLoaded", function () {
         const query = searchInput.value.trim();
 
         if (query.length > 1) {
-            fetchSearchResults(query);
+            fetchSearchResults(query, 1); // Reset to page 1 for new search
         } else {
-            fetchSearchResults("");
+            fetchSearchResults("", 1);
         }
     });
 
     // Event handler for search button
     searchBtn.addEventListener("click", function () {
         const query = searchInput.value.trim();
-        fetchSearchResults(query);
+        fetchSearchResults(query, 1); // Reset to page 1 for search button click
+    });
+
+    // Event delegation for pagination links
+    resultsContainer.addEventListener("click", function (e) {
+        if (e.target.tagName === "A" && e.target.classList.contains("page-link")) {
+            e.preventDefault();
+            const page = parseInt(e.target.getAttribute("data-page"), 10);
+            const query = searchInput.value.trim();
+            fetchSearchResults(query, page);
+        }
     });
 });
+
 
 
 
