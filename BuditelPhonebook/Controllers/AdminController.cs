@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static BuditelPhonebook.Common.EntityValidationConstants.ChangeLog;
-using static BuditelPhonebook.Common.EntityValidationConstants.Person;
 using static BuditelPhonebook.Common.EntityValidationMessages.Person;
 using static BuditelPhonebook.Common.EntityValidationMessages.UserRole;
 
@@ -33,22 +32,6 @@ namespace BuditelPhonebook.Web.Controllers
             _changeLogRepository = changeLogRepository;
             _configuration = configuration;
             _logger = logger;
-        }
-
-        [Authorize(Roles = "SuperAdmin, Admin, Moderator")]
-        [HttpGet]
-        public async Task<IActionResult> Index()
-        {
-            try
-            {
-                var people = await _personRepository.GetAllAsync();
-                return View(people);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error fetching people in AdminController.Index");
-                return StatusCode(500, "Internal server error");
-            }
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]
@@ -98,7 +81,7 @@ namespace BuditelPhonebook.Web.Controllers
 
                 await _changeLogRepository.AddChangeAsync(change);
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Phonebook");
             }
             catch (Exception ex)
             {
@@ -159,7 +142,7 @@ namespace BuditelPhonebook.Web.Controllers
                 await _personRepository.EditPerson(model);
                 await _changeLogRepository.AddChangeAsync(change);
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Phonebook");
             }
             catch (Exception ex)
             {
@@ -209,7 +192,7 @@ namespace BuditelPhonebook.Web.Controllers
             {
                 await _personRepository.SoftDeleteAsync(model.Id, model.CommentOnDeletion, model.LeaveDate);
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("DeletedIndex");
             }
             catch (Exception ex)
             {
@@ -220,28 +203,24 @@ namespace BuditelPhonebook.Web.Controllers
 
         [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpGet]
-        public async Task<IActionResult> DeletedIndex()
+        public async Task<IActionResult> DeletedIndex(string search, int page = 1, int pageSize = 10)
         {
-            var models = await _personRepository.GetAllAttached()
-                .Where(p => p.IsDeleted)
-                .ToListAsync();
+            var (people, totalCount) = await _personRepository.SearchDeletedAsync(search, page, pageSize);
 
-            var results = models
-                .Select(p => new DeletedIndexPersonViewModel
-                {
-                    Id = p.Id,
-                    FirstName = p.FirstName,
-                    MiddleName = p.MiddleName,
-                    LastName = p.LastName,
-                    Email = p.Email,
-                    PersonalPhoneNumber = p.PersonalPhoneNumber,
-                    LeaveDate = p.LeaveDate?.ToString(HireAndLeaveDateFormat),
-                    Department = p.Department.Name,
-                    Role = p.Role.Name,
-                    CommentOnDeletion = p.CommentOnDeletion
-                });
+            var model = new PaginatedDeletedPersonViewModel
+            {
+                People = people,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalCount = totalCount
+            };
 
-            return View(results);
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("_DeletedPeoplePartial", model); // Return the partial view for AJAX
+            }
+
+            return View(model);
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]

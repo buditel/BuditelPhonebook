@@ -90,6 +90,64 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("searchInputDeleted");
+    const searchBtn = document.getElementById("searchBtnDeleted");
+    const resultsContainer = document.getElementById("resultsDeleted");
+
+    let currentPage = 1;
+
+    // Function to fetch search results with pagination
+    const fetchSearchResults = async (query, page = 1) => {
+        try {
+            const response = await fetch(`/Admin/DeletedIndex?search=${encodeURIComponent(query)}&page=${page}`, {
+                headers: { "X-Requested-With": "XMLHttpRequest" },
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch results.");
+            }
+
+            const partialViewHtml = await response.text();
+
+            if (partialViewHtml.trim()) {
+                resultsContainer.innerHTML = partialViewHtml;
+                currentPage = page; // Update current page
+            }
+        } catch (error) {
+            console.error("Error fetching search results:", error);
+            resultsContainer.innerHTML = `<div class="alert alert-danger text-center">Възникна грешка при зареждането на резултатите.</div>`;
+        }
+    };
+
+    // Event handler for real-time search
+    searchInput.addEventListener("input", function () {
+        const query = searchInput.value.trim();
+
+        if (query.length > 1) {
+            fetchSearchResults(query, 1); // Reset to page 1 for new search
+        } else {
+            fetchSearchResults("", 1);
+        }
+    });
+
+    // Event handler for search button
+    searchBtn.addEventListener("click", function () {
+        const query = searchInput.value.trim();
+        fetchSearchResults(query, 1); // Reset to page 1 for search button click
+    });
+
+    // Event delegation for pagination links
+    resultsContainer.addEventListener("click", function (e) {
+        if (e.target.tagName === "A" && e.target.classList.contains("page-link")) {
+            e.preventDefault();
+            const page = parseInt(e.target.getAttribute("data-page"), 10);
+            const query = searchInput.value.trim();
+            fetchSearchResults(query, page);
+        }
+    });
+});
+
 
 
 

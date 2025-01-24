@@ -138,6 +138,63 @@ namespace BuditelPhonebook.Core.Repositories
             return (people, totalCount);
         }
 
+        public async Task<(IEnumerable<DeletedIndexPersonViewModel> People, int TotalCount)> SearchDeletedAsync(string query, int page = 1, int pageSize = 10)
+        {
+            IQueryable<Person> queryable = _context.People
+                .Include(p => p.Role)
+                .Include(p => p.Department)
+                .Include(p => p.ChangeLogs)
+                .Where(p => p.IsDeleted);
+
+            if (!string.IsNullOrWhiteSpace(query) && query.Length > 1)
+            {
+                var queryArray = query.ToLower().Split(" ", StringSplitOptions.RemoveEmptyEntries);
+                queryable = queryable.Where(p =>
+                    queryArray.All(q =>
+                        p.FirstName.ToLower().Contains(q)
+                        || (p.MiddleName != null && p.MiddleName.ToLower().Contains(q))
+                        || p.LastName.ToLower().Contains(q)
+                        || p.Email.ToLower().Contains(q)
+                        || (p.BusinessPhoneNumber != null && p.BusinessPhoneNumber.ToLower().Contains(q))
+                        || p.PersonalPhoneNumber.ToLower().Contains(q)
+                        || (p.Role != null && p.Role.Name.ToLower().Contains(q))
+                        || (p.Department != null && p.Department.Name.ToLower().Contains(q))));
+            }
+
+            int totalCount = await queryable.CountAsync();
+
+            var peopleList = await queryable
+                .OrderBy(p => p.FirstName)
+                .ThenBy(p => p.LastName)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var people = peopleList
+                .Select(p => new DeletedIndexPersonViewModel
+                {
+                    Id = p.Id,
+                    FirstName = p.FirstName,
+                    MiddleName = p.MiddleName,
+                    LastName = p.LastName,
+                    Birthdate = p.Birthdate,
+                    PersonalPhoneNumber = p.PersonalPhoneNumber,
+                    BusinessPhoneNumber = p.BusinessPhoneNumber,
+                    HireDate = p.HireDate.ToString(HireAndLeaveDateFormat),
+                    LeaveDate = p.LeaveDate?.ToString(HireAndLeaveDateFormat),
+                    CommentOnDeletion = p.CommentOnDeletion,
+                    Email = p.Email,
+                    Department = p.Department.Name,
+                    Role = p.Role.Name,
+                    SubjectGroup = p.SubjectGroup,
+                    Subject = p.Subject,
+                    PersonPicture = p.PersonPicture,
+                })
+                .ToList();
+
+            return (people, totalCount);
+        }
+
         public IEnumerable<Role> GetRoles()
         {
             return _context.Roles.Where(r => !r.IsDeleted).AsNoTracking().ToList();

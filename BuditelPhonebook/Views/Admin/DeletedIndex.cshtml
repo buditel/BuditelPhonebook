@@ -1,60 +1,24 @@
-﻿@model IEnumerable<DeletedIndexPersonViewModel>
+﻿@model PaginatedDeletedPersonViewModel
 @{
-    ViewBag.Title = "Изтрити контакти";
+    ViewBag.Title = "Указател";
 }
-<h1 class="h3 mb-4">Изтрити контакти</h1>
-
-<p>
-    <a asp-action="Index" class="btn btn-primary">Виж актуални</a>
-</p>
-
-@if (!Model.Any())
-{
-    <div class="alert alert-info">Няма изтрити контакти.</div>
-}
-else
-{
-    <div class="table-responsive">
-        <table class="table table-striped table-bordered align-middle">
-            <thead class="table-light">
-                <tr>
-                    <th>Име</th>
-                    <th>Презиме</th>
-                    <th>Фамилия</th>
-                    <th>Коментар</th>
-                    <th>Имейл</th>
-                    <th>Личен телефон</th>
-                    <th>Роля</th>
-                    <th>Отдел</th>
-                    <th>Дата на напускане</th>
-                    @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
-                    {
-                        <th></th>
-                    }
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var p in Model)
-                {
-                    <tr>
-                        <td>@p.FirstName</td>
-                        <td>@p.MiddleName</td>
-                        <td>@p.LastName</td>
-                        <td>@p.CommentOnDeletion</td>
-                        <td>@p.Email</td>
-                        <td>@p.PersonalPhoneNumber</td>
-                        <td>@p.Role</td>
-                        <td>@p.Department</td>
-                        <td>@p.LeaveDate</td>
-                        @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
-                        {
-                            <td>
-                                <a asp-action="Restore" asp-route-id="@p.Id" class="btn btn-sm btn-success">Възстанови</a>
-                            </td>
-                        }
-                    </tr>
-                }
-            </tbody>
-        </table>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 phonebook-title">Изтрити контакти от СофтУни БУДИТЕЛ</h1>
+    <div class="input-group search-bar-container">
+        <input id="searchInputDeleted" type="text" class="form-control" placeholder="Търсене..." />
+        <button id="searchBtnDeleted" class="btn btn-primary">Търси изтрити</button>
     </div>
-}
+</div>
+
+<div class="d-flex flex-wrap justify-content-between mb-3">
+    <div class="mb-2">
+        <a asp-controller="Phonebook" asp-action="Index" class="btn btn-primary mb-2">Виж актуални</a>
+    </div>
+    <div>
+        <a asp-controller="Admin" asp-action="UserRoles" class="btn btn-outline-primary mb-2">Потребителски права</a>
+    </div>
+</div>
+
+<div id="resultsDeleted">
+    <partial name="_DeletedPeoplePartial" model="@Model" />
+</div>

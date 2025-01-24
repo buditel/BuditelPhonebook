@@ -16,7 +16,19 @@
 
         public string? PersonalPhoneNumber { get; set; }
 
+        public string? BusinessPhoneNumber { get; set; }
+
+        public string? Birthdate { get; set; }
+
         public string? LeaveDate { get; set; }
+
+        public string? SubjectGroup { get; set; }
+
+        public string? Subject { get; set; }
+
+        public byte[]? PersonPicture { get; set; }
+
+        public string HireDate { get; set; } = null!;
 
         public string Role { get; set; } = null!;
 

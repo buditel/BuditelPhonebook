@@ -65,11 +65,8 @@ namespace BuditelPhonebook
                 options.Events.OnRemoteFailure = context =>
                 {
                     // This handles the failed authentication scenario (like a correlation error)
-                    if (context.Failure != null)
-                    {
-                        context.Response.Redirect("/Account/Login");
-                        context.HandleResponse();
-                    }
+                    context.Response.Redirect("/Account/Login");
+                    context.HandleResponse();
 
                     return Task.CompletedTask;
                 };

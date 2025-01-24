@@ -1,0 +1,92 @@
+﻿@using System.Text.RegularExpressions
+@model PaginatedDeletedPersonViewModel
+
+@if (!Model.People.Any())
+{
+    <div class="alert alert-info text-center">Няма съвпадения.</div>
+}
+
+<div class="container mt-5">
+    <div class="row">
+        @foreach (var person in Model.People.OrderBy(p => p.FirstName).ThenBy(p => p.LastName))
+        {
+            <div class="col-lg-6 col-md-12 mb-4 d-flex">
+                <div class="contact-card card shadow p-3 bg-white rounded person-card w-100 h-100">
+                    <div class="row g-0 h-100">
+                        <div class="col-md-4 text-center">
+                            <div class="p-3">
+                                @if (person.PersonPicture != null)
+                                {
+                                    <img src="@($"data:image/webp;base64,{Convert.ToBase64String(person.PersonPicture)}")" alt="Avatar" class="img-fluid rounded-circle border person-image" />
+                                }
+                                else
+                                {
+                                    <img src="https://buditel.softuni.bg/wp-content/uploads/2020/04/SoftUni-Buditel-favicon.png" alt="No Avatar" class="img-fluid rounded-circle border person-image" />
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-8 d-flex flex-column">
+                            <div class="card-body flex-grow-1">
+                                <h4 class="card-title mb-3 text-primary">
+                                    @($"{person.FirstName} {(string.IsNullOrWhiteSpace(person.MiddleName) ? "" : $"{person.MiddleName} ")}{person.LastName}")
+                                </h4>
+                                <p class="card-text"><strong>Дата на напускане/изтриване:</strong> @person.LeaveDate</p>
+                                <p class="card-text"><strong>Причина за напускане/изтриване:</strong> @person.CommentOnDeletion</p>
+                                <p class="card-text"><strong>Отдел:</strong> @person.Department</p>
+                                <p class="card-text"><strong>Длъжност:</strong> @person.Role</p>
+                                @if (person.Role == "Учител")
+                                {
+                                    <p class="card-text"><strong>Група предмети:</strong> @person.SubjectGroup</p>
+                                    <p class="card-text"><strong>Предмет:</strong> @person.Subject</p>
+                                }
+                                <p class="card-text">
+                                    <strong>Личен телефон:</strong>
+                                    <a href="tel:@person.PersonalPhoneNumber">@person.PersonalPhoneNumber</a>
+                                </p>
+                                <p class="card-text">
+                                    <strong>Служебен телефон:</strong>
+                                    @{
+                                        var sanitizedPhoneNumber = person.BusinessPhoneNumber != null && Regex.IsMatch(person.BusinessPhoneNumber, @"[0-9]+")
+                                        ? person.BusinessPhoneNumber
+                                        : null;
+                                    }
+                                    @(sanitizedPhoneNumber != null
+                                        ? Html.Raw($"<a href=\"tel:{sanitizedPhoneNumber}\">{sanitizedPhoneNumber}</a>")
+                                        : "липсва")
+                                </p>
+                                <p class="card-text">
+                                    <strong>Имейл:</strong>
+                                    <a href="https://mail.google.com/mail/?view=cm&to=@person.Email" target="_blank">@person.Email</a>
+                                </p>
+                                @if (person.Birthdate != null)
+                                {
+                                    <p class="card-text"><strong>Рождена дата:</strong> @person.Birthdate</p>
+                                }
+
+                                <p class="card-text"><strong>Дата на постъпване:</strong> @person.HireDate</p>
+
+                            </div>
+                            @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                            {
+                                <div class="mt-auto text-end">
+                                    <a asp-controller="Admin" asp-action="Restore" asp-route-id="@person.Id" class="btn btn-success me-2">Възстанови</a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                <a class="page-link" href="#" data-page="@i">@i</a>
+            </li>
+        }
+    </ul>
+</nav>

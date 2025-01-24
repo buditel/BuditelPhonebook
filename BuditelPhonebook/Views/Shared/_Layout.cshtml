@@ -26,9 +26,6 @@
                             @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin") || User.IsInRole("Moderator"))
                             {
                                 <li class="nav-item m-3">
-                                    <a class="nav-link" asp-controller="Admin" asp-action="Index">Контакти</a>
-                                </li>
-                                <li class="nav-item m-3">
                                     <a class="nav-link" asp-controller="Role" asp-action="Index">Длъжности</a>
                                 </li>
                                 <li class="nav-item m-3">

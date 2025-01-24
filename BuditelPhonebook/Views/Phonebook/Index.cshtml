@@ -7,9 +7,25 @@
     <div class="input-group search-bar-container">
         <input id="searchInput" type="text" class="form-control" placeholder="Търсене..." />
         <button id="searchBtn" class="btn btn-primary">Търси</button>
-        <div id="suggestions" class="dropdown-menu w-100"></div>
     </div>
 </div>
+
+@if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin") || User.IsInRole("Moderator"))
+{
+    <div class="d-flex flex-wrap justify-content-between mb-3">
+        <div class="mb-2">
+            @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+            {
+                <a asp-controller="Admin" asp-action="Create" class="btn btn-success mb-2">Добави нов контакт</a>
+            }
+
+            <a asp-controller="Admin" asp-action="DeletedIndex" class="btn btn-primary mb-2">Виж изтрити</a>
+        </div>
+        <div>
+            <a asp-controller="Admin" asp-action="UserRoles" class="btn btn-outline-primary mb-2">Потребителски права</a>
+        </div>
+    </div>
+}
 
 <div id="results">
     <partial name="_PeopleTablePartial" model="@Model"/>
