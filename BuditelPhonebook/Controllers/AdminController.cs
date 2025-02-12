@@ -98,7 +98,6 @@ namespace BuditelPhonebook.Web.Controllers
         {
             try
             {
-                // Fetch the Person using the repository
                 var model = await _personRepository.MapPersonForEditById(id);
 
                 return View(model);
@@ -106,7 +105,7 @@ namespace BuditelPhonebook.Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error fetching person with ID {id} in AdminController.Edit");
-                return StatusCode(500, "Internal server error");
+                return Redirect("/Error/404");
             }
         }
 

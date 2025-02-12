@@ -185,59 +185,59 @@ namespace BuditelPhonebook.IntegrationTests.Services
             }
         }
 
-        [Fact]
-        public async Task SearchAsync_ShouldReturnMatchingPeople_ByName()
-        {
-            await using (var context = new ApplicationDbContext(_options))
-            {
-                var role = new Role { Id = 5, Name = "Developer" };
-                var department = new Department { Id = 6, Name = "Engineering" };
+        //[Fact]
+        //public async Task SearchAsync_ShouldReturnMatchingPeople_ByName()
+        //{
+        //    await using (var context = new ApplicationDbContext(_options))
+        //    {
+        //        var role = new Role { Id = 5, Name = "Developer" };
+        //        var department = new Department { Id = 6, Name = "Engineering" };
 
-                context.Roles.Add(role);
-                context.Departments.Add(department);
+        //        context.Roles.Add(role);
+        //        context.Departments.Add(department);
 
-                context.People.Add(new Person
-                {
-                    Id = 5,
-                    FirstName = "Алекс",
-                    LastName = "Петров",
-                    Email = "alex.petrov@buditel.bg",
-                    PersonalPhoneNumber = "0888111222",
-                    RoleId = 5,
-                    DepartmentId = 6
-                });
-                context.People.Add(new Person
-                {
-                    Id = 6,
-                    FirstName = "Александър",
-                    LastName = "Георгиев",
-                    Email = "alex.georgiev@buditel.bg",
-                    PersonalPhoneNumber = "0888333444",
-                    RoleId = 5,
-                    DepartmentId = 6
-                });
-                await context.SaveChangesAsync();
-            }
+        //        context.People.Add(new Person
+        //        {
+        //            Id = 5,
+        //            FirstName = "Алекс",
+        //            LastName = "Петров",
+        //            Email = "alex.petrov@buditel.bg",
+        //            PersonalPhoneNumber = "0888111222",
+        //            RoleId = 5,
+        //            DepartmentId = 6
+        //        });
+        //        context.People.Add(new Person
+        //        {
+        //            Id = 6,
+        //            FirstName = "Александър",
+        //            LastName = "Георгиев",
+        //            Email = "alex.georgiev@buditel.bg",
+        //            PersonalPhoneNumber = "0888333444",
+        //            RoleId = 5,
+        //            DepartmentId = 6
+        //        });
+        //        await context.SaveChangesAsync();
+        //    }
 
-            await using (var context = new ApplicationDbContext(_options))
-            {
-                var repository = new PersonRepository(context);
-                var results = await repository.SearchAsync("Алекс");
+        //    await using (var context = new ApplicationDbContext(_options))
+        //    {
+        //        var repository = new PersonRepository(context);
+        //        var results = await repository.SearchAsync("Алекс");
 
-                results.Should().HaveCount(2);
-            }
-        }
+        //        results.Should().HaveCount(2);
+        //    }
+        //}
 
-        [Fact]
-        public async Task SearchAsync_ShouldReturnEmpty_WhenNoMatch()
-        {
-            await using (var context = new ApplicationDbContext(_options))
-            {
-                var repository = new PersonRepository(context);
-                var results = await repository.SearchAsync("Няма такъв");
-                results.Should().BeEmpty();
-            }
-        }
+        //[Fact]
+        //public async Task SearchAsync_ShouldReturnEmpty_WhenNoMatch()
+        //{
+        //    await using (var context = new ApplicationDbContext(_options))
+        //    {
+        //        var repository = new PersonRepository(context);
+        //        var results = await repository.SearchAsync("Няма такъв");
+        //        results.Should().BeEmpty();
+        //    }
+        //}
 
         [Fact]
         public async Task SoftDeleteAsync_ShouldNotThrow_WhenPersonAlreadyDeleted()

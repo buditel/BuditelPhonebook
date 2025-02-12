@@ -55,6 +55,8 @@ document.addEventListener("DOMContentLoaded", function () {
             if (partialViewHtml.trim()) {
                 resultsContainer.innerHTML = partialViewHtml;
                 currentPage = page; // Update current page
+
+                window.scrollTo({ top: 0, behavior: "smooth" });
             }
         } catch (error) {
             console.error("Error fetching search results:", error);
@@ -113,6 +115,8 @@ document.addEventListener("DOMContentLoaded", function () {
             if (partialViewHtml.trim()) {
                 resultsContainer.innerHTML = partialViewHtml;
                 currentPage = page; // Update current page
+
+                window.scrollTo({ top: 0, behavior: "smooth" });
             }
         } catch (error) {
             console.error("Error fetching search results:", error);

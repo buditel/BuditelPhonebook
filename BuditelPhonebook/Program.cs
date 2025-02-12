@@ -2,6 +2,7 @@ using BuditelPhonebook.Core.Contracts;
 using BuditelPhonebook.Core.Repositories;
 using BuditelPhonebook.Core.Services;
 using BuditelPhonebook.Infrastructure.Data;
+using BuditelPhonebook.Infrastructure.Seed;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
@@ -114,6 +115,7 @@ namespace BuditelPhonebook
                 };
             });
 
+            builder.Services.AddHttpContextAccessor();
 
             var app = builder.Build();
 
@@ -147,9 +149,32 @@ namespace BuditelPhonebook
 
             app.UseAuthorization();
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var dbContext = services.GetRequiredService<ApplicationDbContext>();
+                var httpContextAccessor = services.GetRequiredService<IHttpContextAccessor>();
+                var seeder = new ExcelDataSeeder(dbContext, httpContextAccessor);
 
+                try
+                {
+                    var filePath = Path.Combine(app.Environment.WebRootPath, "OrgChart.xlsx");
+                    if (File.Exists(filePath))
+                    {
+                        seeder.SeedData(filePath).GetAwaiter().GetResult(); // Run synchronously
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Seeding skipped: File '{filePath}' not found.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error during seeding: {ex.Message}");
+                }
+            }
 
-            // Security headers
+            //Security headers
             app.Use(async (context, next) =>
             {
                 context.Response.Headers.Add("X-Content-Type-Options", "nosniff");

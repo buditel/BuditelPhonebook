@@ -49,7 +49,7 @@ namespace BuditelPhonebook.Infrastructure.Migrations
 
                     b.HasIndex("PersonId");
 
-                    b.ToTable("ChangeLogs");
+                    b.ToTable("ChangeLogs", (string)null);
                 });
 
             modelBuilder.Entity("BuditelPhonebook.Infrastructure.Data.Models.Department", b =>
@@ -73,7 +73,7 @@ namespace BuditelPhonebook.Infrastructure.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Departments");
+                    b.ToTable("Departments", (string)null);
                 });
 
             modelBuilder.Entity("BuditelPhonebook.Infrastructure.Data.Models.Person", b =>
@@ -155,7 +155,7 @@ namespace BuditelPhonebook.Infrastructure.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("People");
+                    b.ToTable("People", (string)null);
                 });
 
             modelBuilder.Entity("BuditelPhonebook.Infrastructure.Data.Models.Role", b =>
@@ -179,7 +179,7 @@ namespace BuditelPhonebook.Infrastructure.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("BuditelPhonebook.Infrastructure.Data.Models.UserRole", b =>
@@ -202,7 +202,7 @@ namespace BuditelPhonebook.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UsersRoles");
+                    b.ToTable("UsersRoles", (string)null);
                 });
 
             modelBuilder.Entity("BuditelPhonebook.Infrastructure.Data.Models.ChangeLog", b =>

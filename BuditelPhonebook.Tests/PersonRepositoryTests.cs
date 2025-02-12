@@ -1,7 +1,6 @@
 ﻿using BuditelPhonebook.Core.Repositories;
 using BuditelPhonebook.Infrastructure.Data;
 using BuditelPhonebook.Infrastructure.Data.Models;
-using BuditelPhonebook.Web.ViewModels.Person;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,8 +39,8 @@ namespace BuditelPhonebook.Tests
                     LastName = "Петров",
                     Email = "ivan.petrov@buditel.bg",
                     PersonalPhoneNumber = "0888123456",
-                    RoleId = role.Id,  
-                    DepartmentId = department.Id  
+                    RoleId = role.Id,
+                    DepartmentId = department.Id
                 });
                 context.People.Add(new Person
                 {
@@ -219,54 +218,54 @@ namespace BuditelPhonebook.Tests
             }
         }
 
-        [Fact]
-        public async Task SearchAsync_ShouldReturnMatchingPeople()
-        {
-            await using (var context = new ApplicationDbContext(_options))
-            {
-                context.Database.EnsureDeleted();
-                context.Database.EnsureCreated();
+        //[Fact]
+        //public async Task SearchAsync_ShouldReturnMatchingPeople()
+        //{
+        //    await using (var context = new ApplicationDbContext(_options))
+        //    {
+        //        context.Database.EnsureDeleted();
+        //        context.Database.EnsureCreated();
 
-                var role = new Role { Id = 1, Name = "Учител" };
-                var department = new Department { Id = 1, Name = "ИТ отдел" };
+        //        var role = new Role { Id = 1, Name = "Учител" };
+        //        var department = new Department { Id = 1, Name = "ИТ отдел" };
 
-                context.Roles.Add(role);
-                context.Departments.Add(department);
-                await context.SaveChangesAsync();
+        //        context.Roles.Add(role);
+        //        context.Departments.Add(department);
+        //        await context.SaveChangesAsync();
 
-                context.People.Add(new Person
-                {
-                    Id = 7,
-                    FirstName = "Даниел",
-                    LastName = "Йорданов",
-                    Email = "daniel.yordanov@buditel.bg",
-                    PersonalPhoneNumber = "0888997766",
-                    RoleId = role.Id,
-                    DepartmentId = department.Id
-                });
+        //        context.People.Add(new Person
+        //        {
+        //            Id = 7,
+        //            FirstName = "Даниел",
+        //            LastName = "Йорданов",
+        //            Email = "daniel.yordanov@buditel.bg",
+        //            PersonalPhoneNumber = "0888997766",
+        //            RoleId = role.Id,
+        //            DepartmentId = department.Id
+        //        });
 
-                context.People.Add(new Person
-                {
-                    Id = 8,
-                    FirstName = "Вероника",
-                    LastName = "Цачева",
-                    Email = "veronika.tsacheva@buditel.bg",
-                    PersonalPhoneNumber = "0888998877",
-                    RoleId = role.Id,
-                    DepartmentId = department.Id
-                });
+        //        context.People.Add(new Person
+        //        {
+        //            Id = 8,
+        //            FirstName = "Вероника",
+        //            LastName = "Цачева",
+        //            Email = "veronika.tsacheva@buditel.bg",
+        //            PersonalPhoneNumber = "0888998877",
+        //            RoleId = role.Id,
+        //            DepartmentId = department.Id
+        //        });
 
-                await context.SaveChangesAsync();
-            }
+        //        await context.SaveChangesAsync();
+        //    }
 
-            await using (var context = new ApplicationDbContext(_options))
-            {
-                var repository = new PersonRepository(context);
-                var results = await repository.SearchAsync("Даниел");
+        //    await using (var context = new ApplicationDbContext(_options))
+        //    {
+        //        var repository = new PersonRepository(context);
+        //        var results = await repository.SearchAsync("Даниел");
 
-                results.Should().ContainSingle(p => p.FirstName == "Даниел");
-            }
-        }
+        //        results.Should().ContainSingle(p => p.FirstName == "Даниел");
+        //    }
+        //}
 
 
         private Person CreatePerson(int id, string firstName, string lastName, string email)

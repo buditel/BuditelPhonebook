@@ -23,6 +23,10 @@ namespace BuditelPhonebook.Infrastructure.Data
                 .HasConversion(
                     v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
                     v => JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions)null));
+
+            //ExcelDataSeeder seeder = new ExcelDataSeeder(this);
+
+            //seeder.SeedData("/OrgChart.xlsx");
         }
     }
 

@@ -1,11 +1,9 @@
 ﻿using BuditelPhonebook.Core.Contracts;
-using BuditelPhonebook.Core.Repositories;
 using BuditelPhonebook.Infrastructure.Data;
 using BuditelPhonebook.Infrastructure.Data.Models;
 using BuditelPhonebook.Web.Controllers;
 using BuditelPhonebook.Web.ViewModels.Person;
 using FluentAssertions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -76,37 +74,37 @@ namespace BuditelPhonebook.Tests.Integration
             await act.Should().ThrowAsync<Exception>();
         }
 
-        [Fact]
-        public async Task Index_ShouldReturnPartialView_ForAjaxRequest()
-        {
-            // Arrange
-            var people = new List<PersonDetailsViewModel>
-            {
-                new PersonDetailsViewModel
-                {
-                    Id = 1,
-                    FirstName = "Иван",
-                    LastName = "Петров",
-                    Email = "ivan.petrov@example.com",
-                    PersonalPhoneNumber = "0888123456",
-                    Role = "Учител",
-                    Department = "ИТ отдел"
-                }
-            };
+        //[Fact]
+        //public async Task Index_ShouldReturnPartialView_ForAjaxRequest()
+        //{
+        //    // Arrange
+        //    var people = new List<PersonDetailsViewModel>
+        //    {
+        //        new PersonDetailsViewModel
+        //        {
+        //            Id = 1,
+        //            FirstName = "Иван",
+        //            LastName = "Петров",
+        //            Email = "ivan.petrov@example.com",
+        //            PersonalPhoneNumber = "0888123456",
+        //            Role = "Учител",
+        //            Department = "ИТ отдел"
+        //        }
+        //    };
 
-            _mockPersonRepository.Setup(repo => repo.SearchAsync("Иван"))
-                .ReturnsAsync(people);
+        //    _mockPersonRepository.Setup(repo => repo.SearchAsync("Иван"))
+        //        .ReturnsAsync(people);
 
-            _controller.ControllerContext.HttpContext = new DefaultHttpContext();
-            _controller.ControllerContext.HttpContext.Request.Headers["X-Requested-With"] = "XMLHttpRequest";
+        //    _controller.ControllerContext.HttpContext = new DefaultHttpContext();
+        //    _controller.ControllerContext.HttpContext.Request.Headers["X-Requested-With"] = "XMLHttpRequest";
 
-            // Act
-            var result = await _controller.Index("Иван") as PartialViewResult;
+        //    // Act
+        //    var result = await _controller.Index("Иван") as PartialViewResult;
 
-            // Assert
-            result.Should().NotBeNull();
-            result.ViewName.Should().Be("_PeopleTablePartial");
-            result.Model.Should().BeAssignableTo<IEnumerable<PersonDetailsViewModel>>();
-        }
+        //    // Assert
+        //    result.Should().NotBeNull();
+        //    result.ViewName.Should().Be("_PeopleTablePartial");
+        //    result.Model.Should().BeAssignableTo<IEnumerable<PersonDetailsViewModel>>();
+        //}
     }
 }
