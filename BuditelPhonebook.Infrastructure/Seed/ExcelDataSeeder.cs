@@ -107,7 +107,11 @@ namespace BuditelPhonebook.Infrastructure.Seed
 
                     Department? department = null;
 
-                    if (!_context.Departments.Any(d => d.Name == departmentName))
+                    if (await _context.Departments.AnyAsync(d => d.Name == departmentName))
+                    {
+                        department = await _context.Departments.FirstOrDefaultAsync(d => d.Name == departmentName);
+                    }
+                    else
                     {
                         department = new Department()
                         {
@@ -117,14 +121,14 @@ namespace BuditelPhonebook.Infrastructure.Seed
                         await _context.Departments.AddAsync(department);
                         await _context.SaveChangesAsync();
                     }
-                    else
-                    {
-                        department = await _context.Departments.FirstOrDefaultAsync(d => d.Name == departmentName);
-                    }
 
                     Role? role = null;
 
-                    if (!_context.Roles.Any(r => r.Name == roleName))
+                    if (await _context.Roles.AnyAsync(r => r.Name == roleName))
+                    {
+                        role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == roleName);
+                    }
+                    else
                     {
                         role = new Role()
                         {
@@ -133,10 +137,6 @@ namespace BuditelPhonebook.Infrastructure.Seed
 
                         await _context.Roles.AddAsync(role);
                         await _context.SaveChangesAsync();
-                    }
-                    else
-                    {
-                        role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == roleName);
                     }
 
                     // Map to Person entity
