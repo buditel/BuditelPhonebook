@@ -2,22 +2,22 @@
 @{
     ViewBag.Title = "Указател";
 }
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3 phonebook-title">Изтрити контакти от СофтУни БУДИТЕЛ</h1>
-    <div class="input-group search-bar-container">
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-5 p-3">
+    <div class="d-flex flex-wrap flex-column flex-md-row mb-1">
+        <div class="m-2">
+            <a asp-controller="Phonebook" asp-action="Index" class="btn btn-primary main-button">Виж актуални</a>
+        </div>
+        <div class="m-2">
+            <a asp-controller="Admin" asp-action="UserRoles" class="btn btn-outline-primary main-button">Потребителски права</a>
+        </div>
+    </div>
+    <div class="input-group search-bar-container mb-2">
         <input id="searchInputDeleted" type="text" class="form-control" placeholder="Търсене..." />
         <button id="searchBtnDeleted" class="btn btn-primary">Търси изтрити</button>
     </div>
 </div>
 
-<div class="d-flex flex-wrap justify-content-between mb-3">
-    <div class="mb-2">
-        <a asp-controller="Phonebook" asp-action="Index" class="btn btn-primary mb-2">Виж актуални</a>
-    </div>
-    <div>
-        <a asp-controller="Admin" asp-action="UserRoles" class="btn btn-outline-primary mb-2">Потребителски права</a>
-    </div>
-</div>
+<h1 class="h3 phonebook-title text-center">Изтрити контакти от СофтУни БУДИТЕЛ</h1>
 
 <div id="resultsDeleted">
     <partial name="_DeletedPeoplePartial" model="@Model" />
