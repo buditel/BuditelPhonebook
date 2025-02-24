@@ -1,19 +1,19 @@
-# Използваме официалния .NET 8 SDK образ за билдване
+# Използваме .NET 8 SDK за билдване
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /app
 
-# Копираме csproj и възстановяваме зависимостите
-COPY *.csproj ./
-RUN dotnet restore
-
-# Копираме останалия код и билдваме
+# Копираме .sln и всички проекти
 COPY . ./
+WORKDIR /app/BuditelPhonebook  # Отиваме в главния уеб проект
+
+# Възстановяваме зависимостите и билдваме проекта
+RUN dotnet restore
 RUN dotnet publish -c Release -o out
 
-# Използваме по-лек .NET 8 runtime образ за стартиране
+# Използваме .NET runtime за изпълнение
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY --from=build-env /app/out .
+COPY --from=build-env /app/BuditelPhonebook/out .
 
-# Изпълняваме приложението
+# Стартиране на приложението
 CMD ["dotnet", "BuditelPhonebook.dll"]
