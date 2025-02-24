@@ -1,0 +1,21 @@
+﻿@model ChangeLogViewModel
+
+<div class="modal-header">
+    <h5 class="modal-title">Последна промяна</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    @foreach (string change in Model.ChangesDescriptions)
+    {
+        if (change.Contains("<img"))
+        {
+            @Html.Raw(change)
+        }
+        else
+        {
+            <p>@change</p>
+        }
+    }
+    <p><strong>Променено от:</strong> @Model.ChangedBy</p>
+    <p><strong>Дата и час на промяната:</strong> @Model.ChangedAt</p>
+</div>

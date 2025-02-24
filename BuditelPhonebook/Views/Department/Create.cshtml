@@ -1,0 +1,16 @@
+﻿@model CreateDepartmentViewModel
+@{
+    ViewBag.Title = "Създай нов отдел";
+}
+
+<h1 class="h3 mb-4">@ViewBag.Title</h1>
+
+<form asp-action="Create" method="post">
+    <div class="form-group mb-3">
+        <label asp-for="Name">Име</label>
+        <input asp-for="Name" class="form-control" placeholder="Въведете име..."/>
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Запиши</button>
+    <a asp-action="Index" class="btn btn-secondary">Отказ</a>
+</form>

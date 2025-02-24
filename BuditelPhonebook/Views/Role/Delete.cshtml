@@ -1,0 +1,13 @@
+﻿@model Role
+@{
+    ViewBag.Title = "Изтрий длъжност";
+}
+<h1 class="h3 mb-4">Изтрий длъжност</h1>
+<div class="alert alert-warning">
+    Сигурни ли сте, че искате да изтриете <strong>@Model.Name</strong>?
+</div>
+
+<form asp-action="Delete" method="post">
+    <button type="submit" class="btn btn-danger">Да, изтрий</button>
+    <a asp-action="Index" class="btn btn-secondary">Отказ</a>
+</form>

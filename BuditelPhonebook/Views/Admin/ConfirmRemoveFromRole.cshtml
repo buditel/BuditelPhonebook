@@ -1,0 +1,14 @@
+﻿@model RemoveUserRoleViewModel
+@{
+    ViewBag.Title = "Премахни от роля";
+}
+<h1 class="h3 mb-4">Премахни от роля</h1>
+<div class="alert alert-warning">
+    Сигурни ли сте, че искате да премахнете роля <strong>@(Model.Role == "Admin" ? "Администратор" : "Модератор")</strong> от <strong>@Model.Email</strong>?
+</div>
+
+<form asp-action="RemoveFromRole" method="post">
+    <input type="hidden" asp-for="Id" value="@Model.Id" />
+    <button type="submit" class="btn btn-danger m-1">Да, премахни</button>
+    <a asp-action="UserRoles" class="btn btn-secondary">Отказ</a>
+</form>

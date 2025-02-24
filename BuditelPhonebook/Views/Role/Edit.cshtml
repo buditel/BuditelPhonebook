@@ -1,0 +1,15 @@
+﻿@model EditRoleViewModel
+@{
+    ViewBag.Title = "Редактирай контакт";
+}
+<h1 class="h3 mb-4">@ViewBag.Title</h1>
+
+<form asp-action="Edit" method="post">
+    <div class="form-group mb-3">
+        <label asp-for="Name">Име</label>
+        <input asp-for="Name" class="form-control" value="@Model.Name"/>
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Запиши</button>
+    <a asp-action="Index" class="btn btn-secondary">Отказ</a>
+</form>

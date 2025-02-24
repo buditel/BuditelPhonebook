@@ -1,0 +1,49 @@
+﻿@model IEnumerable<Department>
+
+@{
+    ViewBag.Title = "Управление на отделите";
+}
+<h1 class="h3 mb-4">Управление на отделите</h1>
+
+@if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-success">Добави нов отдел</a>
+    </p>
+}
+
+@if (!Model.Any(d => !d.IsDeleted))
+{
+    <div class="alert alert-info">Няма налични отдели.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered align-middle table-data">
+            <thead class="table-light">
+                <tr>
+                    <th>Име</th>
+                    @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                    {
+                        <th class="action-headings-table">Действия</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var department in Model.Where(d => !d.IsDeleted).OrderBy(d => d.Name))
+                {
+                    <tr>
+                        <td>@department.Name</td>
+                        @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                        {
+                            <td class="d-flex justify-content-center"> 
+                                <a asp-action="Edit" asp-route-id="@department.Id" class="btn btn-sm btn-primary m-1">Редактирай</a>
+                                <a asp-action="Delete" asp-route-id="@department.Id" class="btn btn-sm btn-danger m-1">Изтрий</a>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

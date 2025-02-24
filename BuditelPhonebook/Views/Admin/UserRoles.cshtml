@@ -1,0 +1,93 @@
+﻿@model UserRoleViewModel
+
+@{
+    ViewBag.Title = "Потребителски права";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div class="container mt-4">
+    @if (User.IsInRole("SuperAdmin"))
+    {
+        <form asp-action="ConfirmUserRole" method="get">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="Email" class="form-label">Имейл на потребител</label>
+                    <input type="email" asp-for="Email" class="form-control" placeholder="Въведете имейл на потребител" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="Role" class="form-label">Роля</label>
+                    <select asp-for="Role" class="form-select">
+                        <option value="" disabled selected>Изберете роля</option>
+                        <option value="Admin">Администратор</option>
+                        <option value="Moderator">Модератор</option>
+                    </select>
+                    <span asp-validation-for="Role" class="text-danger"></span>
+                </div>
+
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Възложете роля</button>
+                </div>
+            </div>
+        </form>
+
+        <hr />
+    }
+
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Администратори</h4>
+            @if (Model.UserRoles.Any(ur => ur.Role == "Admin"))
+            {
+                <ul class="list-group">
+                    @foreach (var userRole in Model.UserRoles.Where(ur => ur.Role == "Admin"))
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="m-2">@userRole.Email</span>
+                            @if (User.IsInRole("SuperAdmin"))
+                            {
+                                <form asp-action="ConfirmRemoveFromRole" method="get" class="d-inline">
+                                    <input type="hidden" name="id" value="@userRole.Id" />
+                                    <button type="submit" class="btn btn-danger btn-sm">Премахни от роля</button>
+                                </form>
+                            }
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>Няма зададени администратори.</p>
+            }
+        </div>
+
+        <div class="col-md-6">
+            <h4>Модератори</h4>
+            @if (Model.UserRoles.Any(ur => ur.Role == "Moderator"))
+            {
+                <ul class="list-group">
+                    @foreach (var userRole in Model.UserRoles.Where(ur => ur.Role == "Moderator"))
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="m-2">@userRole.Email</span>
+                            @if (User.IsInRole("SuperAdmin"))
+                            {
+                                <form asp-action="ConfirmRemoveFromRole" method="get" class="d-inline">
+                                    <input type="hidden" name="id" value="@userRole.Id" />
+                                    <button type="submit" class="btn btn-danger btn-sm">Премахни от роля</button>
+                                </form>
+                            }
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>Няма зададени модератори.</p>
+            }
+        </div>
+    </div>
+
+</div>

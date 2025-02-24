@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BuditelPhonebook.Controllers
+namespace BuditelPhonebook.Web.Controllers
 {
     public class AccountController : Controller
     {
@@ -11,15 +11,18 @@ namespace BuditelPhonebook.Controllers
             return Challenge(new AuthenticationProperties { RedirectUri = returnUrl }, "Google");
         }
 
-        public IActionResult AccessDenied()
+        public async Task<IActionResult> AccessDenied()
         {
-            return Content("Достъпът е отказан. Вашият акаунт няма достъп до това приложение.");
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            return View();
         }
 
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Index", "Phonebook");
+
+            return RedirectToAction("Login", "Account");
         }
 
     }

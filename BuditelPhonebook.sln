@@ -3,7 +3,24 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuditelPhonebook", "BuditelPhonebook\BuditelPhonebook.csproj", "{95991C66-35EF-4121-AD69-841EE65DFBDB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuditelPhonebook.Web", "BuditelPhonebook\BuditelPhonebook.Web.csproj", "{95991C66-35EF-4121-AD69-841EE65DFBDB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuditelPhonebook.Infrastructure", "BuditelPhonebook.Infrastructure\BuditelPhonebook.Infrastructure.csproj", "{39378A47-8B6E-4A27-82E3-1ECA5D669F12}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuditelPhonebook.Core", "BuditelPhonebook.Core\BuditelPhonebook.Core.csproj", "{180EE3D0-1B4A-47DC-888F-5F2C55DFBF51}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuditelPhonebook.Tests", "BuditelPhonebook.Tests\BuditelPhonebook.Tests.csproj", "{8999ACF2-E0D5-470D-82CC-2BC1E21A1B73}"
+	ProjectSection(ProjectDependencies) = postProject
+		{180EE3D0-1B4A-47DC-888F-5F2C55DFBF51} = {180EE3D0-1B4A-47DC-888F-5F2C55DFBF51}
+		{39378A47-8B6E-4A27-82E3-1ECA5D669F12} = {39378A47-8B6E-4A27-82E3-1ECA5D669F12}
+		{95991C66-35EF-4121-AD69-841EE65DFBDB} = {95991C66-35EF-4121-AD69-841EE65DFBDB}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuditelPhonebook.Web.ViewModels", "BuditelPhonebook.Web.ViewModels\BuditelPhonebook.Web.ViewModels.csproj", "{AC2D5D3D-543E-4A2F-8402-A3E85C3E5559}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuditelPhonebook.Common", "BuditelPhonebook.Common\BuditelPhonebook.Common.csproj", "{EE3704A7-E0D7-4959-A3CC-94F3ECC1BD17}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuditelPhonebook.IntegrationTests", "BuditelPhonebook.IntegrationTests\BuditelPhonebook.IntegrationTests.csproj", "{836076F4-498C-4832-8AD7-5AF4F9CF151B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +32,30 @@ Global
 		{95991C66-35EF-4121-AD69-841EE65DFBDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95991C66-35EF-4121-AD69-841EE65DFBDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95991C66-35EF-4121-AD69-841EE65DFBDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39378A47-8B6E-4A27-82E3-1ECA5D669F12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39378A47-8B6E-4A27-82E3-1ECA5D669F12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39378A47-8B6E-4A27-82E3-1ECA5D669F12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39378A47-8B6E-4A27-82E3-1ECA5D669F12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{180EE3D0-1B4A-47DC-888F-5F2C55DFBF51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{180EE3D0-1B4A-47DC-888F-5F2C55DFBF51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{180EE3D0-1B4A-47DC-888F-5F2C55DFBF51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{180EE3D0-1B4A-47DC-888F-5F2C55DFBF51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8999ACF2-E0D5-470D-82CC-2BC1E21A1B73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8999ACF2-E0D5-470D-82CC-2BC1E21A1B73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8999ACF2-E0D5-470D-82CC-2BC1E21A1B73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8999ACF2-E0D5-470D-82CC-2BC1E21A1B73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC2D5D3D-543E-4A2F-8402-A3E85C3E5559}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC2D5D3D-543E-4A2F-8402-A3E85C3E5559}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC2D5D3D-543E-4A2F-8402-A3E85C3E5559}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC2D5D3D-543E-4A2F-8402-A3E85C3E5559}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE3704A7-E0D7-4959-A3CC-94F3ECC1BD17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE3704A7-E0D7-4959-A3CC-94F3ECC1BD17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE3704A7-E0D7-4959-A3CC-94F3ECC1BD17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE3704A7-E0D7-4959-A3CC-94F3ECC1BD17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{836076F4-498C-4832-8AD7-5AF4F9CF151B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{836076F4-498C-4832-8AD7-5AF4F9CF151B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{836076F4-498C-4832-8AD7-5AF4F9CF151B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{836076F4-498C-4832-8AD7-5AF4F9CF151B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
