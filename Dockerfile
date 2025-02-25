@@ -12,7 +12,6 @@ COPY BuditelPhonebook.Tests/*.csproj ./BuditelPhonebook.Tests/
 COPY BuditelPhonebook.Utilities/*.csproj ./BuditelPhonebook.Utilities/
 COPY BuditelPhonebook.Web.ViewModels/*.csproj ./BuditelPhonebook.Web.ViewModels/
 COPY BuditelPhonebook/*.csproj ./BuditelPhonebook/
-COPY BuditelPhonebook.Web/*.csproj ./BuditelPhonebook.Web/
 
 # Step 3: Restore dependencies
 RUN dotnet restore BuditelPhonebook.Web/BuditelPhonebook.Web.csproj
