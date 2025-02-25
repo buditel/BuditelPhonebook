@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
+
 
 namespace BuditelPhonebook
 {
@@ -25,9 +27,17 @@ namespace BuditelPhonebook
                 builder.Configuration.AddUserSecrets<Program>();
             }
 
-            // Configure database context
+            var connectionString = builder.Configuration.GetConnectionString("DATABASE_URL");
+
+            // Convert the Render connection string to a format Npgsql can use
+            var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+            var builderNpgsql = new NpgsqlConnectionStringBuilder(databaseUrl)
+            {
+                Pooling = true,
+            };
+
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseNpgsql(builderNpgsql.ConnectionString));
 
             // Configure Identity
             //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
