@@ -27,7 +27,7 @@ namespace BuditelPhonebook
                 builder.Configuration.AddUserSecrets<Program>();
             }
 
-            var connectionString = builder.Configuration.GetConnectionString("DATABASE_URL");
+            //var connectionString = builder.Configuration.GetConnectionString("DATABASE_URL");
 
             // Convert the Render connection string to a format Npgsql can use
             var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
