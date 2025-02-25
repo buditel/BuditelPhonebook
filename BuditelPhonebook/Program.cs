@@ -47,14 +47,12 @@ namespace BuditelPhonebook
 
             // Extract host, port, and database
             var host = uri.Host;
-            var port = uri.Port;
             var database = uri.AbsolutePath.TrimStart('/');
 
             // Build the connection string for Npgsql
             var builderNpgsql = new NpgsqlConnectionStringBuilder
             {
                 Host = host,
-                Port = port,
                 Username = username,
                 Password = password,
                 Database = database,
