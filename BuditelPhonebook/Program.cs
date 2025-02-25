@@ -29,16 +29,44 @@ namespace BuditelPhonebook
 
             //var connectionString = builder.Configuration.GetConnectionString("DATABASE_URL");
 
-            // Convert the Render connection string to a format Npgsql can use
             var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-            var builderNpgsql = new NpgsqlConnectionStringBuilder(databaseUrl)
+
+            // Ensure the database URL is provided
+            if (string.IsNullOrEmpty(databaseUrl))
             {
-                Pooling = true,
+                throw new ArgumentException("DATABASE_URL is not set.");
+            }
+
+            // Parse the URL using Uri and extract necessary components
+            var uri = new Uri(databaseUrl);
+
+            // Extract user info (username:password)
+            var userInfo = uri.UserInfo.Split(':');
+            var username = userInfo[0];
+            var password = userInfo[1];
+
+            // Extract host, port, and database
+            var host = uri.Host;
+            var port = uri.Port;
+            var database = uri.AbsolutePath.TrimStart('/');
+
+            // Build the connection string for Npgsql
+            var builderNpgsql = new NpgsqlConnectionStringBuilder
+            {
+                Host = host,
+                Port = port,
+                Username = username,
+                Password = password,
+                Database = database,
+                SslMode = SslMode.Require, // Set SSL mode if required
             };
 
+            // Add pooling (optional, but recommended)
+            builderNpgsql.Pooling = true;
+
+            // Use the connection string for DbContext
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(builderNpgsql.ConnectionString));
-
             // Configure Identity
             //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
