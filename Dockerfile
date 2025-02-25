@@ -14,13 +14,13 @@ COPY BuditelPhonebook.Web.ViewModels/*.csproj ./BuditelPhonebook.Web.ViewModels/
 COPY BuditelPhonebook/*.csproj ./BuditelPhonebook/
 
 # Step 3: Restore dependencies
-RUN dotnet restore BuditelPhonebook.Web/BuditelPhonebook.Web.csproj
+RUN dotnet restore BuditelPhonebook/BuditelPhonebook.Web.csproj
 
 # Step 4: Copy all source files
 COPY . ./
 
 # Step 5: Build and publish the app
-WORKDIR /app/BuditelPhonebook.Web
+WORKDIR /app/BuditelPhonebook
 RUN dotnet publish -c Release -o out
 
 # Step 6: Use a smaller runtime image for production
@@ -28,10 +28,10 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 
 # Step 7: Copy built files from the build stage
-COPY --from=build /app/BuditelPhonebook.Web/out ./
+COPY --from=build /app/BuditelPhonebook/out ./
 
 # Step 8: Expose the web port (Render uses 8080)
 EXPOSE 8080
 
 # Step 9: Start the application
-CMD ["dotnet", "BuditelPhonebook.Web.dll"]
+CMD ["dotnet", "BuditelPhonebook.dll"]
