@@ -34,4 +34,4 @@ COPY --from=build /app/BuditelPhonebook/out ./
 EXPOSE 8080
 
 # Step 9: Start the application
-CMD ["dotnet", "BuditelPhonebook.dll"]
+CMD ["dotnet", "BuditelPhonebook.Web.dll"]
