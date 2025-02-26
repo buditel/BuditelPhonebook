@@ -2,7 +2,6 @@ using BuditelPhonebook.Core.Contracts;
 using BuditelPhonebook.Core.Repositories;
 using BuditelPhonebook.Core.Services;
 using BuditelPhonebook.Infrastructure.Data;
-using BuditelPhonebook.Infrastructure.Seed;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
@@ -193,25 +192,25 @@ namespace BuditelPhonebook
 
                 dbContext.Database.Migrate();
 
-                var httpContextAccessor = services.GetRequiredService<IHttpContextAccessor>();
-                var seeder = new ExcelDataSeeder(dbContext, httpContextAccessor);
+                //var httpContextAccessor = services.GetRequiredService<IHttpContextAccessor>();
+                //var seeder = new ExcelDataSeeder(dbContext, httpContextAccessor);
 
-                try
-                {
-                    var filePath = Path.Combine(app.Environment.WebRootPath, "OrgChart.xlsx");
-                    if (File.Exists(filePath))
-                    {
-                        seeder.SeedData(filePath).GetAwaiter().GetResult(); // Run synchronously
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Seeding skipped: File '{filePath}' not found.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error during seeding: {ex.Message}");
-                }
+                //try
+                //{
+                //    var filePath = Path.Combine(app.Environment.WebRootPath, "OrgChart.xlsx");
+                //    if (File.Exists(filePath))
+                //    {
+                //        seeder.SeedData(filePath).GetAwaiter().GetResult(); // Run synchronously
+                //    }
+                //    else
+                //    {
+                //        Console.WriteLine($"Seeding skipped: File '{filePath}' not found.");
+                //    }
+                //}
+                //catch (Exception ex)
+                //{
+                //    Console.WriteLine($"Error during seeding: {ex.Message}");
+                //}
             }
 
             //Security headers
