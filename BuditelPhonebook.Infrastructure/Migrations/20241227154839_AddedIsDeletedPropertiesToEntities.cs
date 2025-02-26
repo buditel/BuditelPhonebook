@@ -22,14 +22,14 @@ namespace BuditelPhonebook.Infrastructure.Migrations
             migrationBuilder.AddColumn<bool>(
                 name: "IsDeleted",
                 table: "Roles",
-                type: "bit",
+                type: "boolean",
                 nullable: false,
                 defaultValue: false);
 
             migrationBuilder.AddColumn<bool>(
                 name: "IsDeleted",
                 table: "People",
-                type: "bit",
+                type: "boolean",
                 nullable: false,
                 defaultValue: false);
 
@@ -45,7 +45,7 @@ namespace BuditelPhonebook.Infrastructure.Migrations
             migrationBuilder.AddColumn<bool>(
                 name: "IsDeleted",
                 table: "Departments",
-                type: "bit",
+                type: "boolean",
                 nullable: false,
                 defaultValue: false);
         }
