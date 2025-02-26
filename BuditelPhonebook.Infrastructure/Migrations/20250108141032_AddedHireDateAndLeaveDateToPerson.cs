@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -14,14 +13,14 @@ namespace BuditelPhonebook.Infrastructure.Migrations
             migrationBuilder.AddColumn<DateTime>(
                 name: "HireDate",
                 table: "People",
-                type: "datetime2",
+                type: "timestamp",
                 nullable: false,
                 defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "LeaveDate",
                 table: "People",
-                type: "datetime2",
+                type: "timestamp",
                 nullable: true);
         }
 

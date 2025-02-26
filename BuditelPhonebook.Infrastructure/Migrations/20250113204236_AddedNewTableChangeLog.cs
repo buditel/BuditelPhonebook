@@ -19,7 +19,7 @@ namespace BuditelPhonebook.Infrastructure.Migrations
                     PersonId = table.Column<int>(type: "int", nullable: false),
                     ChangeDescription = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false),
                     ChangedBy = table.Column<string>(type: "varchar(80)", maxLength: 80, nullable: false),
-                    ChangedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    ChangedAt = table.Column<DateTime>(type: "timestamp", nullable: false)
                 },
                 constraints: table =>
                 {
