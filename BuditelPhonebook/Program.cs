@@ -155,6 +155,7 @@ namespace BuditelPhonebook
 
             var app = builder.Build();
 
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -189,6 +190,9 @@ namespace BuditelPhonebook
             {
                 var services = scope.ServiceProvider;
                 var dbContext = services.GetRequiredService<ApplicationDbContext>();
+
+                dbContext.Database.Migrate();
+
                 var httpContextAccessor = services.GetRequiredService<IHttpContextAccessor>();
                 var seeder = new ExcelDataSeeder(dbContext, httpContextAccessor);
 
