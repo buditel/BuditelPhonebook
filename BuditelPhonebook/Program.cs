@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
+
 
 namespace BuditelPhonebook
 {
@@ -25,10 +27,44 @@ namespace BuditelPhonebook
                 builder.Configuration.AddUserSecrets<Program>();
             }
 
-            // Configure database context
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            //var connectionString = builder.Configuration.GetConnectionString("DATABASE_URL");
 
+            var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+            // Ensure the database URL is provided
+            if (string.IsNullOrEmpty(databaseUrl))
+            {
+                throw new ArgumentException("DATABASE_URL is not set.");
+            }
+
+            // Parse the URL using Uri and extract necessary components
+            var uri = new Uri(databaseUrl);
+
+            // Extract user info (username:password)
+            var userInfo = uri.UserInfo.Split(':');
+            var username = userInfo[0];
+            var password = userInfo[1];
+
+            // Extract host, port, and database
+            var host = uri.Host;
+            var database = uri.AbsolutePath.TrimStart('/');
+
+            // Build the connection string for Npgsql
+            var builderNpgsql = new NpgsqlConnectionStringBuilder
+            {
+                Host = host,
+                Username = username,
+                Password = password,
+                Database = database,
+                SslMode = SslMode.Require, // Set SSL mode if required
+            };
+
+            // Add pooling (optional, but recommended)
+            builderNpgsql.Pooling = true;
+
+            // Use the connection string for DbContext
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseNpgsql(builderNpgsql.ConnectionString));
             // Configure Identity
             //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -119,6 +155,7 @@ namespace BuditelPhonebook
 
             var app = builder.Build();
 
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -153,6 +190,9 @@ namespace BuditelPhonebook
             {
                 var services = scope.ServiceProvider;
                 var dbContext = services.GetRequiredService<ApplicationDbContext>();
+
+                dbContext.Database.Migrate();
+
                 var httpContextAccessor = services.GetRequiredService<IHttpContextAccessor>();
                 var seeder = new ExcelDataSeeder(dbContext, httpContextAccessor);
 

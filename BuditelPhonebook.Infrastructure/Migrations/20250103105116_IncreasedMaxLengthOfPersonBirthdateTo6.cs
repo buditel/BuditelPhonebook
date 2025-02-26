@@ -13,11 +13,11 @@ namespace BuditelPhonebook.Infrastructure.Migrations
             migrationBuilder.AlterColumn<string>(
                 name: "Birthdate",
                 table: "People",
-                type: "nvarchar(6)",
+                type: "varchar(6)",
                 maxLength: 6,
                 nullable: true,
                 oldClrType: typeof(string),
-                oldType: "nvarchar(5)",
+                oldType: "varchar(5)",
                 oldMaxLength: 5,
                 oldNullable: true);
         }
@@ -28,11 +28,11 @@ namespace BuditelPhonebook.Infrastructure.Migrations
             migrationBuilder.AlterColumn<string>(
                 name: "Birthdate",
                 table: "People",
-                type: "nvarchar(5)",
+                type: "varchar(5)",
                 maxLength: 5,
                 nullable: true,
                 oldClrType: typeof(string),
-                oldType: "nvarchar(6)",
+                oldType: "varchar(6)",
                 oldMaxLength: 6,
                 oldNullable: true);
         }

@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -18,8 +17,8 @@ namespace BuditelPhonebook.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PersonId = table.Column<int>(type: "int", nullable: false),
-                    ChangeDescription = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    ChangedBy = table.Column<string>(type: "nvarchar(80)", maxLength: 80, nullable: false),
+                    ChangeDescription = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false),
+                    ChangedBy = table.Column<string>(type: "varchar(80)", maxLength: 80, nullable: false),
                     ChangedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
