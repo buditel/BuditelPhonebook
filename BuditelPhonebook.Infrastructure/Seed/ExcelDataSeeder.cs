@@ -115,7 +115,8 @@ namespace BuditelPhonebook.Infrastructure.Seed
                     {
                         department = new Department()
                         {
-                            Name = departmentName
+                            Name = departmentName,
+                            IsDeleted = false,
                         };
 
                         await _context.Departments.AddAsync(department);
@@ -132,7 +133,8 @@ namespace BuditelPhonebook.Infrastructure.Seed
                     {
                         role = new Role()
                         {
-                            Name = roleName
+                            Name = roleName,
+                            IsDeleted = false,
                         };
 
                         await _context.Roles.AddAsync(role);
