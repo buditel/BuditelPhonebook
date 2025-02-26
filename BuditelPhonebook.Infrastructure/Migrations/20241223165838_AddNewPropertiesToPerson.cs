@@ -18,28 +18,28 @@ namespace BuditelPhonebook.Infrastructure.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "Birthdate",
                 table: "People",
-                type: "nvarchar(5)",
+                type: "varchar(5)",
                 maxLength: 5,
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "BusinessPhoneNumber",
                 table: "People",
-                type: "nvarchar(20)",
+                type: "varchar(20)",
                 maxLength: 20,
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "PersonalPhoneNumber",
                 table: "People",
-                type: "nvarchar(20)",
+                type: "varchar(20)",
                 maxLength: 20,
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Subject",
                 table: "People",
-                type: "nvarchar(40)",
+                type: "varchar(40)",
                 maxLength: 40,
                 nullable: true);
         }

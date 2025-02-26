@@ -21,21 +21,21 @@ namespace BuditelPhonebook.Infrastructure.Migrations
             migrationBuilder.AlterColumn<string>(
                 name: "PhoneNumber",
                 table: "People",
-                type: "nvarchar(20)",
+                type: "varchar(20)",
                 maxLength: 20,
                 nullable: true,
                 oldClrType: typeof(string),
-                oldType: "nvarchar(20)",
+                oldType: "varchar(20)",
                 oldMaxLength: 20);
 
             migrationBuilder.AlterColumn<string>(
                 name: "MiddleName",
                 table: "People",
-                type: "nvarchar(50)",
+                type: "varchar(50)",
                 maxLength: 50,
                 nullable: true,
                 oldClrType: typeof(string),
-                oldType: "nvarchar(50)",
+                oldType: "varchar(50)",
                 oldMaxLength: 50);
 
             migrationBuilder.AddColumn<int>(
@@ -58,7 +58,7 @@ namespace BuditelPhonebook.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -71,7 +71,7 @@ namespace BuditelPhonebook.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -141,31 +141,31 @@ namespace BuditelPhonebook.Infrastructure.Migrations
             migrationBuilder.AlterColumn<string>(
                 name: "PhoneNumber",
                 table: "People",
-                type: "nvarchar(20)",
+                type: "varchar(20)",
                 maxLength: 20,
                 nullable: false,
                 defaultValue: "",
                 oldClrType: typeof(string),
-                oldType: "nvarchar(20)",
+                oldType: "varchar(20)",
                 oldMaxLength: 20,
                 oldNullable: true);
 
             migrationBuilder.AlterColumn<string>(
                 name: "MiddleName",
                 table: "People",
-                type: "nvarchar(50)",
+                type: "varchar(50)",
                 maxLength: 50,
                 nullable: false,
                 defaultValue: "",
                 oldClrType: typeof(string),
-                oldType: "nvarchar(50)",
+                oldType: "varchar(50)",
                 oldMaxLength: 50,
                 oldNullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Department",
                 table: "People",
-                type: "nvarchar(50)",
+                type: "varchar(50)",
                 maxLength: 50,
                 nullable: false,
                 defaultValue: "");
@@ -173,7 +173,7 @@ namespace BuditelPhonebook.Infrastructure.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "Role",
                 table: "People",
-                type: "nvarchar(50)",
+                type: "varchar(50)",
                 maxLength: 50,
                 nullable: false,
                 defaultValue: "");

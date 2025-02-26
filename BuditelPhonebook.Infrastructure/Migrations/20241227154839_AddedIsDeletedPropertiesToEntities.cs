@@ -13,11 +13,11 @@ namespace BuditelPhonebook.Infrastructure.Migrations
             migrationBuilder.AlterColumn<string>(
                 name: "Name",
                 table: "Roles",
-                type: "nvarchar(100)",
+                type: "varchar(100)",
                 maxLength: 100,
                 nullable: false,
                 oldClrType: typeof(string),
-                oldType: "nvarchar(max)");
+                oldType: "text");
 
             migrationBuilder.AddColumn<bool>(
                 name: "IsDeleted",
@@ -36,11 +36,11 @@ namespace BuditelPhonebook.Infrastructure.Migrations
             migrationBuilder.AlterColumn<string>(
                 name: "Name",
                 table: "Departments",
-                type: "nvarchar(100)",
+                type: "varchar(100)",
                 maxLength: 100,
                 nullable: false,
                 oldClrType: typeof(string),
-                oldType: "nvarchar(max)");
+                oldType: "text");
 
             migrationBuilder.AddColumn<bool>(
                 name: "IsDeleted",
@@ -68,19 +68,19 @@ namespace BuditelPhonebook.Infrastructure.Migrations
             migrationBuilder.AlterColumn<string>(
                 name: "Name",
                 table: "Roles",
-                type: "nvarchar(max)",
+                type: "text",
                 nullable: false,
                 oldClrType: typeof(string),
-                oldType: "nvarchar(100)",
+                oldType: "varchar(100)",
                 oldMaxLength: 100);
 
             migrationBuilder.AlterColumn<string>(
                 name: "Name",
                 table: "Departments",
-                type: "nvarchar(max)",
+                type: "text",
                 nullable: false,
                 oldClrType: typeof(string),
-                oldType: "nvarchar(100)",
+                oldType: "varchar(100)",
                 oldMaxLength: 100);
         }
     }

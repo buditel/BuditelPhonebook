@@ -17,7 +17,7 @@ namespace BuditelPhonebook.Infrastructure.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "ChangesDescriptions",
                 table: "ChangeLogs",
-                type: "nvarchar(max)",
+                type: "text",
                 nullable: false,
                 defaultValue: "[]");
         }
@@ -32,7 +32,7 @@ namespace BuditelPhonebook.Infrastructure.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "ChangeDescription",
                 table: "ChangeLogs",
-                type: "nvarchar(200)",
+                type: "text",
                 maxLength: 200,
                 nullable: false,
                 defaultValue: "");

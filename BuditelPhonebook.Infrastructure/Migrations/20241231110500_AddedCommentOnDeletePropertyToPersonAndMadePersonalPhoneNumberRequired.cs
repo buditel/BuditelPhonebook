@@ -13,19 +13,19 @@ namespace BuditelPhonebook.Infrastructure.Migrations
             migrationBuilder.AlterColumn<string>(
                 name: "PersonalPhoneNumber",
                 table: "People",
-                type: "nvarchar(20)",
+                type: "varchar(20)",
                 maxLength: 20,
                 nullable: false,
                 defaultValue: "",
                 oldClrType: typeof(string),
-                oldType: "nvarchar(20)",
+                oldType: "varchar(20)",
                 oldMaxLength: 20,
                 oldNullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "CommentOnDeletion",
                 table: "People",
-                type: "nvarchar(150)",
+                type: "varchar(150)",
                 maxLength: 150,
                 nullable: true);
         }
@@ -40,11 +40,11 @@ namespace BuditelPhonebook.Infrastructure.Migrations
             migrationBuilder.AlterColumn<string>(
                 name: "PersonalPhoneNumber",
                 table: "People",
-                type: "nvarchar(20)",
+                type: "varchar(20)",
                 maxLength: 20,
                 nullable: true,
                 oldClrType: typeof(string),
-                oldType: "nvarchar(20)",
+                oldType: "varchar(20)",
                 oldMaxLength: 20);
         }
     }
