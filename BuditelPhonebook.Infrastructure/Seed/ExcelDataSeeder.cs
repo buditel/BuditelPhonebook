@@ -120,7 +120,7 @@ namespace BuditelPhonebook.Infrastructure.Seed
                         };
 
                         await _context.Departments.AddAsync(department);
-                        await _context.SaveChangesAsync();
+                        //await _context.SaveChangesAsync();
                     }
 
                     Role? role = null;
@@ -138,7 +138,7 @@ namespace BuditelPhonebook.Infrastructure.Seed
                         };
 
                         await _context.Roles.AddAsync(role);
-                        await _context.SaveChangesAsync();
+                        //await _context.SaveChangesAsync();
                     }
 
                     // Map to Person entity
@@ -160,7 +160,7 @@ namespace BuditelPhonebook.Infrastructure.Seed
                     };
 
                     await _context.People.AddAsync(person);
-                    await _context.SaveChangesAsync();
+                    //await _context.SaveChangesAsync();
 
                     ChangeLog change = new ChangeLog()
                     {
