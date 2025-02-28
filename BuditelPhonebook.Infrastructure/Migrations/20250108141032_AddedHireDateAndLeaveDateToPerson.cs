@@ -13,14 +13,14 @@ namespace BuditelPhonebook.Infrastructure.Migrations
             migrationBuilder.AddColumn<DateTime>(
                 name: "HireDate",
                 table: "People",
-                type: "timestamp",
+                type: "timestamp with time zone",
                 nullable: false,
                 defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "LeaveDate",
                 table: "People",
-                type: "timestamp",
+                type: "timestamp with time zone",
                 nullable: true);
         }
 

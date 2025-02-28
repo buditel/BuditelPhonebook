@@ -41,12 +41,16 @@ namespace BuditelPhonebook.Core.Repositories
 
         public async Task AddAsync(Person person)
         {
-            _context.People.Add(person);
+            person.HireDate = DateTime.SpecifyKind(person.HireDate, DateTimeKind.Utc);
+
+            await _context.People.AddAsync(person);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(Person person)
         {
+            person.HireDate = DateTime.SpecifyKind(person.HireDate, DateTimeKind.Utc);
+
             _context.People.Update(person);
             await _context.SaveChangesAsync();
         }
@@ -75,10 +79,10 @@ namespace BuditelPhonebook.Core.Repositories
 
             var personLeaveDate = DateTime.ParseExact(leaveDate, HireAndLeaveDateFormat, CultureInfo.CurrentCulture);
 
-
+            person.LeaveDate = DateTime.SpecifyKind(personLeaveDate, DateTimeKind.Utc);
             person.IsDeleted = true;
             person.CommentOnDeletion = comment;
-            person.LeaveDate = personLeaveDate;
+
 
             _context.People.Update(person);
             await _context.SaveChangesAsync();
@@ -99,12 +103,12 @@ namespace BuditelPhonebook.Core.Repositories
                 queryable = queryable.Where(p =>
                     queryArray.All(q =>
                         p.FirstName.ToLower().Contains(q)
-                        || (p.MiddleName != null && p.MiddleName.ToLower().Contains(q))
                         || p.LastName.ToLower().Contains(q)
                         || p.Email.ToLower().Contains(q)
                         || (p.BusinessPhoneNumber != null && p.BusinessPhoneNumber.ToLower().Contains(q))
                         || p.PersonalPhoneNumber.ToLower().Contains(q)
                         || (p.Role != null && p.Role.Name.ToLower().Contains(q))
+                        || (p.Subject != null && p.Subject.ToLower().Contains(q))
                         || (p.Department != null && p.Department.Name.ToLower().Contains(q))));
             }
 
@@ -152,12 +156,12 @@ namespace BuditelPhonebook.Core.Repositories
                 queryable = queryable.Where(p =>
                     queryArray.All(q =>
                         p.FirstName.ToLower().Contains(q)
-                        || (p.MiddleName != null && p.MiddleName.ToLower().Contains(q))
                         || p.LastName.ToLower().Contains(q)
                         || p.Email.ToLower().Contains(q)
                         || (p.BusinessPhoneNumber != null && p.BusinessPhoneNumber.ToLower().Contains(q))
                         || p.PersonalPhoneNumber.ToLower().Contains(q)
                         || (p.Role != null && p.Role.Name.ToLower().Contains(q))
+                        || (p.Subject != null && p.Subject.ToLower().Contains(q))
                         || (p.Department != null && p.Department.Name.ToLower().Contains(q))));
             }
 

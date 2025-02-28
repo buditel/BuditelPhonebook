@@ -120,7 +120,7 @@ namespace BuditelPhonebook.Infrastructure.Seed
                         };
 
                         await _context.Departments.AddAsync(department);
-                        //await _context.SaveChangesAsync();
+                        await _context.SaveChangesAsync();
                     }
 
                     Role? role = null;
@@ -138,7 +138,7 @@ namespace BuditelPhonebook.Infrastructure.Seed
                         };
 
                         await _context.Roles.AddAsync(role);
-                        //await _context.SaveChangesAsync();
+                        await _context.SaveChangesAsync();
                     }
 
                     // Map to Person entity
@@ -156,15 +156,15 @@ namespace BuditelPhonebook.Infrastructure.Seed
                         SubjectGroup = string.IsNullOrWhiteSpace(subjectGroup) ? null : subjectGroup,
                         Subject = string.IsNullOrWhiteSpace(subject) ? null : subject,
                         IsDeleted = false,
-                        HireDate = DateTime.Now
+                        HireDate = DateTime.UtcNow
                     };
 
                     await _context.People.AddAsync(person);
-                    //await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();
 
                     ChangeLog change = new ChangeLog()
                     {
-                        ChangedAt = DateTime.Now,
+                        ChangedAt = DateTime.UtcNow,
                         ChangedBy = currentUser,
                         ChangesDescriptions = new List<string> { "Добавен контакт от Org Chart." },
                         PersonId = person.Id,
