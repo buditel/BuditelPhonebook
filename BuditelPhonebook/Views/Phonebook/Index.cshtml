@@ -2,7 +2,7 @@
 @{
     ViewBag.Title = "Указател";
 }
-<div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-5 p-3">
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-1 p-3">
     @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin") || User.IsInRole("Moderator"))
     {
         <div class="d-flex flex-wrap flex-column flex-md-row mb-1">
@@ -22,7 +22,7 @@
         </div>
     }
 
-    <div class="input-group search-bar-container mb-2">
+    <div class="input-group search-bar-container mb-2 ms-auto">
         <input id="searchInput" type="text" class="form-control" placeholder="Търсене..." />
         <button id="searchBtn" class="btn btn-primary">Търси</button>
     </div>

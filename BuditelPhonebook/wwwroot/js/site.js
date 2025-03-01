@@ -257,29 +257,32 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.see-latest-change').forEach(element => {
-        element.addEventListener('click', function (event) {
+    document.getElementById("results").addEventListener("click", function (event) {
+        const target = event.target.closest(".see-latest-change");
+        if (target) {
             event.preventDefault();
-
-            const personId = this.getAttribute('data-id');
-            const modalBody = document.querySelector('#latestChangeModal .modal-content');
+            const personId = target.getAttribute("data-id");
+            const modalBody = document.querySelector("#latestChangeModal .modal-content");
 
             fetch(`/Admin/SeeLatestChange?id=${personId}`)
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Грешка при зареждане на последна промяна.');
+                        throw new Error("Грешка при зареждане на последна промяна.");
                     }
                     return response.text();
                 })
                 .then(html => {
                     modalBody.innerHTML = html;
+                    const modal = new bootstrap.Modal(document.getElementById("latestChangeModal"));
+                    modal.show(); // Ensure modal opens after content loads
                 })
                 .catch(error => {
                     modalBody.innerHTML = `<div class="modal-body text-danger">${error.message}</div>`;
                 });
-        });
+        }
     });
 });
+
 
 document.addEventListener('DOMContentLoaded', function () {
     const removePictureButton = document.getElementById('removePictureButton');

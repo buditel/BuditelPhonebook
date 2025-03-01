@@ -62,6 +62,8 @@ namespace BuditelPhonebook.Web.Controllers
             {
                 model.Roles = _personRepository.GetRoles();
                 model.Departments = _personRepository.GetDepartments();
+                model.PersonPicture = model.PersonPicture;
+
                 return View(model);
             }
 
