@@ -262,7 +262,8 @@ document.addEventListener('DOMContentLoaded', function () {
         if (target) {
             event.preventDefault();
             const personId = target.getAttribute("data-id");
-            const modalBody = document.querySelector("#latestChangeModal .modal-content");
+            const modalElement = document.getElementById("latestChangeModal");
+            const modalBody = modalElement.querySelector(".modal-content");
 
             fetch(`/Admin/SeeLatestChange?id=${personId}`)
                 .then(response => {
@@ -273,8 +274,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
                 .then(html => {
                     modalBody.innerHTML = html;
-                    const modal = new bootstrap.Modal(document.getElementById("latestChangeModal"));
-                    modal.show(); // Ensure modal opens after content loads
+                    const modal = new bootstrap.Modal(modalElement);
+                    modal.show();
+
+                    // Ensure proper cleanup when modal is closed
+                    modalElement.addEventListener("hidden.bs.modal", function () {
+                        modal.dispose();
+                        modalBody.innerHTML = ""; // Clear modal content
+                        removeBackdrop(); // Ensure no lingering backdrop
+                        restoreBodyStyles(); // Fix scrolling issue
+                    }, { once: true });
                 })
                 .catch(error => {
                     modalBody.innerHTML = `<div class="modal-body text-danger">${error.message}</div>`;
@@ -282,6 +291,23 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+
+// Function to remove any leftover Bootstrap modal backdrops
+function removeBackdrop() {
+    const backdrops = document.querySelectorAll(".modal-backdrop");
+    backdrops.forEach(backdrop => backdrop.remove());
+}
+
+// Function to fully restore scrolling behavior
+function restoreBodyStyles() {
+    document.body.classList.remove("modal-open"); // Ensure modal-open is removed
+    document.body.style.overflow = ""; // Restore scrolling
+    document.body.style.paddingRight = ""; // Reset padding added by Bootstrap
+}
+
+
+
+
 
 
 document.addEventListener('DOMContentLoaded', function () {
