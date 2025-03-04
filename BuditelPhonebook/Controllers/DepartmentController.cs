@@ -90,7 +90,6 @@ namespace BuditelPhonebook.Web.Controllers
             catch (KeyNotFoundException)
             {
                 return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 404 });
-
             }
         }
 

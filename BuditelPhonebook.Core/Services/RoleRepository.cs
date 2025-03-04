@@ -16,35 +16,53 @@ namespace BuditelPhonebook.Core.Repositories
 
         public async Task<IEnumerable<Role>> GetAllAsync()
         {
-            return await _context.Roles.ToListAsync();
+            try
+            {
+                return await _context.Roles.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Грешка при извличане на всички длъжности.", ex);
+            }
         }
 
         public async Task<Role> GetByIdAsync(int id)
         {
-            return await _context.Roles.FindAsync(id);
+            var role = await _context.Roles.FindAsync(id);
+
+            if (role == null)
+            {
+                throw new KeyNotFoundException($"Длъжност с ID {id} не е намерена.");
+            }
+
+            return role;
         }
 
         public async Task AddAsync(Role role)
         {
-            if (role == null)
+            try
             {
-                throw new ArgumentNullException(nameof(role));
+                _context.Roles.Add(role);
+                await _context.SaveChangesAsync();
             }
-
-            _context.Roles.Add(role);
-            await _context.SaveChangesAsync();
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Грешка при добавяне на нова длъжност.", ex);
+            }
         }
 
 
         public async Task UpdateAsync(Role role)
         {
-            if (role == null)
+            try
             {
-                throw new ArgumentNullException(nameof(role));
+                _context.Roles.Update(role);
+                await _context.SaveChangesAsync();
             }
-
-            _context.Roles.Update(role);
-            await _context.SaveChangesAsync();
+            catch (Exception ex)
+            {
+                throw new ApplicationException($"Грешка при актуализиране на длъжност с ID {role.Id}.", ex);
+            }
         }
 
 
@@ -64,18 +82,32 @@ namespace BuditelPhonebook.Core.Repositories
 
             if (role == null)
             {
-                throw new ArgumentNullException(nameof(role));
+                throw new KeyNotFoundException($"Длъжност с ID {id} не е намерена.");
             }
 
             role.IsDeleted = true;
 
-            _context.Roles.Update(role);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Roles.Update(role);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException($"Грешка при софт-изтриване на длъжност с ID {id}.", ex);
+            }
         }
 
         public IQueryable<Role> GetAllAttached()
         {
-            return _context.Roles.AsQueryable();
+            try
+            {
+                return _context.Roles.AsQueryable();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Грешка при извличане на длъжностите.", ex);
+            }
         }
     }
 

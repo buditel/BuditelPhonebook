@@ -20,8 +20,15 @@ namespace BuditelPhonebook.Web.Controllers
         [Authorize(Roles = "SuperAdmin, Admin, Moderator")]
         public async Task<IActionResult> Index()
         {
-            var roles = await _roleRepository.GetAllAsync();
-            return View(roles);
+            try
+            {
+                var roles = await _roleRepository.GetAllAsync();
+                return View(roles);
+            }
+            catch (ApplicationException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
+            }
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]
@@ -37,42 +44,52 @@ namespace BuditelPhonebook.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateRoleViewModel model)
         {
-            var exists = _roleRepository.GetAllAttached().Any(r => r.Name == model.Name);
-            if (exists)
+            try
             {
-                ModelState.AddModelError(nameof(model.Name), NameUniqueMessage);
+                var exists = _roleRepository.GetAllAttached().Any(r => r.Name == model.Name);
+                if (exists)
+                {
+                    ModelState.AddModelError(nameof(model.Name), NameUniqueMessage);
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+
+                var role = new Role
+                {
+                    Name = model.Name
+                };
+
+                await _roleRepository.AddAsync(role);
+                return RedirectToAction(nameof(Index));
             }
-
-            if (!ModelState.IsValid)
+            catch (ApplicationException)
             {
-                return View(model);
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
             }
-
-            var role = new Role
-            {
-                Name = model.Name
-            };
-
-            await _roleRepository.AddAsync(role);
-            return RedirectToAction(nameof(Index));
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<IActionResult> Edit(int id)
         {
-            var role = await _roleRepository.GetByIdAsync(id);
-            if (role == null)
+            try
             {
-                return NotFound();
+                var role = await _roleRepository.GetByIdAsync(id);
+
+                var model = new EditRoleViewModel
+                {
+                    Id = id,
+                    Name = role.Name
+                };
+
+                return View(model);
             }
-
-            var model = new EditRoleViewModel
+            catch (KeyNotFoundException)
             {
-                Id = id,
-                Name = role.Name
-            };
-
-            return View(model);
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 404 });
+            }
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]
@@ -80,31 +97,48 @@ namespace BuditelPhonebook.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditRoleViewModel model)
         {
-            var exists = _roleRepository.GetAllAttached().Any(d => d.Name == model.Name);
-            if (exists)
+            try
             {
-                ModelState.AddModelError(nameof(model.Name), NameUniqueMessage);
-            }
+                var exists = _roleRepository.GetAllAttached().Any(d => d.Name == model.Name);
+                if (exists)
+                {
+                    ModelState.AddModelError(nameof(model.Name), NameUniqueMessage);
+                }
 
-            if (!ModelState.IsValid)
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+
+                var role = await _roleRepository.GetByIdAsync(model.Id);
+                role.Name = model.Name;
+
+                await _roleRepository.UpdateAsync(role);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (KeyNotFoundException)
             {
-                return View(model);
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 404 });
             }
-
-            var role = await _roleRepository.GetByIdAsync(model.Id);
-            role.Name = model.Name;
-
-            await _roleRepository.UpdateAsync(role);
-            return RedirectToAction(nameof(Index));
+            catch (ApplicationException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
+            }
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<IActionResult> Delete(int id)
         {
-            var role = await _roleRepository.GetByIdAsync(id);
-            if (role == null) return NotFound();
+            try
+            {
+                var role = await _roleRepository.GetByIdAsync(id);
 
-            return View(role);
+                return View(role);
+            }
+            catch (KeyNotFoundException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 404 });
+            }
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]
@@ -112,8 +146,19 @@ namespace BuditelPhonebook.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _roleRepository.SoftDeleteAsync(id);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                await _roleRepository.SoftDeleteAsync(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (KeyNotFoundException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 404 });
+            }
+            catch (ApplicationException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
+            }
         }
     }
 }
