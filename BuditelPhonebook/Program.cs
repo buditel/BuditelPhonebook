@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 
 namespace BuditelPhonebook
@@ -26,47 +27,49 @@ namespace BuditelPhonebook
                 builder.Configuration.AddUserSecrets<Program>();
             }
 
-            //var connectionString = builder.Configuration.GetConnectionString("DATABASE_URL");
+            var connectionString = builder.Configuration.GetConnectionString("DATABASE_URL");
 
-            var connectionString = builder.Configuration.GetConnectionString("PostgreConnection");
+            //var connectionString = builder.Configuration.GetConnectionString("PostgreConnection");
 
             //RENDER
-            //var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+            var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
-            // Ensure the database URL is provided
-            //if (string.IsNullOrEmpty(databaseUrl))
-            //{
-            //    throw new ArgumentException("DATABASE_URL is not set.");
-            //}
+            //Ensure the database URL is provided
+            if (string.IsNullOrEmpty(databaseUrl))
+            {
+                throw new ArgumentException("DATABASE_URL is not set.");
+            }
 
-            //// Parse the URL using Uri and extract necessary components
-            //var uri = new Uri(databaseUrl);
+            // Parse the URL using Uri and extract necessary components
+            var uri = new Uri(databaseUrl);
 
-            //// Extract user info (username:password)
-            //var userInfo = uri.UserInfo.Split(':');
-            //var username = userInfo[0];
-            //var password = userInfo[1];
+            // Extract user info (username:password)
+            var userInfo = uri.UserInfo.Split(':');
+            var username = userInfo[0];
+            var password = userInfo[1];
 
-            //// Extract host, port, and database
-            //var host = uri.Host;
-            //var database = uri.AbsolutePath.TrimStart('/');
+            // Extract host, port, and database
+            var host = uri.Host;
+            var database = uri.AbsolutePath.TrimStart('/');
 
-            //// Build the connection string for Npgsql
-            //var builderNpgsql = new NpgsqlConnectionStringBuilder
-            //{
-            //    Host = host,
-            //    Username = username,
-            //    Password = password,
-            //    Database = database,
-            //    SslMode = SslMode.Require, // Set SSL mode if required
-            //};
+            // Build the connection string for Npgsql
+            var builderNpgsql = new NpgsqlConnectionStringBuilder
+            {
+                Host = host,
+                Username = username,
+                Password = password,
+                Database = database,
+                SslMode = SslMode.Require, // Set SSL mode if required
+            };
 
-            //// Add pooling (optional, but recommended)
-            //builderNpgsql.Pooling = true;
+            // Add pooling (optional, but recommended)
+            builderNpgsql.Pooling = true;
 
             // Use the connection string for DbContext
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(connectionString));
+                                options.UseNpgsql(builderNpgsql.ConnectionString));
+                                //options.UseNpgsql(connectionString));
+
             // Configure Identity
             //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -98,6 +101,7 @@ namespace BuditelPhonebook
             {
                 options.ClientId = googleConfig["ClientId"];
                 options.ClientSecret = googleConfig["ClientSecret"];
+                options.CallbackPath = new PathString("/signin-google"); // Ensure it matches the URI registered in Google Console
                 options.SaveTokens = true; // Save tokens to ensure proper state handling
                 options.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
 
