@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
 
 
 namespace BuditelPhonebook
@@ -27,48 +26,48 @@ namespace BuditelPhonebook
                 builder.Configuration.AddUserSecrets<Program>();
             }
 
-            var connectionString = builder.Configuration.GetConnectionString("DATABASE_URL");
+            //var connectionString = builder.Configuration.GetConnectionString("DATABASE_URL");
 
-            //var connectionString = builder.Configuration.GetConnectionString("PostgreConnection");
+            var connectionString = builder.Configuration.GetConnectionString("PostgreConnection");
 
-            //RENDER
-            var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+            ////RENDER
+            //var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
-            //Ensure the database URL is provided
-            if (string.IsNullOrEmpty(databaseUrl))
-            {
-                throw new ArgumentException("DATABASE_URL is not set.");
-            }
+            ////Ensure the database URL is provided
+            //if (string.IsNullOrEmpty(databaseUrl))
+            //{
+            //    throw new ArgumentException("DATABASE_URL is not set.");
+            //}
 
-            // Parse the URL using Uri and extract necessary components
-            var uri = new Uri(databaseUrl);
+            //// Parse the URL using Uri and extract necessary components
+            //var uri = new Uri(databaseUrl);
 
-            // Extract user info (username:password)
-            var userInfo = uri.UserInfo.Split(':');
-            var username = userInfo[0];
-            var password = userInfo[1];
+            //// Extract user info (username:password)
+            //var userInfo = uri.UserInfo.Split(':');
+            //var username = userInfo[0];
+            //var password = userInfo[1];
 
-            // Extract host, port, and database
-            var host = uri.Host;
-            var database = uri.AbsolutePath.TrimStart('/');
+            //// Extract host, port, and database
+            //var host = uri.Host;
+            //var database = uri.AbsolutePath.TrimStart('/');
 
-            // Build the connection string for Npgsql
-            var builderNpgsql = new NpgsqlConnectionStringBuilder
-            {
-                Host = host,
-                Username = username,
-                Password = password,
-                Database = database,
-                SslMode = SslMode.Require, // Set SSL mode if required
-            };
+            //// Build the connection string for Npgsql
+            //var builderNpgsql = new NpgsqlConnectionStringBuilder
+            //{
+            //    Host = host,
+            //    Username = username,
+            //    Password = password,
+            //    Database = database,
+            //    SslMode = SslMode.Require, // Set SSL mode if required
+            //};
 
-            // Add pooling (optional, but recommended)
-            builderNpgsql.Pooling = true;
+            //// Add pooling (optional, but recommended)
+            //builderNpgsql.Pooling = true;
 
             // Use the connection string for DbContext
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                                options.UseNpgsql(builderNpgsql.ConnectionString));
-                                //options.UseNpgsql(connectionString));
+                                //options.UseNpgsql(builderNpgsql.ConnectionString));
+                                options.UseNpgsql(connectionString));
 
             // Configure Identity
             //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -163,7 +162,10 @@ namespace BuditelPhonebook
 
 
             app.UseHttpsRedirection();
+            app.UseHsts();
             app.UseStaticFiles();
+            app.UseStatusCodePagesWithReExecute("/Error/{0}");
+
 
             app.UseRouting();
 
@@ -223,11 +225,14 @@ namespace BuditelPhonebook
             //Security headers
             app.Use(async (context, next) =>
             {
-                context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-                context.Response.Headers.Add("X-Frame-Options", "DENY");
-                context.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
-                context.Response.Headers.Add("Content-Security-Policy",
-                    "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://cdn.jsdelivr.net; img-src 'self' https://buditel.softuni.bg data:;");
+                var headers = context.Response.Headers;
+
+                if (!headers.ContainsKey("Content-Security-Policy"))
+                {
+                    headers.Add("Content-Security-Policy",
+                        "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://cdn.jsdelivr.net; img-src 'self' https://buditel.softuni.bg data:;");
+                }
+
                 await next();
             });
 
