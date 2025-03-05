@@ -5,12 +5,20 @@
 }
 <h1 class="h3 mb-4">Управление на отделите</h1>
 
-@if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
-{
-    <p>
-        <a asp-action="Create" class="btn btn-success">Добави нов отдел</a>
-    </p>
-}
+
+<div class="d-flex flex-wrap flex-column flex-md-row mb-1">
+    <div class="m-2">
+        @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+        {
+            <a asp-action="Create" class="btn btn-success main-button">Добави нов отдел</a>
+        }
+    </div>
+    <div class="m-2">
+
+        <a asp-action="DeletedIndex" class="btn btn-danger main-button">Виж изтрити</a>
+    </div>
+</div>
+
 
 @if (!Model.Any(d => !d.IsDeleted))
 {
@@ -36,7 +44,7 @@ else
                         <td>@department.Name</td>
                         @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
                         {
-                            <td class="d-flex justify-content-center"> 
+                            <td class="d-flex justify-content-center">
                                 <a asp-action="Edit" asp-route-id="@department.Id" class="btn btn-sm btn-primary m-1">Редактирай</a>
                                 <a asp-action="Delete" asp-route-id="@department.Id" class="btn btn-sm btn-danger m-1">Изтрий</a>
                             </td>

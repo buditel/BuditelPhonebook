@@ -213,7 +213,7 @@ namespace BuditelPhonebook.Web.Controllers
 
         }
 
-        [Authorize(Roles = "SuperAdmin, Admin")]
+        [Authorize(Roles = "SuperAdmin, Admin, Moderator")]
         [HttpGet]
         public async Task<IActionResult> DeletedIndex(string search, int page = 1, int pageSize = 10)
         {
