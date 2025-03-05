@@ -5,12 +5,18 @@
 }
 <h1 class="h3 mb-4">Управление на длъжностите</h1>
 
-@if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
-{
-    <p>
-        <a asp-action="Create" class="btn btn-success">Добави нова длъжност</a>
-    </p>
-}
+<div class="d-flex flex-wrap flex-column flex-md-row mb-3">
+    <div class="m-2">
+        @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+        {
+            <a asp-action="Create" class="btn btn-success main-button">Добави нова длъжност</a>
+        }
+    </div>
+    <div class="m-2">
+
+        <a asp-action="DeletedIndex" class="btn btn-danger main-button">Виж изтрити</a>
+    </div>
+</div>
 
 @if (!Model.Any(r => !r.IsDeleted))
 {

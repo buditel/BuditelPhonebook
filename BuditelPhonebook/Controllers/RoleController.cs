@@ -3,7 +3,7 @@ using BuditelPhonebook.Infrastructure.Data.Models;
 using BuditelPhonebook.Web.ViewModels.Role;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.EntityFrameworkCore;
 using static BuditelPhonebook.Common.EntityValidationMessages.Role;
 
 namespace BuditelPhonebook.Web.Controllers
@@ -150,6 +150,72 @@ namespace BuditelPhonebook.Web.Controllers
             {
                 await _roleRepository.SoftDeleteAsync(id);
                 return RedirectToAction(nameof(Index));
+            }
+            catch (KeyNotFoundException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 404 });
+            }
+            catch (ApplicationException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
+            }
+        }
+
+        [Authorize(Roles = "SuperAdmin, Admin, Moderator")]
+        [HttpGet]
+        public async Task<IActionResult> DeletedIndex()
+        {
+            try
+            {
+                var deletedRoles = await _roleRepository.GetAllAttached().Where(d => d.IsDeleted).ToListAsync();
+
+                return View(deletedRoles);
+            }
+            catch (ArgumentException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
+            }
+            catch (ApplicationException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
+            }
+        }
+
+        [Authorize(Roles = "SuperAdmin, Admin")]
+        [HttpGet]
+        public async Task<IActionResult> Restore(int id)
+        {
+            try
+            {
+                var role = await _roleRepository.GetByIdAsync(id);
+
+                var model = new RestoreRoleViewModel
+                {
+                    Id = id,
+                    Name = role.Name
+                };
+
+                return View(model);
+            }
+            catch (KeyNotFoundException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 404 });
+            }
+        }
+
+        [Authorize(Roles = "SuperAdmin, Admin")]
+        [HttpPost]
+        public async Task<IActionResult> Restore(RestoreRoleViewModel model)
+        {
+            try
+            {
+                var role = await _roleRepository.GetByIdAsync(model.Id);
+
+                role.IsDeleted = false;
+
+                await _roleRepository.UpdateAsync(role);
+
+                return RedirectToAction(nameof(DeletedIndex));
             }
             catch (KeyNotFoundException)
             {

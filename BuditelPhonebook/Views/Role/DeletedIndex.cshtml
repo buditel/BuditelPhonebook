@@ -1,9 +1,9 @@
-﻿@model IEnumerable<Department>
+﻿@model IEnumerable<Role>
 
 @{
-    ViewBag.Title = "Управление на изтритите отдели";
+    ViewBag.Title = "Управление на изтритите длъжности";
 }
-<h1 class="h3 mb-4">Изтрити отдели</h1>
+<h1 class="h3 mb-4">Изтрити длъжности</h1>
 
 <p>
     <a asp-action="Index" class="btn btn-success mb-3">Виж актуални</a>
@@ -11,7 +11,7 @@
 
 @if (!Model.Any(d => d.IsDeleted))
 {
-    <div class="alert alert-info">Няма изтрити отдели.</div>
+    <div class="alert alert-info">Няма изтрити длъжности.</div>
 }
 else
 {
@@ -27,14 +27,14 @@ else
                 </tr>
             </thead>
             <tbody>
-                @foreach (var department in Model.Where(d => d.IsDeleted).OrderBy(d => d.Name))
+                @foreach (var role in Model.Where(d => d.IsDeleted).OrderBy(d => d.Name))
                 {
                     <tr>
-                        <td>@department.Name</td>
+                        <td>@role.Name</td>
                         @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
                         {
                             <td class="d-flex justify-content-center">
-                                <a asp-action="Restore" asp-route-id="@department.Id" class="btn btn-sm btn-primary m-1">Възстанови</a>
+                                <a asp-action="Restore" asp-route-id="@role.Id" class="btn btn-sm btn-primary m-1">Възстанови</a>
                             </td>
                         }
                     </tr>

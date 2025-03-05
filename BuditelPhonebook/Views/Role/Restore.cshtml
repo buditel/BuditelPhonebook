@@ -1,0 +1,12 @@
+﻿@model RestoreRoleViewModel
+@{
+    ViewBag.Title = "Възстанови длъжност";
+}
+<h1 class="h3 mb-4">@ViewBag.Title</h1>
+<div class="alert alert-warning">
+    Сигурни ли сте, че искате да възстановите <strong>@Model.Name</strong>?
+</div>
+<form method="post">
+    <button type="submit" class="btn btn-success m-1">Да, възстанови</button>
+    <a asp-action="DeletedIndex" class="btn btn-secondary">Отказ</a>
+</form>
