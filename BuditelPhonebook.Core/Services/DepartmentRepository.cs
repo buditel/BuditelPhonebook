@@ -16,24 +16,52 @@ namespace BuditelPhonebook.Core.Repositories
 
         public async Task<IEnumerable<Department>> GetAllAsync()
         {
-            return await _context.Departments.ToListAsync();
+            try
+            {
+                return await _context.Departments.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Грешка при извличане на всички отдели.", ex);
+            }
         }
 
         public async Task<Department> GetByIdAsync(int id)
         {
-            return await _context.Departments.FindAsync(id);
+            var department = await _context.Departments.FindAsync(id);
+
+            if (department == null)
+            {
+                throw new KeyNotFoundException($"Отдел с ID {id} не е намерен.");
+            }
+
+            return department;
         }
 
         public async Task AddAsync(Department department)
         {
-            _context.Departments.Add(department);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Departments.Add(department);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Грешка при добавяне на нов отдел.", ex);
+            }
         }
 
         public async Task UpdateAsync(Department department)
         {
-            _context.Departments.Update(department);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Departments.Update(department);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException($"Грешка при актуализиране на отдел с ID {department.Id}.", ex);
+            }
         }
 
         public async Task DeleteAsync(int id)
@@ -52,18 +80,33 @@ namespace BuditelPhonebook.Core.Repositories
 
             if (department == null)
             {
-                throw new ArgumentNullException(nameof(department));
+                throw new KeyNotFoundException($"Отдел с ID {id} не е намерен.");
             }
 
             department.IsDeleted = true;
 
-            _context.Departments.Update(department);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Departments.Update(department);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException($"Грешка при софт-изтриване на отдел с ID {id}.", ex);
+            }
         }
 
         public IQueryable<Department> GetAllAttached()
         {
-            return _context.Departments.AsQueryable();
+            try
+            {
+                return _context.Departments.AsQueryable();
+            }
+            catch (ApplicationException ex)
+            {
+
+                throw new ApplicationException("Грешка при извличане на отделите.", ex);
+            }
         }
     }
 }

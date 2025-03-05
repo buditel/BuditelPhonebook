@@ -12,7 +12,7 @@ namespace BuditelPhonebook.Web.Controllers
                 case 404:
                     return View("404");
                 default:
-                    return View("Error");
+                    return View("500");
             }
         }
     }

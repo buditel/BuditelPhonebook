@@ -20,8 +20,15 @@ namespace BuditelPhonebook.Web.Controllers
         [Authorize(Roles = "SuperAdmin, Admin, Moderator")]
         public async Task<IActionResult> Index()
         {
-            var departments = await _departmentRepository.GetAllAsync();
-            return View(departments);
+            try
+            {
+                var departments = await _departmentRepository.GetAllAsync();
+                return View(departments);
+            }
+            catch (ApplicationException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
+            }
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]
@@ -37,42 +44,53 @@ namespace BuditelPhonebook.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateDepartmentViewModel model)
         {
-            var exists = _departmentRepository.GetAllAttached().Any(d => d.Name == model.Name);
-            if (exists)
+            try
             {
-                ModelState.AddModelError(nameof(model.Name), NameUniqueMessage);
+                var exists = _departmentRepository.GetAllAttached().Any(d => d.Name == model.Name);
+                if (exists)
+                {
+                    ModelState.AddModelError(nameof(model.Name), NameUniqueMessage);
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+
+                var department = new Department
+                {
+                    Name = model.Name
+                };
+
+
+                await _departmentRepository.AddAsync(department);
+                return RedirectToAction(nameof(Index));
             }
-
-            if (!ModelState.IsValid)
+            catch (ApplicationException)
             {
-                return View(model);
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
             }
-
-            var department = new Department
-            {
-                Name = model.Name
-            };
-
-            await _departmentRepository.AddAsync(department);
-            return RedirectToAction(nameof(Index));
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<IActionResult> Edit(int id)
         {
-            var department = await _departmentRepository.GetByIdAsync(id);
-            if (department == null)
+            try
             {
-                return NotFound();
+                var department = await _departmentRepository.GetByIdAsync(id);
+
+                var model = new EditDepartmentViewModel
+                {
+                    Id = id,
+                    Name = department.Name
+                };
+
+                return View(model);
             }
-
-            var model = new EditDepartmentViewModel
+            catch (KeyNotFoundException)
             {
-                Id = id,
-                Name = department.Name
-            };
-
-            return View(model);
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 404 });
+            }
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]
@@ -80,32 +98,50 @@ namespace BuditelPhonebook.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditDepartmentViewModel model)
         {
-            var exists = _departmentRepository.GetAllAttached().Any(d => d.Name == model.Name);
-            if (exists)
+            try
             {
-                ModelState.AddModelError(nameof(model.Name), NameUniqueMessage);
+                var exists = _departmentRepository.GetAllAttached().Any(d => d.Name == model.Name);
+                if (exists)
+                {
+                    ModelState.AddModelError(nameof(model.Name), NameUniqueMessage);
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+
+                var department = await _departmentRepository.GetByIdAsync(model.Id);
+
+                department.Name = model.Name;
+
+                await _departmentRepository.UpdateAsync(department);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (KeyNotFoundException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 404 });
+            }
+            catch (ApplicationException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
             }
 
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            var department = await _departmentRepository.GetByIdAsync(model.Id);
-
-            department.Name = model.Name;
-
-            await _departmentRepository.UpdateAsync(department);
-            return RedirectToAction(nameof(Index));
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<IActionResult> Delete(int id)
         {
-            var department = await _departmentRepository.GetByIdAsync(id);
-            if (department == null) return NotFound();
+            try
+            {
+                var department = await _departmentRepository.GetByIdAsync(id);
 
-            return View(department);
+                return View(department);
+            }
+            catch (KeyNotFoundException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 404 });
+            }
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]
@@ -113,8 +149,19 @@ namespace BuditelPhonebook.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _departmentRepository.SoftDeleteAsync(id);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                await _departmentRepository.SoftDeleteAsync(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (KeyNotFoundException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 404 });
+            }
+            catch (ApplicationException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
+            }
         }
     }
 }
