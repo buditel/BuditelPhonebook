@@ -13,39 +13,39 @@ namespace BuditelPhonebook.Infrastructure.Migrations
             migrationBuilder.AlterColumn<string>(
                 name: "Name",
                 table: "Roles",
-                type: "varchar(100)",
+                type: "nvarchar(100)",
                 maxLength: 100,
                 nullable: false,
                 oldClrType: typeof(string),
-                oldType: "text");
+                oldType: "nvarchar(max)");
 
             migrationBuilder.AddColumn<bool>(
                 name: "IsDeleted",
                 table: "Roles",
-                type: "boolean",
+                type: "bit",
                 nullable: false,
                 defaultValue: false);
 
             migrationBuilder.AddColumn<bool>(
                 name: "IsDeleted",
                 table: "People",
-                type: "boolean",
+                type: "bit",
                 nullable: false,
                 defaultValue: false);
 
             migrationBuilder.AlterColumn<string>(
                 name: "Name",
                 table: "Departments",
-                type: "varchar(100)",
+                type: "nvarchar(100)",
                 maxLength: 100,
                 nullable: false,
                 oldClrType: typeof(string),
-                oldType: "text");
+                oldType: "nvarchar(max)");
 
             migrationBuilder.AddColumn<bool>(
                 name: "IsDeleted",
                 table: "Departments",
-                type: "boolean",
+                type: "bit",
                 nullable: false,
                 defaultValue: false);
         }
@@ -68,19 +68,19 @@ namespace BuditelPhonebook.Infrastructure.Migrations
             migrationBuilder.AlterColumn<string>(
                 name: "Name",
                 table: "Roles",
-                type: "text",
+                type: "nvarchar(max)",
                 nullable: false,
                 oldClrType: typeof(string),
-                oldType: "varchar(100)",
+                oldType: "nvarchar(100)",
                 oldMaxLength: 100);
 
             migrationBuilder.AlterColumn<string>(
                 name: "Name",
                 table: "Departments",
-                type: "text",
+                type: "nvarchar(max)",
                 nullable: false,
                 oldClrType: typeof(string),
-                oldType: "varchar(100)",
+                oldType: "nvarchar(100)",
                 oldMaxLength: 100);
         }
     }

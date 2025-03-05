@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -22,21 +21,21 @@ namespace BuditelPhonebook.Infrastructure.Migrations
             migrationBuilder.AlterColumn<string>(
                 name: "PhoneNumber",
                 table: "People",
-                type: "varchar(20)",
+                type: "nvarchar(20)",
                 maxLength: 20,
                 nullable: true,
                 oldClrType: typeof(string),
-                oldType: "varchar(20)",
+                oldType: "nvarchar(20)",
                 oldMaxLength: 20);
 
             migrationBuilder.AlterColumn<string>(
                 name: "MiddleName",
                 table: "People",
-                type: "varchar(50)",
+                type: "nvarchar(50)",
                 maxLength: 50,
                 nullable: true,
                 oldClrType: typeof(string),
-                oldType: "varchar(50)",
+                oldType: "nvarchar(50)",
                 oldMaxLength: 50);
 
             migrationBuilder.AddColumn<int>(
@@ -58,8 +57,8 @@ namespace BuditelPhonebook.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -71,8 +70,8 @@ namespace BuditelPhonebook.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -142,31 +141,31 @@ namespace BuditelPhonebook.Infrastructure.Migrations
             migrationBuilder.AlterColumn<string>(
                 name: "PhoneNumber",
                 table: "People",
-                type: "varchar(20)",
+                type: "nvarchar(20)",
                 maxLength: 20,
                 nullable: false,
                 defaultValue: "",
                 oldClrType: typeof(string),
-                oldType: "varchar(20)",
+                oldType: "nvarchar(20)",
                 oldMaxLength: 20,
                 oldNullable: true);
 
             migrationBuilder.AlterColumn<string>(
                 name: "MiddleName",
                 table: "People",
-                type: "varchar(50)",
+                type: "nvarchar(50)",
                 maxLength: 50,
                 nullable: false,
                 defaultValue: "",
                 oldClrType: typeof(string),
-                oldType: "varchar(50)",
+                oldType: "nvarchar(50)",
                 oldMaxLength: 50,
                 oldNullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Department",
                 table: "People",
-                type: "varchar(50)",
+                type: "nvarchar(50)",
                 maxLength: 50,
                 nullable: false,
                 defaultValue: "");
@@ -174,7 +173,7 @@ namespace BuditelPhonebook.Infrastructure.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "Role",
                 table: "People",
-                type: "varchar(50)",
+                type: "nvarchar(50)",
                 maxLength: 50,
                 nullable: false,
                 defaultValue: "");

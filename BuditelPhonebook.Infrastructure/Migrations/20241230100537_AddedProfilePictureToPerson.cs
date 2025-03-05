@@ -13,7 +13,7 @@ namespace BuditelPhonebook.Infrastructure.Migrations
             migrationBuilder.AddColumn<byte[]>(
                 name: "ProfilePicture",
                 table: "People",
-                type: "bytea",
+                type: "varbinary(max)",
                 nullable: true);
         }
 
