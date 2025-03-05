@@ -67,7 +67,9 @@ namespace BuditelPhonebook
 
             // Use the connection string for DbContext
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(builderNpgsql.ConnectionString));
+                                options.UseNpgsql(builderNpgsql.ConnectionString));
+                                //options.UseNpgsql(connectionString));
+
             // Configure Identity
             //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -99,6 +101,7 @@ namespace BuditelPhonebook
             {
                 options.ClientId = googleConfig["ClientId"];
                 options.ClientSecret = googleConfig["ClientSecret"];
+                options.CallbackPath = new PathString("/signin-google"); // Ensure it matches the URI registered in Google Console
                 options.SaveTokens = true; // Save tokens to ensure proper state handling
                 options.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
 
