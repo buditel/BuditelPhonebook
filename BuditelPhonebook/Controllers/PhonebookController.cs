@@ -19,22 +19,33 @@ namespace BuditelPhonebook.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(string search, int page = 1, int pageSize = 10)
         {
-            var (people, totalCount) = await _personRepository.SearchAsync(search, page, pageSize);
-
-            var model = new PaginatedPersonViewModel
+            try
             {
-                People = people,
-                CurrentPage = page,
-                PageSize = pageSize,
-                TotalCount = totalCount
-            };
+                var (people, totalCount) = await _personRepository.SearchAsync(search, page, pageSize);
 
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-            {
-                return PartialView("_PeopleTablePartial", model); // Return the partial view for AJAX
+                var model = new PaginatedPersonViewModel
+                {
+                    People = people,
+                    CurrentPage = page,
+                    PageSize = pageSize,
+                    TotalCount = totalCount
+                };
+
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return PartialView("_PeopleTablePartial", model); // Return the partial view for AJAX
+                }
+
+                return View(model); // Return the full view for standard requests
             }
-
-            return View(model); // Return the full view for standard requests
+            catch (ArgumentException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 404 });
+            }
+            catch (ApplicationException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
+            }
         }
 
         [HttpGet]

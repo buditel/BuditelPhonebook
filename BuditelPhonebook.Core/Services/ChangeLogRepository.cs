@@ -18,8 +18,15 @@ namespace BuditelPhonebook.Core.Services
         }
         public async Task AddChangeAsync(ChangeLog change)
         {
-            await _context.AddAsync(change);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.AddAsync(change);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Грешка при добавяне на нова промяна.", ex);
+            }
         }
 
         public async Task<List<string>> GenerateChangeDescription(Person oldPerson, EditPersonViewModel newPerson)
@@ -179,7 +186,14 @@ namespace BuditelPhonebook.Core.Services
 
         public IQueryable<ChangeLog> GetAllAttached()
         {
-            return _context.ChangeLogs.AsQueryable();
+            try
+            {
+                return _context.ChangeLogs.AsQueryable();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Грешка при извличане на всички промени.", ex);
+            }
         }
 
         private bool ArePicturesEqual(byte[]? oldPicture, byte[]? newPicture)
@@ -201,7 +215,7 @@ namespace BuditelPhonebook.Core.Services
         {
             if (imageData == null || imageData.Length == 0)
             {
-                throw new ArgumentException("Image data is invalid or empty.");
+                throw new ArgumentException("Невалидни данни на снимка.");
             }
 
             using (var inputStream = new MemoryStream(imageData))

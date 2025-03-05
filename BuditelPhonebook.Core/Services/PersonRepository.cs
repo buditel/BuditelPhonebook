@@ -19,40 +19,76 @@ namespace BuditelPhonebook.Core.Repositories
 
         public async Task<IEnumerable<Person>> GetAllAsync()
         {
-            return await _context.People
+            try
+            {
+                return await _context.People
                 .Include(p => p.Role)
                 .Include(p => p.Department)
                 .AsNoTracking() // Improves performance for read-only queries
                 .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Грешка при извличане на всички контакти.", ex);
+            }
+
         }
 
         public async Task<Person> GetByIdAsync(int id)
         {
-            return await _context.People.FindAsync(id);
+            var person = await _context.People.FindAsync(id);
+
+            if (person == null)
+            {
+                throw new KeyNotFoundException($"Контакт с ID {id} не е намерен.");
+            }
+
+            return person;
         }
 
         public async Task<Person> GetByIdWithRelationsAsync(int id)
         {
-            return await _context.People
+            var person = await _context.People
                 .Include(p => p.Role)
                 .Include(p => p.Department)
                 .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (person == null)
+            {
+                throw new KeyNotFoundException($"Контакт с ID {id} не е намерен.");
+            }
+
+            return person;
         }
 
         public async Task AddAsync(Person person)
         {
-            person.HireDate = DateTime.SpecifyKind(person.HireDate, DateTimeKind.Utc);
+            try
+            {
+                person.HireDate = DateTime.SpecifyKind(person.HireDate, DateTimeKind.Utc);
 
-            await _context.People.AddAsync(person);
-            await _context.SaveChangesAsync();
+                await _context.People.AddAsync(person);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Грешка при добавяне на нов контакт.", ex);
+            }
         }
 
         public async Task UpdateAsync(Person person)
         {
-            person.HireDate = DateTime.SpecifyKind(person.HireDate, DateTimeKind.Utc);
+            try
+            {
+                person.HireDate = DateTime.SpecifyKind(person.HireDate, DateTimeKind.Utc);
 
-            _context.People.Update(person);
-            await _context.SaveChangesAsync();
+                _context.People.Update(person);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException($"Грешка при актуализиране на контакт с ID {person.Id}.", ex);
+            }
         }
 
         public async Task DeleteAsync(int id)
@@ -60,7 +96,6 @@ namespace BuditelPhonebook.Core.Repositories
             var person = await _context.People.FindAsync(id);
             if (person == null)
             {
-                // Optional: Log a warning that the person was not found
                 return;
             }
 
@@ -74,139 +109,201 @@ namespace BuditelPhonebook.Core.Repositories
 
             if (person == null)
             {
-                throw new ArgumentNullException(nameof(person));
+                throw new KeyNotFoundException($"Контакт с ID {id} не е намерен.");
             }
 
-            var personLeaveDate = DateTime.ParseExact(leaveDate, HireAndLeaveDateFormat, CultureInfo.CurrentCulture);
+            bool isDateValid = DateTime.TryParseExact(leaveDate, HireAndLeaveDateFormat, CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime personLeaveDate);
+
+            if (!isDateValid)
+            {
+                throw new ArgumentException("Форматът на датата е невалиден.");
+            }
 
             person.LeaveDate = DateTime.SpecifyKind(personLeaveDate, DateTimeKind.Utc);
             person.IsDeleted = true;
             person.CommentOnDeletion = comment;
 
-
-            _context.People.Update(person);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.People.Update(person);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException($"Грешка при софт-изтриване на контакт с ID {id}.", ex)
+                    ;
+            }
         }
 
 
         public async Task<(IEnumerable<PersonDetailsViewModel> People, int TotalCount)> SearchAsync(string query, int page = 1, int pageSize = 10)
         {
-            IQueryable<Person> queryable = _context.People
+            if (page < 1)
+            {
+                throw new ArgumentException("Невалиден номер на страница.");
+            }
+
+            if (pageSize < 1)
+            {
+                throw new ArgumentException("Невалиден размер на страница.");
+            }
+
+            try
+            {
+                IQueryable<Person> queryable = _context.People
                 .Include(p => p.Role)
                 .Include(p => p.Department)
                 .Include(p => p.ChangeLogs)
                 .Where(p => !p.IsDeleted);
 
-            if (!string.IsNullOrWhiteSpace(query) && query.Length > 1)
+                if (!string.IsNullOrWhiteSpace(query) && query.Length > 1)
+                {
+                    var queryArray = query.ToLower().Split(" ", StringSplitOptions.RemoveEmptyEntries);
+                    queryable = queryable.Where(p =>
+                        queryArray.All(q =>
+                            p.FirstName.ToLower().Contains(q)
+                            || p.LastName.ToLower().Contains(q)
+                            || p.Email.ToLower().Contains(q)
+                            || (p.BusinessPhoneNumber != null && p.BusinessPhoneNumber.ToLower().Contains(q))
+                            || p.PersonalPhoneNumber.ToLower().Contains(q)
+                            || (p.Role != null && p.Role.Name.ToLower().Contains(q))
+                            || (p.Subject != null && p.Subject.ToLower().Contains(q))
+                            || (p.Department != null && p.Department.Name.ToLower().Contains(q))));
+                }
+
+                int totalCount = await queryable.CountAsync();
+
+                var people = await queryable
+                    .OrderBy(p => p.FirstName)
+                    .ThenBy(p => p.LastName)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .Select(p => new PersonDetailsViewModel
+                    {
+                        Id = p.Id,
+                        FirstName = p.FirstName,
+                        MiddleName = p.MiddleName,
+                        LastName = p.LastName,
+                        Birthdate = p.Birthdate,
+                        PersonalPhoneNumber = p.PersonalPhoneNumber,
+                        BusinessPhoneNumber = p.BusinessPhoneNumber,
+                        HireDate = p.HireDate.ToString(HireAndLeaveDateFormat),
+                        Email = p.Email,
+                        Department = p.Department.Name,
+                        Role = p.Role.Name,
+                        SubjectGroup = p.SubjectGroup,
+                        Subject = p.Subject,
+                        PersonPicture = p.PersonPicture,
+                        ChangedAt = p.ChangeLogs.OrderByDescending(c => c.ChangedAt).FirstOrDefault().ChangedAt.ToString(HireAndLeaveDateFormat)
+                    })
+                    .ToListAsync();
+
+                return (people, totalCount);
+            }
+            catch (Exception ex)
             {
-                var queryArray = query.ToLower().Split(" ", StringSplitOptions.RemoveEmptyEntries);
-                queryable = queryable.Where(p =>
-                    queryArray.All(q =>
-                        p.FirstName.ToLower().Contains(q)
-                        || p.LastName.ToLower().Contains(q)
-                        || p.Email.ToLower().Contains(q)
-                        || (p.BusinessPhoneNumber != null && p.BusinessPhoneNumber.ToLower().Contains(q))
-                        || p.PersonalPhoneNumber.ToLower().Contains(q)
-                        || (p.Role != null && p.Role.Name.ToLower().Contains(q))
-                        || (p.Subject != null && p.Subject.ToLower().Contains(q))
-                        || (p.Department != null && p.Department.Name.ToLower().Contains(q))));
+                throw new ApplicationException("Грешка при извличане на контакти", ex);
             }
 
-            int totalCount = await queryable.CountAsync();
-
-            var people = await queryable
-                .OrderBy(p => p.FirstName)
-                .ThenBy(p => p.LastName)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .Select(p => new PersonDetailsViewModel
-                {
-                    Id = p.Id,
-                    FirstName = p.FirstName,
-                    MiddleName = p.MiddleName,
-                    LastName = p.LastName,
-                    Birthdate = p.Birthdate,
-                    PersonalPhoneNumber = p.PersonalPhoneNumber,
-                    BusinessPhoneNumber = p.BusinessPhoneNumber,
-                    HireDate = p.HireDate.ToString(HireAndLeaveDateFormat),
-                    Email = p.Email,
-                    Department = p.Department.Name,
-                    Role = p.Role.Name,
-                    SubjectGroup = p.SubjectGroup,
-                    Subject = p.Subject,
-                    PersonPicture = p.PersonPicture,
-                    ChangedAt = p.ChangeLogs.OrderByDescending(c => c.ChangedAt).FirstOrDefault().ChangedAt.ToString(HireAndLeaveDateFormat)
-                })
-                .ToListAsync();
-
-            return (people, totalCount);
         }
 
         public async Task<(IEnumerable<DeletedIndexPersonViewModel> People, int TotalCount)> SearchDeletedAsync(string query, int page = 1, int pageSize = 10)
         {
-            IQueryable<Person> queryable = _context.People
+            if (page < 1)
+            {
+                throw new ArgumentException("Невалиден номер на страница.");
+            }
+
+            if (pageSize < 1)
+            {
+                throw new ArgumentException("Невалиден размер на страница.");
+            }
+
+            try
+            {
+                IQueryable<Person> queryable = _context.People
                 .Include(p => p.Role)
                 .Include(p => p.Department)
                 .Include(p => p.ChangeLogs)
                 .Where(p => p.IsDeleted);
 
-            if (!string.IsNullOrWhiteSpace(query) && query.Length > 1)
+                if (!string.IsNullOrWhiteSpace(query) && query.Length > 1)
+                {
+                    var queryArray = query.ToLower().Split(" ", StringSplitOptions.RemoveEmptyEntries);
+                    queryable = queryable.Where(p =>
+                        queryArray.All(q =>
+                            p.FirstName.ToLower().Contains(q)
+                            || p.LastName.ToLower().Contains(q)
+                            || p.Email.ToLower().Contains(q)
+                            || (p.BusinessPhoneNumber != null && p.BusinessPhoneNumber.ToLower().Contains(q))
+                            || p.PersonalPhoneNumber.ToLower().Contains(q)
+                            || (p.Role != null && p.Role.Name.ToLower().Contains(q))
+                            || (p.Subject != null && p.Subject.ToLower().Contains(q))
+                            || (p.Department != null && p.Department.Name.ToLower().Contains(q))));
+                }
+
+                int totalCount = await queryable.CountAsync();
+
+                var peopleList = await queryable
+                    .OrderBy(p => p.FirstName)
+                    .ThenBy(p => p.LastName)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+
+                var people = peopleList
+                    .Select(p => new DeletedIndexPersonViewModel
+                    {
+                        Id = p.Id,
+                        FirstName = p.FirstName,
+                        MiddleName = p.MiddleName,
+                        LastName = p.LastName,
+                        Birthdate = p.Birthdate,
+                        PersonalPhoneNumber = p.PersonalPhoneNumber,
+                        BusinessPhoneNumber = p.BusinessPhoneNumber,
+                        HireDate = p.HireDate.ToString(HireAndLeaveDateFormat),
+                        LeaveDate = p.LeaveDate?.ToString(HireAndLeaveDateFormat),
+                        CommentOnDeletion = p.CommentOnDeletion,
+                        Email = p.Email,
+                        Department = p.Department.Name,
+                        Role = p.Role.Name,
+                        SubjectGroup = p.SubjectGroup,
+                        Subject = p.Subject,
+                        PersonPicture = p.PersonPicture,
+                    })
+                    .ToList();
+
+                return (people, totalCount);
+            }
+            catch (Exception ex)
             {
-                var queryArray = query.ToLower().Split(" ", StringSplitOptions.RemoveEmptyEntries);
-                queryable = queryable.Where(p =>
-                    queryArray.All(q =>
-                        p.FirstName.ToLower().Contains(q)
-                        || p.LastName.ToLower().Contains(q)
-                        || p.Email.ToLower().Contains(q)
-                        || (p.BusinessPhoneNumber != null && p.BusinessPhoneNumber.ToLower().Contains(q))
-                        || p.PersonalPhoneNumber.ToLower().Contains(q)
-                        || (p.Role != null && p.Role.Name.ToLower().Contains(q))
-                        || (p.Subject != null && p.Subject.ToLower().Contains(q))
-                        || (p.Department != null && p.Department.Name.ToLower().Contains(q))));
+                throw new ApplicationException("Грешка при извличане на изтрити контакти", ex);
             }
 
-            int totalCount = await queryable.CountAsync();
-
-            var peopleList = await queryable
-                .OrderBy(p => p.FirstName)
-                .ThenBy(p => p.LastName)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-
-            var people = peopleList
-                .Select(p => new DeletedIndexPersonViewModel
-                {
-                    Id = p.Id,
-                    FirstName = p.FirstName,
-                    MiddleName = p.MiddleName,
-                    LastName = p.LastName,
-                    Birthdate = p.Birthdate,
-                    PersonalPhoneNumber = p.PersonalPhoneNumber,
-                    BusinessPhoneNumber = p.BusinessPhoneNumber,
-                    HireDate = p.HireDate.ToString(HireAndLeaveDateFormat),
-                    LeaveDate = p.LeaveDate?.ToString(HireAndLeaveDateFormat),
-                    CommentOnDeletion = p.CommentOnDeletion,
-                    Email = p.Email,
-                    Department = p.Department.Name,
-                    Role = p.Role.Name,
-                    SubjectGroup = p.SubjectGroup,
-                    Subject = p.Subject,
-                    PersonPicture = p.PersonPicture,
-                })
-                .ToList();
-
-            return (people, totalCount);
         }
 
         public IEnumerable<Role> GetRoles()
         {
-            return _context.Roles.Where(r => !r.IsDeleted).AsNoTracking().ToList();
+            try
+            {
+                return _context.Roles.Where(r => !r.IsDeleted).AsNoTracking().ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Грешка при извличане на длъжности.", ex);
+            }
         }
 
         public IEnumerable<Department> GetDepartments()
         {
-            return _context.Departments.Where(d => !d.IsDeleted).AsNoTracking().ToList();
+            try
+            {
+                return _context.Departments.Where(d => !d.IsDeleted).AsNoTracking().ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Грешка при извличане на отдели.", ex);
+            }
         }
 
         public async Task<Person> CreateANewPerson(CreatePersonViewModel model)
@@ -230,7 +327,12 @@ namespace BuditelPhonebook.Core.Repositories
                 model.BusinessPhoneNumber = model.BusinessPhoneNumber.Replace("+359", "0");
             }
 
-            var hireDate = DateTime.ParseExact(model.HireDate, HireAndLeaveDateFormat, CultureInfo.CurrentCulture);
+            bool isDateValid = DateTime.TryParseExact(model.HireDate, HireAndLeaveDateFormat, CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime hireDate);
+
+            if (!isDateValid)
+            {
+                throw new ArgumentException("Форматът на датата е невалиден.");
+            }
 
             Person person = new Person
             {
@@ -254,11 +356,10 @@ namespace BuditelPhonebook.Core.Repositories
 
         public async Task<EditPersonViewModel> MapPersonForEditById(int id)
         {
-            var person = await GetByIdWithRelationsAsync(id); // New repository method
+            var person = await GetByIdWithRelationsAsync(id);
             if (person == null)
             {
-                //TODO:
-                throw new Exception();
+                throw new KeyNotFoundException($"Контакт с ID {id} не е намерен.");
             }
 
             var model = new EditPersonViewModel
@@ -321,7 +422,12 @@ namespace BuditelPhonebook.Core.Repositories
                 model.BusinessPhoneNumber = model.BusinessPhoneNumber.Replace("+359", "0");
             }
 
-            var hireDate = DateTime.ParseExact(model.HireDate, HireAndLeaveDateFormat, CultureInfo.CurrentCulture);
+            bool isDateValid = DateTime.TryParseExact(model.HireDate, HireAndLeaveDateFormat, CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime hireDate);
+
+            if (!isDateValid)
+            {
+                throw new ArgumentException("Форматът на датата е невалиден.");
+            }
 
             person.FirstName = model.FirstName;
             person.MiddleName = model.MiddleName;
@@ -341,10 +447,17 @@ namespace BuditelPhonebook.Core.Repositories
 
         public IQueryable<Person> GetAllAttached()
         {
-            return _context.People
+            try
+            {
+                return _context.People
                 .Include(p => p.Role)
                 .Include(p => p.Department)
                 .AsQueryable();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Грешка при извличане на всички контакти.", ex);
+            }
         }
     }
 }

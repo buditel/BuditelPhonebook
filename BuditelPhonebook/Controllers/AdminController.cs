@@ -38,13 +38,20 @@ namespace BuditelPhonebook.Web.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            var model = new CreatePersonViewModel();
+            try
+            {
+                var model = new CreatePersonViewModel();
 
-            model.Roles = _personRepository.GetRoles(); // Add a method in IPersonRepository
-            model.Departments = _personRepository.GetDepartments(); // Add a method in IPersonRepository
+                model.Roles = _personRepository.GetRoles(); // Add a method in IPersonRepository
+                model.Departments = _personRepository.GetDepartments(); // Add a method in IPersonRepository
 
-            // Pass a new Person instance to the view
-            return View(model);
+                // Pass a new Person instance to the view
+                return View(model);
+            }
+            catch (ApplicationException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
+            }
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]
@@ -52,23 +59,24 @@ namespace BuditelPhonebook.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreatePersonViewModel model)
         {
-            var exists = _personRepository.GetAllAttached().Any(r => r.Email == model.Email);
-            if (exists)
-            {
-                ModelState.AddModelError(nameof(model.Email), EmailUniqueMessage);
-            }
-
-            if (!ModelState.IsValid)
-            {
-                model.Roles = _personRepository.GetRoles();
-                model.Departments = _personRepository.GetDepartments();
-                model.PersonPicture = model.PersonPicture;
-
-                return View(model);
-            }
-
             try
             {
+                var exists = _personRepository.GetAllAttached().Any(r => r.Email == model.Email);
+                if (exists)
+                {
+                    ModelState.AddModelError(nameof(model.Email), EmailUniqueMessage);
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    model.Roles = _personRepository.GetRoles();
+                    model.Departments = _personRepository.GetDepartments();
+                    model.PersonPicture = model.PersonPicture;
+
+                    return View(model);
+                }
+
+
                 Person person = await _personRepository.CreateANewPerson(model);
 
                 await _personRepository.AddAsync(person);
@@ -85,13 +93,13 @@ namespace BuditelPhonebook.Web.Controllers
 
                 return RedirectToAction("Index", "Phonebook");
             }
-            catch (Exception ex)
+            catch (ApplicationException)
             {
-                _logger.LogError(ex, "Error creating person in AdminController.Create");
-                ModelState.AddModelError(string.Empty, "An error occurred while saving the person.");
-                model.Roles = _personRepository.GetRoles();
-                model.Departments = _personRepository.GetDepartments();
-                return View(model);
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
+            }
+            catch (ArgumentException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
             }
         }
 
@@ -104,10 +112,9 @@ namespace BuditelPhonebook.Web.Controllers
 
                 return View(model);
             }
-            catch (Exception ex)
+            catch (KeyNotFoundException)
             {
-                _logger.LogError(ex, $"Error fetching person with ID {id} in AdminController.Edit");
-                return Redirect("/Error/404");
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 404 });
             }
         }
 
@@ -116,22 +123,23 @@ namespace BuditelPhonebook.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditPersonViewModel model)
         {
-            bool exists = _personRepository.GetAllAttached().Any(r => r.Email == model.Email);
-            var currentPerson = await _personRepository.GetByIdWithRelationsAsync(model.Id);
-            if (exists && model.Email != currentPerson.Email)
-            {
-                ModelState.AddModelError(nameof(model.Email), EmailUniqueMessage);
-            }
-
-            if (!ModelState.IsValid)
-            {
-                model.Roles = _personRepository.GetRoles();
-                model.Departments = _personRepository.GetDepartments();
-                return View(model);
-            }
-
             try
             {
+                bool exists = _personRepository.GetAllAttached().Any(r => r.Email == model.Email);
+                var currentPerson = await _personRepository.GetByIdWithRelationsAsync(model.Id);
+
+                if (exists && model.Email != currentPerson.Email)
+                {
+                    ModelState.AddModelError(nameof(model.Email), EmailUniqueMessage);
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    model.Roles = _personRepository.GetRoles();
+                    model.Departments = _personRepository.GetDepartments();
+                    return View(model);
+                }
+
                 var change = new ChangeLog
                 {
                     PersonId = model.Id,
@@ -145,13 +153,13 @@ namespace BuditelPhonebook.Web.Controllers
 
                 return RedirectToAction("Index", "Phonebook");
             }
-            catch (Exception ex)
+            catch (ApplicationException)
             {
-                _logger.LogError(ex, $"Error updating person with ID {model.Id} in AdminController.Edit");
-                ModelState.AddModelError(string.Empty, "An error occurred while updating the person.");
-                model.Roles = _personRepository.GetRoles();
-                model.Departments = _personRepository.GetDepartments();
-                return View(model);
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
+            }
+            catch (KeyNotFoundException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 404 });
             }
         }
 
@@ -162,10 +170,6 @@ namespace BuditelPhonebook.Web.Controllers
             try
             {
                 var person = await _personRepository.GetByIdAsync(id);
-                if (person == null)
-                {
-                    return NotFound();
-                }
 
                 var model = new DeletePersonViewModel
                 {
@@ -177,10 +181,9 @@ namespace BuditelPhonebook.Web.Controllers
 
                 return View(model);
             }
-            catch (Exception ex)
+            catch (KeyNotFoundException)
             {
-                _logger.LogError(ex, $"Error fetching person with ID {id} in AdminController.Delete");
-                return StatusCode(500, "Internal server error");
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 404 });
             }
         }
 
@@ -195,178 +198,255 @@ namespace BuditelPhonebook.Web.Controllers
 
                 return RedirectToAction("DeletedIndex");
             }
-            catch (Exception ex)
+            catch (ApplicationException)
             {
-                _logger.LogError(ex, $"Error deleting person with ID {model.Id} in AdminController.DeleteConfirmed");
-                return StatusCode(500, "Internal server error");
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
             }
+            catch (ArgumentException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
+            }
+            catch (KeyNotFoundException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 404 });
+            }
+
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpGet]
         public async Task<IActionResult> DeletedIndex(string search, int page = 1, int pageSize = 10)
         {
-            var (people, totalCount) = await _personRepository.SearchDeletedAsync(search, page, pageSize);
-
-            var model = new PaginatedDeletedPersonViewModel
+            try
             {
-                People = people,
-                CurrentPage = page,
-                PageSize = pageSize,
-                TotalCount = totalCount
-            };
+                var (people, totalCount) = await _personRepository.SearchDeletedAsync(search, page, pageSize);
 
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-            {
-                return PartialView("_DeletedPeoplePartial", model); // Return the partial view for AJAX
+                var model = new PaginatedDeletedPersonViewModel
+                {
+                    People = people,
+                    CurrentPage = page,
+                    PageSize = pageSize,
+                    TotalCount = totalCount
+                };
+
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return PartialView("_DeletedPeoplePartial", model); // Return the partial view for AJAX
+                }
+
+                return View(model);
             }
-
-            return View(model);
+            catch (ArgumentException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
+            }
+            catch (ApplicationException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
+            }
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpGet]
         public async Task<IActionResult> Restore(int id)
         {
-            var person = await _personRepository.GetByIdAsync(id);
-
-            var model = new RestorePersonViewModel
+            try
             {
-                Id = id,
-                FirstName = person.FirstName,
-                MiddleName = person.MiddleName,
-                LastName = person.LastName
-            };
+                var person = await _personRepository.GetByIdAsync(id);
 
-            return View(model);
+                var model = new RestorePersonViewModel
+                {
+                    Id = id,
+                    FirstName = person.FirstName,
+                    MiddleName = person.MiddleName,
+                    LastName = person.LastName
+                };
+
+                return View(model);
+            }
+            catch (KeyNotFoundException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 404 });
+            }
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpPost]
         public async Task<IActionResult> Restore(RestorePersonViewModel model)
         {
-            var person = await _personRepository.GetByIdAsync(model.Id);
+            try
+            {
+                var person = await _personRepository.GetByIdAsync(model.Id);
 
-            person.CommentOnDeletion = null;
-            person.LeaveDate = null;
-            person.IsDeleted = false;
+                person.CommentOnDeletion = null;
+                person.LeaveDate = null;
+                person.IsDeleted = false;
 
-            await _personRepository.UpdateAsync(person);
+                await _personRepository.UpdateAsync(person);
 
-            return RedirectToAction(nameof(DeletedIndex));
+                return RedirectToAction(nameof(DeletedIndex));
+            }
+            catch (KeyNotFoundException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 404 });
+            }
+            catch (ApplicationException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
+            }
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, Moderator")]
         [HttpGet]
         public async Task<IActionResult> UserRoles()
         {
-            var userRoles = await _userRoleRepository.GetAllRolesAsync();
-
-            var model = new UserRoleViewModel
+            try
             {
-                UserRoles = userRoles
-            };
+                var userRoles = await _userRoleRepository.GetAllRolesAsync();
 
-            return View(model);
+                var model = new UserRoleViewModel
+                {
+                    UserRoles = userRoles
+                };
+
+                return View(model);
+            }
+            catch (ApplicationException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
+            }
         }
 
         [Authorize(Roles = "SuperAdmin")]
         [HttpGet]
         public async Task<IActionResult> ConfirmUserRole(UserRoleViewModel model)
         {
-            var superAdminEmails = _configuration.GetSection("SuperAdminEmails").Get<List<string>>();
-            if (superAdminEmails != null && superAdminEmails.Contains(model.Email))
+            try
             {
-                ModelState.AddModelError(nameof(model.Email), string.Format(UserInSuperAdminRoleMessage, model.Email));
-            }
+                var superAdminEmails = _configuration.GetSection("SuperAdminEmails").Get<List<string>>();
+                if (superAdminEmails != null && superAdminEmails.Contains(model.Email))
+                {
+                    ModelState.AddModelError(nameof(model.Email), string.Format(UserInSuperAdminRoleMessage, model.Email));
+                }
 
-            if (await _userRoleRepository.GetAllRolesAttached().AnyAsync(ur => ur.Email == model.Email && ur.Role == model.Role))
+                if (await _userRoleRepository.GetAllRolesAttached().AnyAsync(ur => ur.Email == model.Email && ur.Role == model.Role))
+                {
+                    var roleInBulgarian = model.Role == "Admin" ? "Администратор" : "Модератор";
+                    ModelState.AddModelError(nameof(model.Role), string.Format(UserIsInSameRoleMessage, model.Email, roleInBulgarian));
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    var userRoles = await _userRoleRepository.GetAllRolesAsync();
+                    model.UserRoles = userRoles;
+
+                    return View("UserRoles", model);
+                }
+
+                var currentRole = await _userRoleRepository.GetAllRolesAttached()
+                    .FirstOrDefaultAsync(ur => ur.Email == model.Email);
+
+                if (currentRole != null)
+                {
+                    model.CurrentRole = currentRole.Role;
+                }
+
+                return View(model);
+            }
+            catch (ApplicationException)
             {
-                var roleInBulgarian = model.Role == "Admin" ? "Администратор" : "Модератор";
-                ModelState.AddModelError(nameof(model.Role), string.Format(UserIsInSameRoleMessage, model.Email, roleInBulgarian));
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
             }
-
-            if (!ModelState.IsValid)
-            {
-                var userRoles = await _userRoleRepository.GetAllRolesAsync();
-                model.UserRoles = userRoles;
-
-                return View("UserRoles", model);
-            }
-
-            var currentRole = await _userRoleRepository.GetAllRolesAttached()
-                .FirstOrDefaultAsync(ur => ur.Email == model.Email);
-
-            if (currentRole != null)
-            {
-                model.CurrentRole = currentRole.Role;
-            }
-
-            return View(model);
         }
 
         [Authorize(Roles = "SuperAdmin")]
         [HttpPost]
         public async Task<IActionResult> AssignUserRole(UserRoleViewModel model)
         {
-            if (model.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase) || model.Role.Equals("Moderator", StringComparison.OrdinalIgnoreCase))
+            try
             {
-                var userToChange = await _userRoleRepository.GetAllRolesAttached().FirstOrDefaultAsync(ur => ur.Email == model.Email);
+                if (model.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase) || model.Role.Equals("Moderator", StringComparison.OrdinalIgnoreCase))
+                {
+                    var userToChange = await _userRoleRepository.GetAllRolesAttached().FirstOrDefaultAsync(ur => ur.Email == model.Email);
 
-                if (userToChange != null)
-                {
-                    userToChange.Role = model.Role;
-                    await _userRoleRepository.UpdateAsync(userToChange);
-                }
-                else
-                {
-                    var userRole = new UserRole()
+                    if (userToChange != null)
                     {
-                        Role = model.Role,
-                        Email = model.Email,
-                    };
+                        userToChange.Role = model.Role;
+                        await _userRoleRepository.UpdateAsync(userToChange);
+                    }
+                    else
+                    {
+                        var userRole = new UserRole()
+                        {
+                            Role = model.Role,
+                            Email = model.Email,
+                        };
 
-                    await _userRoleRepository.AddRoleAsync(userRole);
+                        await _userRoleRepository.AddRoleAsync(userRole);
+                    }
                 }
-            }
-            //TODO: ExceptionHandling
 
-            return RedirectToAction("UserRoles");
+                return RedirectToAction("UserRoles");
+            }
+            catch (ApplicationException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
+            }
         }
 
         [Authorize(Roles = "SuperAdmin")]
         [HttpGet]
         public async Task<IActionResult> ConfirmRemoveFromRole(int id)
         {
-            var userRole = await _userRoleRepository.GetByIdAsync(id);
-
-            if (userRole == null)
+            try
             {
-                throw new Exception();
+                var userRole = await _userRoleRepository.GetByIdAsync(id);
+
+                if (userRole == null)
+                {
+                    throw new Exception();
+                }
+
+                var model = new RemoveUserRoleViewModel()
+                {
+                    Id = id,
+                    Email = userRole.Email,
+                    Role = userRole.Role
+                };
+
+                return View(model);
             }
-
-            var model = new RemoveUserRoleViewModel()
+            catch (KeyNotFoundException)
             {
-                Id = id,
-                Email = userRole.Email,
-                Role = userRole.Role
-            };
-
-            return View(model);
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 404 });
+            }
         }
 
         [Authorize(Roles = "SuperAdmin")]
         [HttpPost]
         public async Task<IActionResult> RemoveFromRole(int id)
         {
-            await _userRoleRepository.RemoveRoleAsync(id);
+            try
+            {
+                await _userRoleRepository.RemoveRoleAsync(id);
 
-            return RedirectToAction("UserRoles");
+                return RedirectToAction("UserRoles");
+            }
+            catch (KeyNotFoundException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 404 });
+            }
+            catch (ApplicationException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
+            }
         }
 
         public async Task<IActionResult> SeeLatestChange(int id)
         {
-            var model = await _changeLogRepository
+            try
+            {
+                var model = await _changeLogRepository
                 .GetAllAttached()
                 .Where(cl => cl.PersonId == id)
                 .OrderByDescending(cl => cl.ChangedAt)
@@ -379,12 +459,17 @@ namespace BuditelPhonebook.Web.Controllers
                 })
                 .FirstOrDefaultAsync();
 
-            if (model == null)
-            {
-                return NotFound("No changes found for this person.");
-            }
+                if (model == null)
+                {
+                    return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 404 });
+                }
 
-            return PartialView("_LatestChange", model);
+                return PartialView("_LatestChange", model);
+            }
+            catch (ApplicationException)
+            {
+                return RedirectToAction("HttpStatusCodeHandler", "Error", new { statusCode = 500 });
+            }
         }
     }
 }
