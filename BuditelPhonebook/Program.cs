@@ -27,9 +27,9 @@ namespace BuditelPhonebook
                 builder.Configuration.AddUserSecrets<Program>();
             }
 
-            //var connectionString = builder.Configuration.GetConnectionString("DATABASE_URL");
+            var connectionString = builder.Configuration.GetConnectionString("DATABASE_URL");
 
-            var connectionString = builder.Configuration.GetConnectionString("PostgreConnection");
+            //var connectionString = builder.Configuration.GetConnectionString("PostgreConnection");
 
             //RENDER
             var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
