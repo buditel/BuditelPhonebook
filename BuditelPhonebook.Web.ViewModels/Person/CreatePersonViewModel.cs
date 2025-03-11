@@ -49,7 +49,7 @@ namespace BuditelPhonebook.Web.ViewModels.Person
         [RequiredIfTeacher("Role", "Учител", SubjectGroupRequiredMessage)]
         public string? SubjectGroup { get; set; }
 
-        [MaxLength(40)]
+        [StringLength(150, MinimumLength = 2, ErrorMessage = SubjectLengthMessage)]
         [RequiredIfTeacher("Role", "Учител", SubjectRequiredMessage)]
         public string? Subject { get; set; }
 
