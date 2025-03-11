@@ -145,3 +145,7 @@ footer {
 .main-button{
     width: 200px;
 }
+
+.pagination{
+    flex-wrap:wrap;
+}
