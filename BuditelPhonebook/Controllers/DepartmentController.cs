@@ -134,7 +134,9 @@ namespace BuditelPhonebook.Web.Controllers
         {
             try
             {
-                var department = await _departmentRepository.GetByIdAsync(id);
+                var department = await _departmentRepository.GetAllAttached()
+                    .Include(d => d.People)
+                    .FirstOrDefaultAsync(d => d.Id == id);
 
                 return View(department);
             }

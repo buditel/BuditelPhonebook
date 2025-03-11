@@ -76,7 +76,9 @@ namespace BuditelPhonebook.Core.Repositories
 
         public async Task SoftDeleteAsync(int id)
         {
-            var department = await _context.Departments.FindAsync(id);
+            var department = await _context.Departments
+                .Include(d => d.People)
+                .FirstOrDefaultAsync(d => d.Id == id);
 
             if (department == null)
             {
@@ -87,7 +89,26 @@ namespace BuditelPhonebook.Core.Repositories
 
             try
             {
+                if (!await _context.Departments.AnyAsync(d => d.Name == "Отделът е изтрит"))
+                {
+                    Department deletedDepartment = new Department()
+                    {
+                        Name = "Отделът е изтрит"
+                    };
+
+                    await AddAsync(deletedDepartment);
+                }
+
                 _context.Departments.Update(department);
+                await _context.SaveChangesAsync();
+
+                foreach (var person in department.People)
+                {
+                    person.Department = await _context.Departments.FirstOrDefaultAsync(d => d.Name == "Отделът е изтрит");
+
+                    _context.People.Update(person);
+                }
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
