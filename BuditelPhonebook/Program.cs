@@ -71,6 +71,14 @@ namespace BuditelPhonebook
                 options.SaveTokens = true; // Save tokens to ensure proper state handling
                 options.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
 
+                options.Events.OnRedirectToAuthorizationEndpoint = context =>
+                {
+                    var redirectUri = context.RedirectUri + "&prompt=select_account";
+                    context.Response.Redirect(redirectUri);
+
+                    return Task.CompletedTask;
+                };
+
                 options.Events.OnRemoteFailure = context =>
                 {
                     // This handles the failed authentication scenario (like a correlation error)
