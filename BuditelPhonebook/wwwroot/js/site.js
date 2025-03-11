@@ -10,7 +10,7 @@
     function updateVisibility() {
         const selectedRole = roleSelect.options[roleSelect.selectedIndex].text;
 
-        if (selectedRole === "Учител") {
+        if (selectedRole.includes("Учител")) {
             subjectGroup.style.display = "block";
             subject.style.display = "block";
 
