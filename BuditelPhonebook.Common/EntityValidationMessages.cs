@@ -23,6 +23,8 @@
             public const string DepartmentRequiredMessage = "Трябва да изберете отдел.";
             public const string SubjectGroupRequiredMessage = "Трябва да изберете група предмети.";
             public const string SubjectRequiredMessage = "Трябва да въведете предмет, по който учителят преподава.";
+            public const string CommentOnDeletionRequiredMessage = "Трябва да въведете причина за изтриване на контакта.";
+            public const string CommentOnDeletionLengthMessage = "Коментарът за изтриване трябва да е между 5 и 150 символа.";
         }
 
         public static class Role

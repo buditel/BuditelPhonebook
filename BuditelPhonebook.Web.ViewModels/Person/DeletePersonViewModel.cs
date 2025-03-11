@@ -1,4 +1,8 @@
-﻿namespace BuditelPhonebook.Web.ViewModels.Person
+﻿using System.ComponentModel.DataAnnotations;
+
+using static BuditelPhonebook.Common.EntityValidationMessages.Person;
+
+namespace BuditelPhonebook.Web.ViewModels.Person
 {
     public class DeletePersonViewModel
     {
@@ -10,7 +14,8 @@
 
         public string LastName { get; set; } = null!;
 
-        public string? CommentOnDeletion { get; set; }
+        [Required(ErrorMessage = CommentOnDeletionRequiredMessage), StringLength(150, MinimumLength = 5, ErrorMessage = CommentOnDeletionLengthMessage)]
+        public string CommentOnDeletion { get; set; } = null!;
 
         public string LeaveDate { get; set; } = null!;
     }

@@ -194,6 +194,16 @@ namespace BuditelPhonebook.Web.Controllers
         {
             try
             {
+                var person = await _personRepository.GetByIdAsync(model.Id);
+                model.FirstName = person.FirstName;
+                model.MiddleName = person.MiddleName;
+                model.LastName = person.LastName;
+
+                if (model.CommentOnDeletion == null)
+                {
+                    return View("Delete", model);
+                }
+
                 await _personRepository.SoftDeleteAsync(model.Id, model.CommentOnDeletion, model.LeaveDate);
 
                 return RedirectToAction("DeletedIndex");
