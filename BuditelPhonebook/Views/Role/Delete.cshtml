@@ -4,7 +4,8 @@
 }
 <h1 class="h3 mb-4">Изтрий длъжност</h1>
 <div class="alert alert-warning">
-    Сигурни ли сте, че искате да изтриете <strong>@Model.Name</strong>?
+    <p>Сигурни ли сте, че искате да изтриете <strong>@Model.Name</strong>?</p>
+    <p><strong>@Model.People.Count</strong> @(Model.People.Count == 1 ? "контакт ще остане" : "контакта ще останат") без длъжност.</p>
 </div>
 
 <form asp-action="Delete" method="post">

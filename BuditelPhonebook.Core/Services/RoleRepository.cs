@@ -78,7 +78,9 @@ namespace BuditelPhonebook.Core.Repositories
 
         public async Task SoftDeleteAsync(int id)
         {
-            var role = await _context.Roles.FindAsync(id);
+            var role = await _context.Roles
+                .Include(r => r.People)
+                .FirstOrDefaultAsync(r => r.Id == id);
 
             if (role == null)
             {
@@ -89,7 +91,26 @@ namespace BuditelPhonebook.Core.Repositories
 
             try
             {
+                if (!await _context.Roles.AnyAsync(r => r.Name == "Длъжността е изтрита"))
+                {
+                    Role deletedRole = new Role()
+                    {
+                        Name = "Длъжността е изтрита"
+                    };
+
+                    await AddAsync(deletedRole);
+                }
+
                 _context.Roles.Update(role);
+                await _context.SaveChangesAsync();
+
+                foreach (var person in role.People)
+                {
+                    person.Role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "Длъжността е изтрита");
+
+                    _context.People.Update(person);
+                }
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

@@ -131,7 +131,9 @@ namespace BuditelPhonebook.Web.Controllers
         {
             try
             {
-                var role = await _roleRepository.GetByIdAsync(id);
+                var role = await _roleRepository.GetAllAttached()
+                    .Include(r => r.People)
+                    .FirstOrDefaultAsync(r => r.Id == id);
 
                 return View(role);
             }
