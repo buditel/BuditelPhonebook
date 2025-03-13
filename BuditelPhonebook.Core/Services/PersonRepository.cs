@@ -23,7 +23,8 @@ namespace BuditelPhonebook.Core.Repositories
             {
                 return await _context.People
                 .Include(p => p.Role)
-                .Include(p => p.Department)
+                .Include(p => p.PeopleDepartments)
+                    .ThenInclude(pd => pd.Department)
                 .AsNoTracking() // Improves performance for read-only queries
                 .ToListAsync();
             }
@@ -50,7 +51,8 @@ namespace BuditelPhonebook.Core.Repositories
         {
             var person = await _context.People
                 .Include(p => p.Role)
-                .Include(p => p.Department)
+                .Include(p => p.PeopleDepartments)
+                    .ThenInclude(pd => pd.Department)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (person == null)
@@ -152,7 +154,8 @@ namespace BuditelPhonebook.Core.Repositories
             {
                 IQueryable<Person> queryable = _context.People
                 .Include(p => p.Role)
-                .Include(p => p.Department)
+                .Include(p => p.PeopleDepartments)
+                    .ThenInclude(pd => pd.Department)
                 .Include(p => p.ChangeLogs)
                 .Where(p => !p.IsDeleted);
 
@@ -168,7 +171,7 @@ namespace BuditelPhonebook.Core.Repositories
                             || p.PersonalPhoneNumber.ToLower().Contains(q)
                             || (p.Role != null && p.Role.Name.ToLower().Contains(q))
                             || (p.Subject != null && p.Subject.ToLower().Contains(q))
-                            || (p.Department != null && p.Department.Name.ToLower().Contains(q))));
+                            || (p.PeopleDepartments != null && p.PeopleDepartments.Any(pd => pd.Department.Name.ToLower().Contains(q)))));
                 }
 
                 int totalCount = await queryable.CountAsync();
@@ -189,7 +192,7 @@ namespace BuditelPhonebook.Core.Repositories
                         BusinessPhoneNumber = p.BusinessPhoneNumber,
                         HireDate = p.HireDate.ToString(HireAndLeaveDateFormat),
                         Email = p.Email,
-                        Department = p.Department.Name,
+                        Departments = p.PeopleDepartments.Select(pd => pd.Department.Name).ToList(),
                         Role = p.Role.Name,
                         SubjectGroup = p.SubjectGroup,
                         Subject = p.Subject,
@@ -223,7 +226,8 @@ namespace BuditelPhonebook.Core.Repositories
             {
                 IQueryable<Person> queryable = _context.People
                 .Include(p => p.Role)
-                .Include(p => p.Department)
+                .Include(p => p.PeopleDepartments)
+                    .ThenInclude(pd => pd.Department)
                 .Include(p => p.ChangeLogs)
                 .Where(p => p.IsDeleted);
 
@@ -239,7 +243,7 @@ namespace BuditelPhonebook.Core.Repositories
                             || p.PersonalPhoneNumber.ToLower().Contains(q)
                             || (p.Role != null && p.Role.Name.ToLower().Contains(q))
                             || (p.Subject != null && p.Subject.ToLower().Contains(q))
-                            || (p.Department != null && p.Department.Name.ToLower().Contains(q))));
+                            || (p.PeopleDepartments != null && p.PeopleDepartments.Any(pd => pd.Department.Name.ToLower().Contains(q)))));
                 }
 
                 int totalCount = await queryable.CountAsync();
@@ -265,7 +269,7 @@ namespace BuditelPhonebook.Core.Repositories
                         LeaveDate = p.LeaveDate?.ToString(HireAndLeaveDateFormat),
                         CommentOnDeletion = p.CommentOnDeletion,
                         Email = p.Email,
-                        Department = p.Department.Name,
+                        Departments = p.PeopleDepartments.Select(pd => pd.Department.Name).ToList(),
                         Role = p.Role.Name,
                         SubjectGroup = p.SubjectGroup,
                         Subject = p.Subject,
@@ -334,6 +338,11 @@ namespace BuditelPhonebook.Core.Repositories
                 throw new ArgumentException("Форматът на датата е невалиден.");
             }
 
+            var selectedDepartments = model.Departments
+                .Where(d => !string.IsNullOrWhiteSpace(d))
+                .ToList();
+
+
             Person person = new Person
             {
                 FirstName = model.FirstName,
@@ -345,12 +354,25 @@ namespace BuditelPhonebook.Core.Repositories
                 PersonalPhoneNumber = model.PersonalPhoneNumber,
                 HireDate = hireDate,
                 PersonPicture = personPictureData,
-                DepartmentId = GetDepartments().FirstOrDefault(d => d.Name == model.Department).Id,
+                //DepartmentId = GetDepartments().FirstOrDefault(d => d.Name == model.Department).Id,
                 RoleId = GetRoles().FirstOrDefault(r => r.Name == model.Role).Id,
                 SubjectGroup = model.SubjectGroup,
                 Subject = model.Subject
             };
 
+            foreach (var departmentName in model.Departments)
+            {
+                PersonDepartment personDepartment = new PersonDepartment()
+                {
+                    Person = person,
+                    Department = await _context.Departments.FirstOrDefaultAsync(d => d.Name == departmentName)
+                };
+
+                await _context.PeopleDepartments.AddAsync(personDepartment);
+                person.PeopleDepartments.Add(personDepartment);
+            }
+
+            await AddAsync(person);
             return person;
         }
 
@@ -373,13 +395,13 @@ namespace BuditelPhonebook.Core.Repositories
                 BusinessPhoneNumber = person.BusinessPhoneNumber,
                 HireDate = person.HireDate.ToString(HireAndLeaveDateFormat),
                 Email = person.Email,
-                Department = person.Department.Name,
+                Departments = person.PeopleDepartments.Select(pd => pd.Department.Name).ToList(),
                 Role = person.Role.Name,
                 SubjectGroup = person.SubjectGroup,
                 Subject = person.Subject,
                 ExistingPicture = person.PersonPicture,
                 Roles = GetRoles(),
-                Departments = GetDepartments()
+                AvailableDepartments = GetDepartments()
             };
 
             return model;
@@ -429,6 +451,35 @@ namespace BuditelPhonebook.Core.Repositories
                 throw new ArgumentException("Форматът на датата е невалиден.");
             }
 
+            List<PersonDepartment> peopleDepartments = new List<PersonDepartment>();
+
+            foreach (var departmentName in model.Departments)
+            {
+                if (departmentName == null)
+                {
+                    continue;
+                }
+
+                PersonDepartment personDepartment = null;
+
+                if (!_context.PeopleDepartments.Any(pd => pd.PersonId == person.Id && pd.Department.Name == departmentName))
+                {
+                    personDepartment = new PersonDepartment()
+                    {
+                        PersonId = person.Id,
+                        Department = await _context.Departments.FirstOrDefaultAsync(d => d.Name == departmentName)
+                    };
+
+                    await _context.PeopleDepartments.AddAsync(personDepartment);
+                }
+                else
+                {
+                    personDepartment = await _context.PeopleDepartments.FirstOrDefaultAsync(pd => pd.PersonId == person.Id && pd.Department.Name == departmentName);
+                }
+
+                peopleDepartments.Add(personDepartment);
+            }
+
             person.FirstName = model.FirstName;
             person.MiddleName = model.MiddleName;
             person.LastName = model.LastName;
@@ -437,7 +488,7 @@ namespace BuditelPhonebook.Core.Repositories
             person.HireDate = hireDate;
             person.Birthdate = model.Birthdate;
             person.Email = model.Email;
-            person.DepartmentId = GetDepartments().FirstOrDefault(d => d.Name == model.Department).Id;
+            person.PeopleDepartments = peopleDepartments;
             person.RoleId = GetRoles().FirstOrDefault(r => r.Name == model.Role).Id;
             person.SubjectGroup = model.SubjectGroup;
             person.Subject = model.Subject;
@@ -451,7 +502,8 @@ namespace BuditelPhonebook.Core.Repositories
             {
                 return _context.People
                 .Include(p => p.Role)
-                .Include(p => p.Department)
+                .Include(p => p.PeopleDepartments)
+                    .ThenInclude(pd => pd.Department)
                 .AsQueryable();
             }
             catch (Exception ex)

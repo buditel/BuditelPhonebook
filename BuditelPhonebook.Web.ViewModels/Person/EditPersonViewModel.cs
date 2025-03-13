@@ -58,9 +58,10 @@ namespace BuditelPhonebook.Web.ViewModels.Person
         public string? Subject { get; set; }
 
         [Required(ErrorMessage = DepartmentRequiredMessage)]
-        public string Department { get; set; } = null!;
+        public List<string> Departments { get; set; }
+            = new List<string>();
 
-        public IEnumerable<Infrastructure.Data.Models.Department> Departments { get; set; }
+        public IEnumerable<Infrastructure.Data.Models.Department> AvailableDepartments { get; set; }
             = new List<Infrastructure.Data.Models.Department>();
     }
 }

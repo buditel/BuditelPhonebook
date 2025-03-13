@@ -27,7 +27,8 @@
 
         public string? Subject { get; set; }
 
-        public string Department { get; set; } = null!;
+        public List<string> Departments { get; set; }
+            = new List<string>();
 
         public string ChangedAt { get; set; } = null!;
     }

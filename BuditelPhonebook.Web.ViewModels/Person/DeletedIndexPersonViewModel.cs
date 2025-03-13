@@ -32,6 +32,7 @@
 
         public string Role { get; set; } = null!;
 
-        public string Department { get; set; } = null!;
+        public List<string> Departments { get; set; }
+            = new List<string>();
     }
 }

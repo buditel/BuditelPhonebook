@@ -10,11 +10,11 @@
                 <div class="p-3">
                     @if (Model.PersonPicture != null)
                     {
-                        <img src="@($"data:image/webp;base64,{Convert.ToBase64String(Model.PersonPicture)}")" alt="Avatar" class="img-fluid rounded-circle border person-image"/>
+                        <img src="@($"data:image/webp;base64,{Convert.ToBase64String(Model.PersonPicture)}")" alt="Avatar" class="img-fluid rounded-circle border person-image" />
                     }
                     else
                     {
-                        <img src="https://buditel.softuni.bg/wp-content/uploads/2020/04/SoftUni-Buditel-favicon.png" alt="No Avatar" class="img-fluid rounded-circle border person-image"/>
+                        <img src="https://buditel.softuni.bg/wp-content/uploads/2020/04/SoftUni-Buditel-favicon.png" alt="No Avatar" class="img-fluid rounded-circle border person-image" />
                     }
                 </div>
             </div>
@@ -23,7 +23,10 @@
                     <h4 class="card-title mb-3 text-primary">
                         @($"{Model.FirstName} {(string.IsNullOrWhiteSpace(Model.MiddleName) ? "" : $"{Model.MiddleName} ")}{Model.LastName}")
                     </h4>
-                    <p class="card-text"><strong>Отдел:</strong> @Model.Department</p>
+                    @foreach (var department in Model.Departments)
+                    {
+                        <p class="card-text"><strong>Отдел:</strong> @department</p>
+                    }
                     <p class="card-text"><strong>Длъжност:</strong> @Model.Role</p>
                     @if (Model.Role == "Учител")
                     {
@@ -34,7 +37,7 @@
                     <p class="card-text"><strong>Служебен телефон:</strong> @(Model.BusinessPhoneNumber ?? "липсва")</p>
                     <p class="card-text"><strong>Имейл:</strong> @Model.Email</p>
 
-                    @if(Model.Birthdate != null)
+                    @if (Model.Birthdate != null)
                     {
                         <p class="card-text"><strong>Рождена дата:</strong> @Model.Birthdate</p>
                     }

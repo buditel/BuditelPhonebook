@@ -91,9 +91,10 @@ namespace BuditelPhonebook.Core.Services
                 changes.Add($"Редактирана длъжност: {oldPerson.Role.Name} -> {newPerson.Role}");
             }
 
-            if (oldPerson.Department.Name != newPerson.Department)
+
+            if (string.Join(", ", oldPerson.PeopleDepartments.Select(pd => pd.Department.Name)) != string.Join(", ", newPerson.Departments))
             {
-                changes.Add($"Редактирана отдел: {oldPerson.Department.Name} -> {newPerson.Department}");
+                changes.Add($"Редактирани отдели: {string.Join(", ", oldPerson.PeopleDepartments.Select(pd => pd.Department.Name))} -> {string.Join(", ", newPerson.Departments)}");
             }
 
             if (oldPerson.SubjectGroup != newPerson.SubjectGroup)

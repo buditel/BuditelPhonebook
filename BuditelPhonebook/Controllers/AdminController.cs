@@ -43,7 +43,7 @@ namespace BuditelPhonebook.Web.Controllers
                 var model = new CreatePersonViewModel();
 
                 model.Roles = _personRepository.GetRoles(); // Add a method in IPersonRepository
-                model.Departments = _personRepository.GetDepartments(); // Add a method in IPersonRepository
+                model.AvailableDepartments = _personRepository.GetDepartments(); // Add a method in IPersonRepository
 
                 // Pass a new Person instance to the view
                 return View(model);
@@ -67,10 +67,23 @@ namespace BuditelPhonebook.Web.Controllers
                     ModelState.AddModelError(nameof(model.Email), EmailUniqueMessage);
                 }
 
+                if (model.Departments.Any(d => d != null))
+                {
+                    var selectedDepartment = model.Departments.FirstOrDefault(d => d != null);
+
+                    model.Departments.Remove(selectedDepartment);
+                    model.Departments.Insert(0, selectedDepartment);
+                }
+
+                if (model.Departments.Any() && model.Departments[0] == null)
+                {
+                    ModelState.AddModelError(nameof(model.Departments), DepartmentRequiredMessage);
+                }
+
                 if (!ModelState.IsValid)
                 {
                     model.Roles = _personRepository.GetRoles();
-                    model.Departments = _personRepository.GetDepartments();
+                    model.AvailableDepartments = _personRepository.GetDepartments();
                     model.PersonPicture = model.PersonPicture;
 
                     return View(model);
@@ -78,8 +91,6 @@ namespace BuditelPhonebook.Web.Controllers
 
 
                 Person person = await _personRepository.CreateANewPerson(model);
-
-                await _personRepository.AddAsync(person);
 
                 ChangeLog change = new ChangeLog()
                 {
@@ -133,10 +144,23 @@ namespace BuditelPhonebook.Web.Controllers
                     ModelState.AddModelError(nameof(model.Email), EmailUniqueMessage);
                 }
 
+                if (model.Departments.Any(d => d != null))
+                {
+                    var selectedDepartment = model.Departments.FirstOrDefault(d => d != null);
+
+                    model.Departments.Remove(selectedDepartment);
+                    model.Departments.Insert(0, selectedDepartment);
+                }
+
+                if (model.Departments.Any() && model.Departments[0] == null)
+                {
+                    ModelState.AddModelError(nameof(model.Departments), DepartmentRequiredMessage);
+                }
+
                 if (!ModelState.IsValid)
                 {
                     model.Roles = _personRepository.GetRoles();
-                    model.Departments = _personRepository.GetDepartments();
+                    model.AvailableDepartments = _personRepository.GetDepartments();
                     return View(model);
                 }
 

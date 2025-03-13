@@ -53,12 +53,8 @@ namespace BuditelPhonebook.Infrastructure.Data.Models
         [MaxLength(40)]
         public string? Subject { get; set; }
 
-        [Required]
-        [ForeignKey(nameof(Department))]
-        public int DepartmentId { get; set; }
-
-        [Required]
-        public Department Department { get; set; } = null!;
+        public ICollection<PersonDepartment> PeopleDepartments { get; set; }
+            = new List<PersonDepartment>();
 
         [Required]
         public bool IsDeleted { get; set; }

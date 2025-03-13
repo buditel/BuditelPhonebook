@@ -5,7 +5,7 @@
 <h1 class="h3 mb-4">Изтрий отдел</h1>
 <div class="alert alert-warning">
     <p>Сигурни ли сте, че искате да изтриете <strong>@Model.Name</strong>?</p>
-    <p>В този отдел има <strong>@Model.People.Count</strong> @(Model.People.Count == 1 ? "контакт, който ще остане" : "контакта, които ще останат") без отдел.</p>
+    <p>В този отдел има <strong>@Model.PeopleDepartments.Count</strong> @(Model.PeopleDepartments.Count == 1 ? "контакт" : "контакта"), чийто отдел ще бъде изтрит.</p>
 </div>
 
 <form asp-action="Delete" method="post">

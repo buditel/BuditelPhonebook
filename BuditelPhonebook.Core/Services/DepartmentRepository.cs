@@ -77,7 +77,8 @@ namespace BuditelPhonebook.Core.Repositories
         public async Task SoftDeleteAsync(int id)
         {
             var department = await _context.Departments
-                .Include(d => d.People)
+                .Include(d => d.PeopleDepartments)
+                    .ThenInclude(pd => pd.Person)
                 .FirstOrDefaultAsync(d => d.Id == id);
 
             if (department == null)
@@ -102,11 +103,70 @@ namespace BuditelPhonebook.Core.Repositories
                 _context.Departments.Update(department);
                 await _context.SaveChangesAsync();
 
-                foreach (var person in department.People)
-                {
-                    person.Department = await _context.Departments.FirstOrDefaultAsync(d => d.Name == "Отделът е изтрит");
+                var peopleToEdit = new Dictionary<Person, string>();
 
-                    _context.People.Update(person);
+                string oldDepartments = string.Empty;
+
+                foreach (var personDepartment in department.PeopleDepartments)
+                {
+                    var person = personDepartment.Person;
+
+                    oldDepartments = string.Join(", ", _context.PeopleDepartments.Where(pd => pd.PersonId == person.Id).Select(pd => pd.Department.Name).ToList());
+
+                    if (!peopleToEdit.ContainsKey(person))
+                    {
+                        peopleToEdit.Add(person, oldDepartments);
+                    }
+                    else
+                    {
+                        peopleToEdit[person] = oldDepartments;
+                    }
+
+                    _context.PeopleDepartments.Remove(personDepartment);
+                }
+
+                await _context.SaveChangesAsync();
+
+                foreach (var person in peopleToEdit)
+                {
+                    if (!await _context.PeopleDepartments.AnyAsync(pd => pd.PersonId == person.Key.Id))
+                    {
+
+                        var newPersonDepartment = new PersonDepartment()
+                        {
+                            Person = person.Key,
+                            Department = await _context.Departments.FirstOrDefaultAsync(d => d.Name == "Отделът е изтрит")
+                        };
+
+                        await _context.PeopleDepartments.AddAsync(newPersonDepartment);
+
+                        var change = new ChangeLog
+                        {
+                            PersonId = person.Key.Id,
+                            ChangedAt = DateTime.UtcNow,
+                            ChangedBy = "Админ",
+                            ChangesDescriptions = new List<string> { $"Редактиран отдел: {person.Value} -> Изтрит отдел" }
+                        };
+
+                        await _context.ChangeLogs.AddAsync(change);
+                    }
+                    else
+                    {
+                        string newDepartments = string.Join(", ", _context.PeopleDepartments.Where(pd => pd.PersonId == person.Key.Id).Select(pd => pd.Department.Name).ToList());
+
+                        var change = new ChangeLog
+                        {
+                            PersonId = person.Key.Id,
+                            ChangedAt = DateTime.UtcNow,
+                            ChangedBy = "Админ",
+                            ChangesDescriptions = new List<string> { $"Редактиран отдел: {person.Value} -> {newDepartments}" }
+                        };
+
+                        await _context.ChangeLogs.AddAsync(change);
+                    }
+
+
+                    await _context.SaveChangesAsync();
                 }
 
                 await _context.SaveChangesAsync();

@@ -135,7 +135,8 @@ namespace BuditelPhonebook.Web.Controllers
             try
             {
                 var department = await _departmentRepository.GetAllAttached()
-                    .Include(d => d.People)
+                    .Include(d => d.PeopleDepartments)
+                        .ThenInclude(pd => pd.Person)
                     .FirstOrDefaultAsync(d => d.Id == id);
 
                 return View(department);

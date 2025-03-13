@@ -24,7 +24,7 @@ namespace BuditelPhonebook.Common.CustomAttributes
 
             var roleValue = roleProperty.GetValue(validationContext.ObjectInstance)?.ToString();
 
-            if (roleValue.Contains(_requiredRole) && string.IsNullOrWhiteSpace(value?.ToString()))
+            if (roleValue != null && roleValue.Contains(_requiredRole) && string.IsNullOrWhiteSpace(value?.ToString()))
             {
                 return new ValidationResult(ErrorMessage, new[] { validationContext.MemberName });
             }

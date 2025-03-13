@@ -18,7 +18,7 @@ namespace BuditelPhonebook.Infrastructure.Data.Models
         [Required]
         public bool IsDeleted { get; set; }
 
-        public IList<Person> People { get; set; }
-            = new List<Person>();
+        public IList<PersonDepartment> PeopleDepartments { get; set; }
+            = new List<PersonDepartment>();
     }
 }

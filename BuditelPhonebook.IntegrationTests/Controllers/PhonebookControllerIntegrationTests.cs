@@ -40,9 +40,9 @@ namespace BuditelPhonebook.Tests.Integration
                 BusinessPhoneNumber = "024567890",
                 Birthdate = "01.10.",
                 RoleId = 1,
-                DepartmentId = 1,
+                //DepartmentId = 1,
                 Role = new Role { Name = "Учител" },
-                Department = new Department { Name = "ИТ отдел" }
+                //Department = new Department { Name = "ИТ отдел" }
             };
 
             _mockPersonRepository.Setup(repo => repo.GetByIdWithRelationsAsync(1))

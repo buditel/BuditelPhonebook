@@ -30,7 +30,9 @@
                                 <h4 class="card-title mb-3 text-primary">
                                     @($"{person.FirstName} {(string.IsNullOrWhiteSpace(person.MiddleName) ? "" : $"{person.MiddleName} ")}{person.LastName}")
                                 </h4>
-                                <p class="card-text"><strong>Отдел:</strong> @person.Department</p>
+                                <p class="card-text">
+                                    <strong>Отдел: </strong>@(string.Join(", ", person.Departments))
+                                </p>
                                 <p class="card-text"><strong>Длъжност:</strong> @person.Role</p>
                                 @if (person.Role == "Учител")
                                 {
@@ -72,7 +74,6 @@
                                     <div class="modal fade" id="latestChangeModal" tabindex="-1" aria-labelledby="latestChangeModalLabel" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
-
                                             </div>
                                         </div>
                                     </div>

@@ -2,6 +2,7 @@ using BuditelPhonebook.Core.Contracts;
 using BuditelPhonebook.Core.Repositories;
 using BuditelPhonebook.Core.Services;
 using BuditelPhonebook.Infrastructure.Data;
+using BuditelPhonebook.Infrastructure.Seed;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
@@ -96,7 +97,7 @@ namespace BuditelPhonebook
                     var email = ctx.Principal.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
 
                     // Ensure the email matches the allowed domain
-                    if (string.IsNullOrEmpty(email) || !email.EndsWith($"@{allowedDomain}", StringComparison.OrdinalIgnoreCase))
+                    if (string.IsNullOrEmpty(email) || !email.EndsWith($"@{allowedDomain}", StringComparison.OrdinalIgnoreCase) || email.Contains("highschool"))
                     {
                         ctx.Fail("Email domain not allowed.");
 
@@ -154,7 +155,7 @@ namespace BuditelPhonebook
                 {
                     var email = context.User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Email)?.Value;
 
-                    if (string.IsNullOrEmpty(email) || !email.EndsWith($"@{allowedDomain}", StringComparison.OrdinalIgnoreCase))
+                    if (string.IsNullOrEmpty(email) || !email.EndsWith($"@{allowedDomain}", StringComparison.OrdinalIgnoreCase) || email.Contains("highschool"))
                     {
                         // If email is invalid, sign out and redirect to Access Denied
                         await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -169,33 +170,33 @@ namespace BuditelPhonebook
 
             app.UseAuthorization();
 
-            //using (var scope = app.Services.CreateScope())
-            //{
-            //    var services = scope.ServiceProvider;
-            //    var dbContext = services.GetRequiredService<ApplicationDbContext>();
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var dbContext = services.GetRequiredService<ApplicationDbContext>();
 
-            //    dbContext.Database.Migrate();
+                dbContext.Database.Migrate();
 
-            //    var httpContextAccessor = services.GetRequiredService<IHttpContextAccessor>();
-            //    var seeder = new ExcelDataSeeder(dbContext, httpContextAccessor);
+                var httpContextAccessor = services.GetRequiredService<IHttpContextAccessor>();
+                var seeder = new ExcelDataSeeder(dbContext, httpContextAccessor);
 
-            //    try
-            //    {
-            //        var filePath = Path.Combine(app.Environment.WebRootPath, "OrgChart.xlsx");
-            //        if (File.Exists(filePath))
-            //        {
-            //            seeder.SeedData(filePath).GetAwaiter().GetResult(); // Run synchronously
-            //        }
-            //        else
-            //        {
-            //            Console.WriteLine($"Seeding skipped: File '{filePath}' not found.");
-            //        }
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Console.WriteLine($"Error during seeding: {ex.Message}");
-            //    }
-            //}
+                try
+                {
+                    var filePath = Path.Combine(app.Environment.WebRootPath, "OrgChart.xlsx");
+                    if (File.Exists(filePath))
+                    {
+                        seeder.SeedData(filePath).GetAwaiter().GetResult(); // Run synchronously
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Seeding skipped: File '{filePath}' not found.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error during seeding: {ex.Message}");
+                }
+            }
 
             //Security headers
             app.Use(async (context, next) =>

@@ -11,6 +11,7 @@ namespace BuditelPhonebook.Infrastructure.Data
         public DbSet<Department> Departments { get; set; }
         public DbSet<UserRole> UsersRoles { get; set; }
         public DbSet<ChangeLog> ChangeLogs { get; set; }
+        public DbSet<PersonDepartment> PeopleDepartments { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {

@@ -323,4 +323,80 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+    let container = document.getElementById("departmentContainer");
+
+    // Function to add a new department dropdown
+    function addDepartment() {
+        let departmentGroups = container.querySelectorAll(".department-group");
+        let index = departmentGroups.length; // Get the next available index
+
+        // Create a new div for the department select
+        let newGroup = document.createElement("div");
+        newGroup.classList.add("department-group", "d-flex", "align-items-center", "mt-2");
+
+        // Create a new select element
+        let newSelect = document.createElement("select");
+        newSelect.name = `Departments[${index}]`; // Dynamic name based on index
+        newSelect.classList.add("form-control", "dropdown-select", "me-2");
+
+        // Add default "choose" option
+        let defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.textContent = "Изберете отдел...";
+        newSelect.appendChild(defaultOption);
+
+        // Copy existing options from the first select element
+        let firstSelect = container.querySelector("select");
+        if (firstSelect) {
+            firstSelect.querySelectorAll("option").forEach(option => {
+                if (option.value !== "") {
+                    let newOption = document.createElement("option");
+                    newOption.value = option.value;
+                    newOption.textContent = option.textContent;
+                    newSelect.appendChild(newOption);
+                }
+            });
+        }
+
+        // Create a remove button (only for dynamically added ones)
+        let removeButton = document.createElement("button");
+        removeButton.type = "button";
+        removeButton.classList.add("btn", "btn-sm", "btn-danger", "ms-2", "remove-department");
+        removeButton.textContent = "Премахни";
+        removeButton.onclick = function () {
+            container.removeChild(newGroup);
+        };
+
+        // Append elements
+        newGroup.appendChild(newSelect);
+        newGroup.appendChild(removeButton);
+        container.appendChild(newGroup);
+    }
+
+    // Attach click event to "Добави още" button
+    document.getElementById("addDepartment").addEventListener("click", addDepartment);
+
+    // Reattach event listeners to existing remove buttons after page reload
+    function attachRemoveEvents() {
+        container.querySelectorAll(".remove-department").forEach(button => {
+            button.onclick = function () {
+                container.removeChild(this.parentElement);
+            };
+        });
+    }
+
+    // Ensure remove buttons work on initial load (for validation error reloads)
+    attachRemoveEvents();
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Set default selection for all dropdowns that are empty
+    document.querySelectorAll("select").forEach(select => {
+        if (!select.value) {
+            select.value = "";
+        }
+    });
+});
+
 

@@ -152,12 +152,21 @@ namespace BuditelPhonebook.Infrastructure.Seed
                         BusinessPhoneNumber = string.IsNullOrWhiteSpace(businessPhone) ? null : businessPhone,
                         Birthdate = string.IsNullOrWhiteSpace(birthdate) ? null : birthdate,
                         Role = role,
-                        Department = department,
                         SubjectGroup = string.IsNullOrWhiteSpace(subjectGroup) ? null : subjectGroup,
                         Subject = string.IsNullOrWhiteSpace(subject) ? null : subject,
                         IsDeleted = false,
                         HireDate = DateTime.UtcNow
                     };
+
+                    PersonDepartment? personDepartment = new PersonDepartment()
+                    {
+                        PersonId = person.Id,
+                        DepartmentId = department.Id
+                    };
+
+                    await _context.PeopleDepartments.AddAsync(personDepartment);
+
+                    person.PeopleDepartments.Add(personDepartment);
 
                     await _context.People.AddAsync(person);
                     await _context.SaveChangesAsync();

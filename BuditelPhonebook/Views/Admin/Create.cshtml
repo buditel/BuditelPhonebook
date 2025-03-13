@@ -36,7 +36,7 @@
     </div>
     <div class="mb-3">
         <label class="form-label">Дата на постъпване</label>
-        <input type="text" class="form-control datetime-picker dropdown-select" name="HireDate" placeholder="Изберете дата на постъпване на работа...">
+        <input type="text" class="form-control datetime-picker dropdown-select" name="HireDate" value="@Model.HireDate" placeholder="Изберете дата на постъпване на работа...">
         <span asp-validation-for="HireDate" class="text-danger"></span>
     </div>
     <div class="mb-3">
@@ -79,13 +79,48 @@
         <span asp-validation-for="Subject" class="text-danger"></span>
     </div>
     <div class="mb-3">
-        <label class="form-label">Отдел</label>
-        <select asp-for="Department" asp-items="@(new SelectList(Model.Departments, "Name", "Name"))" class="form-control dropdown-select">
-            <option value="">Изберете отдел...</option>
-        </select>
-        <span asp-validation-for="Department" class="text-danger"></span>
+    <label class="form-label">Отдели</label>
+    <div id="departmentContainer">
+        @if (Model.Departments != null && Model.Departments.Any())
+        {
+            @for (int i = 0; i < Model.Departments.Count; i++)
+            {
+                <div class="department-group d-flex align-items-center mt-2">
+                    <select name="Departments[@i]" asp-for="Departments[i]" asp-items="@(new SelectList(Model.AvailableDepartments, "Name", "Name"))" class="form-control dropdown-select">
+                        <option value="">Изберете отдел...</option>
+                    </select>
+                    @if (i > 0) // Only show remove button for additional ones
+                    {
+                        <button type="button" class="btn btn-sm btn-danger ms-2 remove-department">Премахни</button>
+                    }
+                </div>
+            }
+        }
+        else
+        {
+            <!-- The first select should not have a remove button -->
+            <div class="department-group d-flex align-items-center mt-2">
+                <select name="Departments[0]" class="form-control dropdown-select">
+                    <option value="">Изберете отдел...</option>
+                    @foreach (var department in Model.AvailableDepartments)
+                    {
+                        <option value="@department.Name">@department.Name</option>
+                    }
+                </select>
+            </div>
+        }
+        <span asp-validation-for="Departments" class="text-danger"></span>
     </div>
+    <button type="button" class="btn btn-sm btn-success mt-2" id="addDepartment">Добави още</button>
+</div>
+
+
+
 
     <button type="submit" class="btn btn-primary">Запиши</button>
     <a asp-controller="Phonebook" asp-action="Index" class="btn btn-secondary">Отказ</a>
 </form>
+
+<script type="text/javascript">
+    var availableDepartments = @Html.Raw(Json.Serialize(Model.AvailableDepartments));
+</script>

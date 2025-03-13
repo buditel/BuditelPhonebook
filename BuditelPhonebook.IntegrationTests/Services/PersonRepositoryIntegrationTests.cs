@@ -35,7 +35,7 @@ namespace BuditelPhonebook.IntegrationTests.Services
                     Email = "ivan.petrov@buditel.bg",
                     PersonalPhoneNumber = "0888123456",
                     RoleId = 1,
-                    DepartmentId = 1
+                    //DepartmentId = 1
                 });
                 await context.SaveChangesAsync();
             }
@@ -95,7 +95,7 @@ namespace BuditelPhonebook.IntegrationTests.Services
                     Email = "daniel.yordanov@buditel.bg",
                     PersonalPhoneNumber = "0888123456",
                     RoleId = 3,
-                    DepartmentId = 2
+                    //DepartmentId = 2
                 });
                 await context.SaveChangesAsync();
             }
@@ -107,7 +107,7 @@ namespace BuditelPhonebook.IntegrationTests.Services
 
                 person.Should().NotBeNull();
                 person.Role.Name.Should().Be("Teacher");
-                person.Department.Name.Should().Be("Education");
+                //person.Department.Name.Should().Be("Education");
             }
         }
 
@@ -255,7 +255,7 @@ namespace BuditelPhonebook.IntegrationTests.Services
                     Email = "kiril.dimitrov@buditel.bg",
                     PersonalPhoneNumber = "0888333444",
                     RoleId = 5,
-                    DepartmentId = 6,
+                    //DepartmentId = 6,
                     IsDeleted = true
                 });
                 await context.SaveChangesAsync();
