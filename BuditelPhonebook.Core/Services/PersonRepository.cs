@@ -67,8 +67,6 @@ namespace BuditelPhonebook.Core.Repositories
         {
             try
             {
-                person.HireDate = DateTime.SpecifyKind(person.HireDate, DateTimeKind.Utc);
-
                 await _context.People.AddAsync(person);
                 await _context.SaveChangesAsync();
             }
@@ -82,8 +80,6 @@ namespace BuditelPhonebook.Core.Repositories
         {
             try
             {
-                person.HireDate = DateTime.SpecifyKind(person.HireDate, DateTimeKind.Utc);
-
                 _context.People.Update(person);
                 await _context.SaveChangesAsync();
             }
@@ -121,7 +117,7 @@ namespace BuditelPhonebook.Core.Repositories
                 throw new ArgumentException("Форматът на датата е невалиден.");
             }
 
-            person.LeaveDate = DateTime.SpecifyKind(personLeaveDate, DateTimeKind.Utc);
+            person.LeaveDate = DateTime.SpecifyKind(personLeaveDate, DateTimeKind.Unspecified);
             person.IsDeleted = true;
             person.CommentOnDeletion = comment;
 

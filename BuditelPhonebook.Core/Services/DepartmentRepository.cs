@@ -143,7 +143,7 @@ namespace BuditelPhonebook.Core.Repositories
                         var change = new ChangeLog
                         {
                             PersonId = person.Key.Id,
-                            ChangedAt = DateTime.UtcNow,
+                            ChangedAt = DateTime.Now,
                             ChangedBy = "Админ",
                             ChangesDescriptions = new List<string> { $"Редактиран отдел: {person.Value} -> Изтрит отдел" }
                         };
@@ -157,7 +157,7 @@ namespace BuditelPhonebook.Core.Repositories
                         var change = new ChangeLog
                         {
                             PersonId = person.Key.Id,
-                            ChangedAt = DateTime.UtcNow,
+                            ChangedAt = DateTime.Now,
                             ChangedBy = "Админ",
                             ChangesDescriptions = new List<string> { $"Редактиран отдел: {person.Value} -> {newDepartments}" }
                         };

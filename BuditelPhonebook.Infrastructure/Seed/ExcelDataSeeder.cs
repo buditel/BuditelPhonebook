@@ -155,7 +155,7 @@ namespace BuditelPhonebook.Infrastructure.Seed
                         SubjectGroup = string.IsNullOrWhiteSpace(subjectGroup) ? null : subjectGroup,
                         Subject = string.IsNullOrWhiteSpace(subject) ? null : subject,
                         IsDeleted = false,
-                        HireDate = DateTime.UtcNow
+                        HireDate = DateTime.Now
                     };
 
                     PersonDepartment? personDepartment = new PersonDepartment()
@@ -173,7 +173,7 @@ namespace BuditelPhonebook.Infrastructure.Seed
 
                     ChangeLog change = new ChangeLog()
                     {
-                        ChangedAt = DateTime.UtcNow,
+                        ChangedAt = DateTime.Now,
                         ChangedBy = currentUser,
                         ChangesDescriptions = new List<string> { "Добавен контакт от Org Chart." },
                         PersonId = person.Id,

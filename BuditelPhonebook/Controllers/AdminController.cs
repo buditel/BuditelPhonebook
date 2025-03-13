@@ -94,7 +94,7 @@ namespace BuditelPhonebook.Web.Controllers
 
                 ChangeLog change = new ChangeLog()
                 {
-                    ChangedAt = DateTime.UtcNow,
+                    ChangedAt = DateTime.Now,
                     ChangedBy = User.Identity.Name,
                     ChangesDescriptions = new List<string> { "Създаден нов контакт." },
                     PersonId = person.Id,
@@ -167,7 +167,7 @@ namespace BuditelPhonebook.Web.Controllers
                 var change = new ChangeLog
                 {
                     PersonId = model.Id,
-                    ChangedAt = DateTime.UtcNow,
+                    ChangedAt = DateTime.Now,
                     ChangedBy = User.Identity.Name,
                     ChangesDescriptions = await _changeLogRepository.GenerateChangeDescription(currentPerson, model)
                 };
