@@ -23,10 +23,10 @@ namespace BuditelPhonebook.Infrastructure.Data.Models
         public string Email { get; set; } = null!;
 
         [Required]
-        [MaxLength(20)]
+        [MaxLength(10)]
         public string PersonalPhoneNumber { get; set; } = null!;
 
-        [MaxLength(20)]
+        [MaxLength(10)]
         public string? BusinessPhoneNumber { get; set; }
 
 

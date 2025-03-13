@@ -26,10 +26,10 @@ namespace BuditelPhonebook.Web.ViewModels.Person
 
 
         [Required(ErrorMessage = PersonalPhoneNumberRequiredMessage)]
-        [StringLength(20, MinimumLength = 7, ErrorMessage = PersonalPhoneNumberLengthMessage)]
+        [RegularExpression(PhoneNumberRegexPattern, ErrorMessage = PersonalPhoneNumberLengthMessage)]
         public string PersonalPhoneNumber { get; set; } = null!;
 
-        [StringLength(20, MinimumLength = 7, ErrorMessage = BusinessPhoneNumberLengthMessage)]
+        [RegularExpression(PhoneNumberRegexPattern, ErrorMessage = BusinessPhoneNumberLengthMessage)]
         public string? BusinessPhoneNumber { get; set; }
 
         [RegularExpression(BirthDateRegexPattern, ErrorMessage = BirthDateWrongFormatMessage)]

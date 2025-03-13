@@ -14,8 +14,8 @@
             public const string EmailWrongFormatMessage = "Имейлът трябва да завършва на buditel.bg";
             public const string EmailUniqueMessage = "Вече съществува такъв имейл.";
             public const string PersonalPhoneNumberRequiredMessage = "Трябва да въведете личен телефон.";
-            public const string PersonalPhoneNumberLengthMessage = "Личният телефон трябва да е между 7 и 20 символа.";
-            public const string BusinessPhoneNumberLengthMessage = "Служебният телефон трябва да е между 7 и 20 символа.";
+            public const string PersonalPhoneNumberLengthMessage = "Личният телефон трябва да е 10 (0888888888) или 13 (+359888888888) символа.";
+            public const string BusinessPhoneNumberLengthMessage = "Служебният телефон трябва да е 10 (0888888888) или 13 (+359888888888) символа.";
             public const string BirthDateWrongFormatMessage = "Рождената дата трябва да е във формата 01.01.";
             public const string HireDateRequiredMessage = "Трябва да въведете дата на постъпване.";
             public const string HireDateWrongFormatMessage = "Датата на постъпване трябва да е във формата 01.01.0001.";

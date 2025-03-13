@@ -6,6 +6,7 @@
         {
             public const string BirthDateRegexPattern = @"\d{2}.\d{2}.";
             public const string EmailRegexPattern = @"\S+@buditel\.bg";
+            public const string PhoneNumberRegexPattern = @"^0\d{9}$|^\+359\d{9}$";
             public const string HireAndLeaveDateRegexPattern = @"\d{2}.\d{2}.\d{4}.";
             public const string HireAndLeaveDateFormat = "dd.MM.yyyy.";
         }
