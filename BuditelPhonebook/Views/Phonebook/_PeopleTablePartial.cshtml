@@ -79,11 +79,14 @@
                                     </div>
                                 }
                             </div>
-                            @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                            @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin") || User.Claims.Any(c => c.Value == person.Email))
                             {
                                 <div class="mt-auto text-end">
                                     <a asp-controller="Admin" asp-action="Edit" asp-route-id="@person.Id" class="btn btn-primary me-2">Редактиране</a>
-                                    <a asp-controller="Admin" asp-action="Delete" asp-route-id="@person.Id" class="btn btn-danger">Изтриване</a>
+                                    @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                                    {
+                                        <a asp-controller="Admin" asp-action="Delete" asp-route-id="@person.Id" class="btn btn-danger">Изтриване</a>
+                                    }
                                 </div>
                             }
                         </div>

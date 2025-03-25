@@ -114,7 +114,6 @@ namespace BuditelPhonebook.Web.Controllers
             }
         }
 
-        [Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<IActionResult> Edit(int id)
         {
             try
@@ -129,7 +128,6 @@ namespace BuditelPhonebook.Web.Controllers
             }
         }
 
-        [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditPersonViewModel model)

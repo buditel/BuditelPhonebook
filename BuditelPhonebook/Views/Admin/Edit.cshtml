@@ -5,26 +5,30 @@
 <h1 class="h3 mb-4">@ViewBag.Title</h1>
 
 <form method="post" enctype="multipart/form-data" novalidate>
-    <div class="mb-3">
-        <label class="form-label">Име</label>
-        <input type="text" class="form-control" name="FirstName" value="@Model.FirstName" placeholder="Въведете име..." required>
-        <span asp-validation-for="FirstName" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Презиме</label>
-        <input type="text" class="form-control" name="MiddleName" value="@Model.MiddleName" placeholder="Въведете бащино име (по желание)...">
-        <span asp-validation-for="MiddleName" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Фамилия</label>
-        <input type="text" class="form-control" name="LastName" value="@Model.LastName" placeholder="Въведете фамилия..." required>
-        <span asp-validation-for="LastName" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Служебен имейл</label>
-        <input type="email" class="form-control" name="Email" value="@Model.Email" placeholder="Въведете служебен имейл..." required>
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
+    @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+    {
+
+        <div class="mb-3">
+            <label class="form-label">Име</label>
+            <input type="text" class="form-control" name="FirstName" value="@Model.FirstName" placeholder="Въведете име..." required>
+            <span asp-validation-for="FirstName" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Презиме</label>
+            <input type="text" class="form-control" name="MiddleName" value="@Model.MiddleName" placeholder="Въведете бащино име (по желание)...">
+            <span asp-validation-for="MiddleName" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Фамилия</label>
+            <input type="text" class="form-control" name="LastName" value="@Model.LastName" placeholder="Въведете фамилия..." required>
+            <span asp-validation-for="LastName" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Служебен имейл</label>
+            <input type="email" class="form-control" name="Email" value="@Model.Email" placeholder="Въведете служебен имейл..." required>
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+    }
     <div class="mb-3">
         <label class="form-label">Личен телефон</label>
         <input type="text" class="form-control" name="PersonalPhoneNumber" value="@Model.PersonalPhoneNumber" placeholder="Въведете личен телефон...">
@@ -35,11 +39,14 @@
         <input type="text" class="form-control" name="BusinessPhoneNumber" value="@Model.BusinessPhoneNumber" placeholder="Въведете служебен телефон (по желание)...">
         <span asp-validation-for="BusinessPhoneNumber" class="text-danger"></span>
     </div>
-    <div class="mb-3">
-        <label class="form-label">Дата на постъпване</label>
-        <input type="text" class="form-control datetime-picker dropdown-select" name="HireDate" value="@Model.HireDate" placeholder="Изберете дата на постъпване на работа...">
-        <span asp-validation-for="HireDate" class="text-danger"></span>
-    </div>
+    @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+    {
+        <div class="mb-3">
+            <label class="form-label">Дата на постъпване</label>
+            <input type="text" class="form-control datetime-picker dropdown-select" name="HireDate" value="@Model.HireDate" placeholder="Изберете дата на постъпване на работа...">
+            <span asp-validation-for="HireDate" class="text-danger"></span>
+        </div>
+    }
     <div class="mb-3">
         <label class="form-label" for="fileInput">Снимка</label>
 
@@ -77,51 +84,69 @@
         <input type="text" class="form-control" name="Birthdate" value="@Model.Birthdate" placeholder="Въведете рождена дата (по желание)...">
         <span asp-validation-for="Birthdate" class="text-danger"></span>
     </div>
-    <div class="mb-3">
-        <label class="form-label">Длъжност</label>
-        <select id="roleSelect" asp-for="Role" asp-items="@(new SelectList(Model.Roles, "Name", "Name"))" class="form-control dropdown-select">
-            <option value="">Изберете длъжност...</option>
-        </select>
-        <span asp-validation-for="Role" class="text-danger"></span>
-    </div>
-    <div id="subjectGroup" class="mb-3" style="display: none;">
-        <label class="form-label">Група предмети</label>
-        <select asp-for="SubjectGroup" class="form-control dropdown-select">
-            <option value="">Изберете група предмети...</option>
-            <option value="Професионални">Професионални</option>
-            <option value="Общообразователни">Общообразователни</option>
-        </select>
-        <span asp-validation-for="SubjectGroup" class="text-danger"></span>
-    </div>
-    <div id="subject" class="mb-3" style="display: none;">
-        <label class="form-label">Предмет</label>
-        <input type="text" class="form-control" name="Subject" value="@Model.Subject" placeholder="Въведете предмета, по който учителят преподава...">
-        <span asp-validation-for="Subject" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Отдели</label>
-        <div id="departmentContainer">
-            @for (int i = 0; i < Model.Departments.Count; i++)
-            {
-                
-                <div class="department-group d-flex align-items-center mt-2">
-                    <select name="Departments[@i]" asp-for="Departments[i]" asp-items="@(new SelectList(Model.AvailableDepartments, "Name", "Name"))" class="form-control dropdown-select">
-                        <option value="">Изберете отдел...</option>
-                    </select>
-                    @if (i > 0) // Only show remove button for additional ones
-                    {
-                        <button type="button" class="btn btn-sm btn-danger ms-2 remove-department">Премахни</button>
-                    }
-                </div>
-                @if (i == 0)
-                {
-                    <span asp-validation-for="Departments" class="text-danger"></span>
-                }
-            }
+    @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+    {
+        <div class="mb-3">
+            <label class="form-label">Длъжност</label>
+            <select id="roleSelect" asp-for="Role" asp-items="@(new SelectList(Model.Roles, "Name", "Name"))" class="form-control dropdown-select">
+                <option value="">Изберете длъжност...</option>
+            </select>
+            <span asp-validation-for="Role" class="text-danger"></span>
         </div>
-        <button type="button" class="btn btn-sm btn-success mt-2" id="addDepartment">Добави още</button>
-    </div>
+        <div id="subjectGroup" class="mb-3" style="display: none;">
+            <label class="form-label">Група предмети</label>
+            <select asp-for="SubjectGroup" class="form-control dropdown-select">
+                <option value="">Изберете група предмети...</option>
+                <option value="Професионални">Професионални</option>
+                <option value="Общообразователни">Общообразователни</option>
+            </select>
+            <span asp-validation-for="SubjectGroup" class="text-danger"></span>
+        </div>
+        <div id="subject" class="mb-3" style="display: none;">
+            <label class="form-label">Предмет</label>
+            <input type="text" class="form-control" name="Subject" value="@Model.Subject" placeholder="Въведете предмета, по който учителят преподава...">
+            <span asp-validation-for="Subject" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Отдели</label>
+            <div id="departmentContainer">
+                @for (int i = 0; i < Model.Departments.Count; i++)
+                {
 
+                    <div class="department-group d-flex align-items-center mt-2">
+                        <select name="Departments[@i]" asp-for="Departments[i]" asp-items="@(new SelectList(Model.AvailableDepartments, "Name", "Name"))" class="form-control dropdown-select">
+                            <option value="">Изберете отдел...</option>
+                        </select>
+                        @if (i > 0) // Only show remove button for additional ones
+                        {
+                            <button type="button" class="btn btn-sm btn-danger ms-2 remove-department">Премахни</button>
+                        }
+                    </div>
+                    @if (i == 0)
+                    {
+                        <span asp-validation-for="Departments" class="text-danger"></span>
+                    }
+                }
+            </div>
+            <button type="button" class="btn btn-sm btn-success mt-2" id="addDepartment">Добави още</button>
+        </div>
+    }
+
+    @if (!User.IsInRole("SuperAdmin") || !User.IsInRole("Admin"))
+    {
+        <input type="hidden" asp-for="FirstName" />
+        <input type="hidden" asp-for="MiddleName" />
+        <input type="hidden" asp-for="LastName" />
+        <input type="hidden" asp-for="Email" />
+        <input type="hidden" asp-for="HireDate" />
+        <input type="hidden" asp-for="Role" />
+        <input type="hidden" asp-for="SubjectGroup" />
+        <input type="hidden" asp-for="Subject" />
+        @for (int i = 0; i < Model.Departments.Count; i++)
+        {
+            <input type="hidden" name="Departments[@i]" value="@Model.Departments[i]" />
+        }
+    }
 
     <button type="submit" class="btn btn-primary">Запиши</button>
     <a asp-controller="Phonebook" asp-action="Index" class="btn btn-secondary">Отказ</a>

@@ -350,7 +350,6 @@ namespace BuditelPhonebook.Core.Repositories
                 PersonalPhoneNumber = model.PersonalPhoneNumber,
                 HireDate = hireDate,
                 PersonPicture = personPictureData,
-                //DepartmentId = GetDepartments().FirstOrDefault(d => d.Name == model.Department).Id,
                 RoleId = GetRoles().FirstOrDefault(r => r.Name == model.Role).Id,
                 SubjectGroup = model.SubjectGroup,
                 Subject = model.Subject
