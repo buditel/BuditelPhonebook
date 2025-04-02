@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BuditelPhonebook.Infrastructure.Data.Models
 {
@@ -40,12 +39,8 @@ namespace BuditelPhonebook.Infrastructure.Data.Models
 
         public byte[]? PersonPicture { get; set; }
 
-        [Required]
-        [ForeignKey(nameof(Role))]
-        public int RoleId { get; set; }
-
-        [Required]
-        public Role Role { get; set; } = null!;
+        public ICollection<PersonRole> PeopleRoles { get; set; }
+            = new List<PersonRole>();
 
         [MaxLength(20)]
         public string? SubjectGroup { get; set; }

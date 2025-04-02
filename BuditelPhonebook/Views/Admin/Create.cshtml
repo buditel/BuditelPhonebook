@@ -58,11 +58,39 @@
         <span asp-validation-for="Birthdate" class="text-danger"></span>
     </div>
     <div class="mb-3">
-        <label class="form-label">Длъжност</label>
-        <select id="roleSelect" asp-for="Role" asp-items="@(new SelectList(Model.Roles, "Name", "Name"))" class="form-control dropdown-select">
-            <option value="">Изберете длъжност...</option>
-        </select>
-        <span asp-validation-for="Role" class="text-danger"></span>
+        <label class="form-label">Длъжности</label>
+        <div id="roleContainer">
+            @if (Model.Roles != null && Model.Roles.Any())
+            {
+                @for (int i = 0; i < Model.Roles.Count; i++)
+                {
+                    <div class="role-group d-flex align-items-center mt-2">
+                        <select name="Roles[@i]" asp-for="Roles[i]" asp-items="@(new SelectList(Model.AvailableRoles, "Name", "Name"))" class="form-control dropdown-select">
+                            <option value="">Изберете длъжност...</option>
+                        </select>
+                        @if (i > 0) // Only show remove button for additional ones
+                        {
+                            <button type="button" class="btn btn-sm btn-danger ms-2 remove-role">Премахни</button>
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <!-- The first select should not have a remove button -->
+                <div class="role-group d-flex align-items-center mt-2">
+                    <select name="Roles[0]" class="form-control dropdown-select">
+                        <option value="">Изберете длъжност...</option>
+                        @foreach (var role in Model.AvailableRoles)
+                        {
+                            <option value="@role.Name">@role.Name</option>
+                        }
+                    </select>
+                </div>
+            }
+            <span asp-validation-for="Roles" class="text-danger"></span>
+        </div>
+        <button type="button" class="btn btn-sm btn-success mt-2" id="addRole">Добави още</button>
     </div>
     <div id="subjectGroup" class="mb-3" style="display: none;">
         <label class="form-label">Група предмети</label>
@@ -79,40 +107,40 @@
         <span asp-validation-for="Subject" class="text-danger"></span>
     </div>
     <div class="mb-3">
-    <label class="form-label">Отдели</label>
-    <div id="departmentContainer">
-        @if (Model.Departments != null && Model.Departments.Any())
-        {
-            @for (int i = 0; i < Model.Departments.Count; i++)
+        <label class="form-label">Отдели</label>
+        <div id="departmentContainer">
+            @if (Model.Departments != null && Model.Departments.Any())
             {
+                @for (int i = 0; i < Model.Departments.Count; i++)
+                {
+                    <div class="department-group d-flex align-items-center mt-2">
+                        <select name="Departments[@i]" asp-for="Departments[i]" asp-items="@(new SelectList(Model.AvailableDepartments, "Name", "Name"))" class="form-control dropdown-select">
+                            <option value="">Изберете отдел...</option>
+                        </select>
+                        @if (i > 0) // Only show remove button for additional ones
+                        {
+                            <button type="button" class="btn btn-sm btn-danger ms-2 remove-department">Премахни</button>
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <!-- The first select should not have a remove button -->
                 <div class="department-group d-flex align-items-center mt-2">
-                    <select name="Departments[@i]" asp-for="Departments[i]" asp-items="@(new SelectList(Model.AvailableDepartments, "Name", "Name"))" class="form-control dropdown-select">
+                    <select name="Departments[0]" class="form-control dropdown-select">
                         <option value="">Изберете отдел...</option>
+                        @foreach (var department in Model.AvailableDepartments)
+                        {
+                            <option value="@department.Name">@department.Name</option>
+                        }
                     </select>
-                    @if (i > 0) // Only show remove button for additional ones
-                    {
-                        <button type="button" class="btn btn-sm btn-danger ms-2 remove-department">Премахни</button>
-                    }
                 </div>
             }
-        }
-        else
-        {
-            <!-- The first select should not have a remove button -->
-            <div class="department-group d-flex align-items-center mt-2">
-                <select name="Departments[0]" class="form-control dropdown-select">
-                    <option value="">Изберете отдел...</option>
-                    @foreach (var department in Model.AvailableDepartments)
-                    {
-                        <option value="@department.Name">@department.Name</option>
-                    }
-                </select>
-            </div>
-        }
-        <span asp-validation-for="Departments" class="text-danger"></span>
+            <span asp-validation-for="Departments" class="text-danger"></span>
+        </div>
+        <button type="button" class="btn btn-sm btn-success mt-2" id="addDepartment">Добави още</button>
     </div>
-    <button type="button" class="btn btn-sm btn-success mt-2" id="addDepartment">Добави още</button>
-</div>
 
 
 

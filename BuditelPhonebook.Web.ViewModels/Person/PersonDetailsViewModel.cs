@@ -21,8 +21,8 @@
 
         public byte[]? PersonPicture { get; set; }
 
-        public string Role { get; set; } = null!;
-
+        public List<string> Roles { get; set; }
+                    = new List<string>();
         public string? SubjectGroup { get; set; }
 
         public string? Subject { get; set; }

@@ -44,17 +44,18 @@ namespace BuditelPhonebook.Web.ViewModels.Person
         public IFormFile? PersonPicture { get; set; }
 
         [Required(ErrorMessage = RoleRequiredMessage)]
-        public string Role { get; set; } = null!;
+        public List<string> Roles { get; set; }
+             = new List<string>();
 
-        public IEnumerable<Infrastructure.Data.Models.Role> Roles { get; set; }
+        public IEnumerable<Infrastructure.Data.Models.Role> AvailableRoles { get; set; }
             = new List<Infrastructure.Data.Models.Role>();
 
         [MaxLength(20)]
-        [RequiredIfTeacher("Role", "Учител", SubjectGroupRequiredMessage)]
+        [RequiredIfTeacher("Roles", "Учител", SubjectGroupRequiredMessage)]
         public string? SubjectGroup { get; set; }
 
         [StringLength(150, MinimumLength = 2, ErrorMessage = SubjectLengthMessage)]
-        [RequiredIfTeacher("Role", "Учител", SubjectRequiredMessage)]
+        [RequiredIfTeacher("Roles", "Учител", SubjectRequiredMessage)]
         public string? Subject { get; set; }
 
         [Required(ErrorMessage = DepartmentRequiredMessage)]

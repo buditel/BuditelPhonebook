@@ -25,10 +25,13 @@
                     </h4>
                     @foreach (var department in Model.Departments)
                     {
-                        <p class="card-text"><strong>Отдел:</strong> @department</p>
+                        <p class="card-text"><strong>Отдел: </strong>@department</p>
                     }
-                    <p class="card-text"><strong>Длъжност:</strong> @Model.Role</p>
-                    @if (Model.Role == "Учител")
+                    @foreach (var role in Model.Roles)
+                    {
+                        <p class="card-text"><strong>Длъжност: </strong>@role</p>
+                    }
+                    @if (Model.Roles.Contains("Учител"))
                     {
                         <p class="card-text"><strong>Група предмети:</strong> @Model.SubjectGroup</p>
                         <p class="card-text"><strong>Предмет:</strong> @Model.Subject</p>

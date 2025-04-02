@@ -5,7 +5,7 @@
 <h1 class="h3 mb-4">Изтрий длъжност</h1>
 <div class="alert alert-warning">
     <p>Сигурни ли сте, че искате да изтриете <strong>@Model.Name</strong>?</p>
-    <p>Има <strong>@Model.People.Count</strong> @(Model.People.Count == 1 ? "контакт" : "контакта"), чиято длъжност ще бъде изтрита.</p>
+    <p>Има <strong>@Model.PeopleRoles.Count</strong> @(Model.PeopleRoles.Count == 1 ? "контакт" : "контакта"), чиято длъжност ще бъде изтрита.</p>
 </div>
 
 <form asp-action="Delete" method="post">

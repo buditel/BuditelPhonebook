@@ -67,7 +67,7 @@ namespace BuditelPhonebook.Web.Controllers
                 BusinessPhoneNumber = person.BusinessPhoneNumber,
                 PersonalPhoneNumber = person.PersonalPhoneNumber,
                 Birthdate = person.Birthdate,
-                Role = person.Role.Name,
+                Roles = person.PeopleRoles.Select(pr => pr.Role.Name).ToList(),
                 Departments = person.PeopleDepartments.Select(pd => pd.Department.Name).ToList(),
                 Email = person.Email,
                 SubjectGroup = person.SubjectGroup,

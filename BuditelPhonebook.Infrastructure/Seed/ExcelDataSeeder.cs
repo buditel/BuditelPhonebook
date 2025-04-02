@@ -151,7 +151,6 @@ namespace BuditelPhonebook.Infrastructure.Seed
                         PersonalPhoneNumber = personalPhone,
                         BusinessPhoneNumber = string.IsNullOrWhiteSpace(businessPhone) ? null : businessPhone,
                         Birthdate = string.IsNullOrWhiteSpace(birthdate) ? null : birthdate,
-                        Role = role,
                         SubjectGroup = string.IsNullOrWhiteSpace(subjectGroup) ? null : subjectGroup,
                         Subject = string.IsNullOrWhiteSpace(subject) ? null : subject,
                         IsDeleted = false,
@@ -167,6 +166,16 @@ namespace BuditelPhonebook.Infrastructure.Seed
                     await _context.PeopleDepartments.AddAsync(personDepartment);
 
                     person.PeopleDepartments.Add(personDepartment);
+
+                    PersonRole? personRole = new PersonRole()
+                    {
+                        PersonId = person.Id,
+                        RoleId = role.Id
+                    };
+
+                    await _context.PeopleRoles.AddAsync(personRole);
+
+                    person.PeopleRoles.Add(personRole);
 
                     await _context.People.AddAsync(person);
                     await _context.SaveChangesAsync();

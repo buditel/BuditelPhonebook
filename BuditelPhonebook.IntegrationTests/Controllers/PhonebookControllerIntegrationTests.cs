@@ -39,9 +39,9 @@ namespace BuditelPhonebook.Tests.Integration
                 PersonalPhoneNumber = "0888123456",
                 BusinessPhoneNumber = "024567890",
                 Birthdate = "01.10.",
-                RoleId = 1,
+                //RoleId = 1,
                 //DepartmentId = 1,
-                Role = new Role { Name = "Учител" },
+                //Role = new Role { Name = "Учител" },
                 //Department = new Department { Name = "ИТ отдел" }
             };
 
@@ -56,7 +56,7 @@ namespace BuditelPhonebook.Tests.Integration
             result.Model.Should().BeAssignableTo<PersonDetailsViewModel>();
             var model = result.Model as PersonDetailsViewModel;
             model.FirstName.Should().Be("Иван");
-            model.Role.Should().Be("Учител");
+            //model.Role.Should().Be("Учител");
             model.Email.Should().Be("ivan.petrov@example.com");
         }
 

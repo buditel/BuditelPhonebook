@@ -33,8 +33,10 @@
                                 <p class="card-text">
                                     <strong>Отдел: </strong>@(string.Join(", ", person.Departments))
                                 </p>
-                                <p class="card-text"><strong>Длъжност:</strong> @person.Role</p>
-                                @if (person.Role.Contains("Учител"))
+                                <p class="card-text">
+                                    <strong>Длъжност: </strong>@(string.Join(", ", person.Roles))
+                                </p>
+                                @if (person.Roles.Contains("Учител"))
                                 {
                                     <p class="card-text"><strong>Група предмети:</strong> @person.SubjectGroup</p>
                                     <p class="card-text"><strong>Предмет:</strong> @person.Subject</p>

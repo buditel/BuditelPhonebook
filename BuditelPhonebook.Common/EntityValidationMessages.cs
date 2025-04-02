@@ -19,7 +19,7 @@
             public const string BirthDateWrongFormatMessage = "Рождената дата трябва да е във формата 01.01.";
             public const string HireDateRequiredMessage = "Трябва да въведете дата на постъпване.";
             public const string HireDateWrongFormatMessage = "Датата на постъпване трябва да е във формата 01.01.0001.";
-            public const string RoleRequiredMessage = "Трябва да изберете длъжност.";
+            public const string RoleRequiredMessage = "Трябва да изберете поне една длъжност.";
             public const string DepartmentRequiredMessage = "Трябва да изберете поне един отдел.";
             public const string SubjectGroupRequiredMessage = "Трябва да изберете група предмети.";
             public const string SubjectRequiredMessage = "Трябва да въведете предмет, по който учителят преподава.";

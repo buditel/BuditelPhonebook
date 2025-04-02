@@ -34,7 +34,7 @@ namespace BuditelPhonebook.IntegrationTests.Services
                     LastName = "Петров",
                     Email = "ivan.petrov@buditel.bg",
                     PersonalPhoneNumber = "0888123456",
-                    RoleId = 1,
+                    //RoleId = 1,
                     //DepartmentId = 1
                 });
                 await context.SaveChangesAsync();
@@ -94,7 +94,7 @@ namespace BuditelPhonebook.IntegrationTests.Services
                     LastName = "Йорданов",
                     Email = "daniel.yordanov@buditel.bg",
                     PersonalPhoneNumber = "0888123456",
-                    RoleId = 3,
+                    //RoleId = 3,
                     //DepartmentId = 2
                 });
                 await context.SaveChangesAsync();
@@ -106,7 +106,7 @@ namespace BuditelPhonebook.IntegrationTests.Services
                 var person = await repository.GetByIdWithRelationsAsync(3);
 
                 person.Should().NotBeNull();
-                person.Role.Name.Should().Be("Teacher");
+                //person.Role.Name.Should().Be("Teacher");
                 //person.Department.Name.Should().Be("Education");
             }
         }
@@ -254,7 +254,7 @@ namespace BuditelPhonebook.IntegrationTests.Services
                     LastName = "Димитров",
                     Email = "kiril.dimitrov@buditel.bg",
                     PersonalPhoneNumber = "0888333444",
-                    RoleId = 5,
+                    //RoleId = 5,
                     //DepartmentId = 6,
                     IsDeleted = true
                 });

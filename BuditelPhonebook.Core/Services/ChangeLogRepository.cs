@@ -86,11 +86,10 @@ namespace BuditelPhonebook.Core.Services
                 changes.Add($"Редактиран служебен имейл: {oldPerson.Email} -> {newPerson.Email}");
             }
 
-            if (oldPerson.Role.Name != newPerson.Role)
+            if (string.Join(", ", oldPerson.PeopleRoles.Select(pr => pr.Role.Name)) != string.Join(", ", newPerson.Roles))
             {
-                changes.Add($"Редактирана длъжност: {oldPerson.Role.Name} -> {newPerson.Role}");
+                changes.Add($"Редактирани длъжности: {string.Join(", ", oldPerson.PeopleRoles.Select(pr => pr.Role.Name))} -> {string.Join(", ", newPerson.Roles)}");
             }
-
 
             if (string.Join(", ", oldPerson.PeopleDepartments.Select(pd => pd.Department.Name)) != string.Join(", ", newPerson.Departments))
             {

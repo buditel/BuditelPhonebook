@@ -1,36 +1,56 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
-    const roleSelect = document.getElementById("roleSelect");
+    const roleContainer = document.getElementById("roleContainer");
     const subjectGroup = document.getElementById("subjectGroup");
     const subject = document.getElementById("subject");
 
     const subjectGroupInput = document.querySelector('[name="SubjectGroup"]');
     const subjectInput = document.querySelector('[name="Subject"]');
 
-    // Function to update visibility and required attributes
-    function updateVisibility() {
-        const selectedRole = roleSelect.options[roleSelect.selectedIndex].text;
+    if (!roleContainer || !subjectGroup || !subject || !subjectGroupInput || !subjectInput) {
+        console.error("One or more required elements are missing. Check your HTML structure.");
+        return;
+    }
 
-        if (selectedRole.includes("Учител")) {
+    function updateVisibility() {
+        const roleSelects = roleContainer.querySelectorAll("select"); // Get all role dropdowns
+        let isTeacherSelected = false;
+
+        roleSelects.forEach(select => {
+            const selectedText = select.options[select.selectedIndex]?.text.trim() || "";
+            if (selectedText.includes("Учител")) {
+                isTeacherSelected = true;
+            }
+        });
+
+        if (isTeacherSelected) {
             subjectGroup.style.display = "block";
             subject.style.display = "block";
-
             subjectGroupInput.setAttribute("required", "true");
             subjectInput.setAttribute("required", "true");
         } else {
             subjectGroup.style.display = "none";
             subject.style.display = "none";
-
             subjectGroupInput.removeAttribute("required");
             subjectInput.removeAttribute("required");
         }
     }
 
-    // Initialize visibility on page load (for the first load or after validation errors)
+    // Run on page load (for validation error reloads)
     updateVisibility();
 
-    // Add event listener for role selection change
-    roleSelect.addEventListener("change", updateVisibility);
+    // Attach event listener to all role dropdowns dynamically
+    roleContainer.addEventListener("change", function (event) {
+        if (event.target.tagName === "SELECT") {
+            updateVisibility();
+        }
+    });
+
+    // Ensure newly added dropdowns trigger visibility update
+    document.getElementById("addRole").addEventListener("click", function () {
+        setTimeout(updateVisibility, 50); // Small delay to ensure DOM updates
+    });
 });
+
 
 document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById("searchInput");
@@ -326,27 +346,22 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener("DOMContentLoaded", function () {
     let container = document.getElementById("departmentContainer");
 
-    // Function to add a new department dropdown
     function addDepartment() {
         let departmentGroups = container.querySelectorAll(".department-group");
-        let index = departmentGroups.length; // Get the next available index
+        let index = departmentGroups.length;
 
-        // Create a new div for the department select
         let newGroup = document.createElement("div");
         newGroup.classList.add("department-group", "d-flex", "align-items-center", "mt-2");
 
-        // Create a new select element
         let newSelect = document.createElement("select");
-        newSelect.name = `Departments[${index}]`; // Dynamic name based on index
+        newSelect.name = `Departments[${index}]`;
         newSelect.classList.add("form-control", "dropdown-select", "me-2");
 
-        // Add default "choose" option
         let defaultOption = document.createElement("option");
         defaultOption.value = "";
         defaultOption.textContent = "Изберете отдел...";
         newSelect.appendChild(defaultOption);
 
-        // Copy existing options from the first select element
         let firstSelect = container.querySelector("select");
         if (firstSelect) {
             firstSelect.querySelectorAll("option").forEach(option => {
@@ -359,36 +374,141 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
 
-        // Create a remove button (only for dynamically added ones)
         let removeButton = document.createElement("button");
         removeButton.type = "button";
         removeButton.classList.add("btn", "btn-sm", "btn-danger", "ms-2", "remove-department");
         removeButton.textContent = "Премахни";
         removeButton.onclick = function () {
             container.removeChild(newGroup);
+            updateDepartmentIndexes();
         };
 
-        // Append elements
         newGroup.appendChild(newSelect);
         newGroup.appendChild(removeButton);
         container.appendChild(newGroup);
     }
 
-    // Attach click event to "Добави още" button
     document.getElementById("addDepartment").addEventListener("click", addDepartment);
 
-    // Reattach event listeners to existing remove buttons after page reload
     function attachRemoveEvents() {
         container.querySelectorAll(".remove-department").forEach(button => {
             button.onclick = function () {
                 container.removeChild(this.parentElement);
+                updateDepartmentIndexes();
             };
         });
     }
 
-    // Ensure remove buttons work on initial load (for validation error reloads)
+    function updateDepartmentIndexes() {
+        let selects = container.querySelectorAll(".department-group select");
+        selects.forEach((select, index) => {
+            select.name = `Departments[${index}]`;
+        });
+
+        // Remove any old hidden inputs
+        document.querySelectorAll("input[name^='Departments']").forEach(input => input.remove());
+
+        // Add new hidden inputs for each department
+        selects.forEach((select, index) => {
+            let hiddenInput = document.createElement("input");
+            hiddenInput.type = "hidden";
+            hiddenInput.name = `Departments[${index}]`;
+            hiddenInput.value = select.value;
+            document.querySelector("form").appendChild(hiddenInput);
+        });
+    }
+
     attachRemoveEvents();
+
+    document.querySelector("form").addEventListener("submit", function () {
+        updateDepartmentIndexes();
+    });
 });
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    let container = document.getElementById("roleContainer");
+
+    function addRole() {
+        let roleGroups = container.querySelectorAll(".role-group");
+        let index = roleGroups.length;
+
+        let newGroup = document.createElement("div");
+        newGroup.classList.add("role-group", "d-flex", "align-items-center", "mt-2");
+
+        let newSelect = document.createElement("select");
+        newSelect.name = `Roles[${index}]`;
+        newSelect.classList.add("form-control", "dropdown-select", "me-2");
+
+        let defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.textContent = "Изберете длъжност...";
+        newSelect.appendChild(defaultOption);
+
+        let firstSelect = container.querySelector("select");
+        if (firstSelect) {
+            firstSelect.querySelectorAll("option").forEach(option => {
+                if (option.value !== "") {
+                    let newOption = document.createElement("option");
+                    newOption.value = option.value;
+                    newOption.textContent = option.textContent;
+                    newSelect.appendChild(newOption);
+                }
+            });
+        }
+
+        let removeButton = document.createElement("button");
+        removeButton.type = "button";
+        removeButton.classList.add("btn", "btn-sm", "btn-danger", "ms-2", "remove-role");
+        removeButton.textContent = "Премахни";
+        removeButton.onclick = function () {
+            container.removeChild(newGroup);
+            updateRoleIndexes();
+        };
+
+        newGroup.appendChild(newSelect);
+        newGroup.appendChild(removeButton);
+        container.appendChild(newGroup);
+    }
+
+    document.getElementById("addRole").addEventListener("click", addRole);
+
+    function attachRemoveEvents() {
+        container.querySelectorAll(".remove-role").forEach(button => {
+            button.onclick = function () {
+                container.removeChild(this.parentElement);
+                updateRoleIndexes();
+            };
+        });
+    }
+
+    function updateRoleIndexes() {
+        let selects = container.querySelectorAll(".role-group select");
+        selects.forEach((select, index) => {
+            select.name = `Roles[${index}]`;
+        });
+
+        // Remove any old hidden inputs
+        document.querySelectorAll("input[name^='Roles']").forEach(input => input.remove());
+
+        // Add new hidden inputs for each department
+        selects.forEach((select, index) => {
+            let hiddenInput = document.createElement("input");
+            hiddenInput.type = "hidden";
+            hiddenInput.name = `Roles[${index}]`;
+            hiddenInput.value = select.value;
+            document.querySelector("form").appendChild(hiddenInput);
+        });
+    }
+
+    attachRemoveEvents();
+
+    document.querySelector("form").addEventListener("submit", function () {
+        updateRoleIndexes();
+    });
+});
+
+
 
 document.addEventListener("DOMContentLoaded", function () {
     // Set default selection for all dropdowns that are empty

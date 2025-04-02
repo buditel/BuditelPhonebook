@@ -79,7 +79,8 @@ namespace BuditelPhonebook.Core.Repositories
         public async Task SoftDeleteAsync(int id)
         {
             var role = await _context.Roles
-                .Include(r => r.People)
+                .Include(p => p.PeopleRoles)
+                    .ThenInclude(pr => pr.Person)
                 .FirstOrDefaultAsync(r => r.Id == id);
 
             if (role == null)
@@ -104,11 +105,70 @@ namespace BuditelPhonebook.Core.Repositories
                 _context.Roles.Update(role);
                 await _context.SaveChangesAsync();
 
-                foreach (var person in role.People)
-                {
-                    person.Role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "Длъжността е изтрита");
+                var peopleToEdit = new Dictionary<Person, string>();
 
-                    _context.People.Update(person);
+                string oldRoles = string.Empty;
+
+                foreach (var personRole in role.PeopleRoles)
+                {
+                    var person = personRole.Person;
+
+                    oldRoles = string.Join(", ", _context.PeopleRoles.Where(pr => pr.PersonId == person.Id).Select(pr => pr.Role.Name).ToList());
+
+                    if (!peopleToEdit.ContainsKey(person))
+                    {
+                        peopleToEdit.Add(person, oldRoles);
+                    }
+                    else
+                    {
+                        peopleToEdit[person] = oldRoles;
+                    }
+
+                    _context.PeopleRoles.Remove(personRole);
+                }
+
+                await _context.SaveChangesAsync();
+
+                foreach (var person in peopleToEdit)
+                {
+                    if (!await _context.PeopleRoles.AnyAsync(pr => pr.PersonId == person.Key.Id))
+                    {
+
+                        var newPersonRole = new PersonRole()
+                        {
+                            Person = person.Key,
+                            Role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "Длъжността е изтрита")
+                        };
+
+                        await _context.PeopleRoles.AddAsync(newPersonRole);
+
+                        var change = new ChangeLog
+                        {
+                            PersonId = person.Key.Id,
+                            ChangedAt = DateTime.Now,
+                            ChangedBy = "Админ",
+                            ChangesDescriptions = new List<string> { $"Редактирана длъжност: {person.Value} -> Изтрита длъжност" }
+                        };
+
+                        await _context.ChangeLogs.AddAsync(change);
+                    }
+                    else
+                    {
+                        string newRoles = string.Join(", ", _context.PeopleRoles.Where(pr => pr.PersonId == person.Key.Id).Select(pr => pr.Role.Name).ToList());
+
+                        var change = new ChangeLog
+                        {
+                            PersonId = person.Key.Id,
+                            ChangedAt = DateTime.Now,
+                            ChangedBy = "Админ",
+                            ChangesDescriptions = new List<string> { $"Редактирана длъжност: {person.Value} -> {newRoles}" }
+                        };
+
+                        await _context.ChangeLogs.AddAsync(change);
+                    }
+
+
+                    await _context.SaveChangesAsync();
                 }
 
                 await _context.SaveChangesAsync();

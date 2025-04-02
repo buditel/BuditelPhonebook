@@ -22,7 +22,7 @@ namespace BuditelPhonebook.Common.CustomAttributes
                 throw new ArgumentException($"Property '{_rolePropertyName}' not found on the object.");
             }
 
-            var roleValue = roleProperty.GetValue(validationContext.ObjectInstance)?.ToString();
+            var roleValue = roleProperty.GetValue(validationContext.ObjectInstance) as List<string>;
 
             if (roleValue != null && roleValue.Contains(_requiredRole) && string.IsNullOrWhiteSpace(value?.ToString()))
             {
