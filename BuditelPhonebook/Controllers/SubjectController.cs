@@ -1,20 +1,20 @@
 ﻿using BuditelPhonebook.Core.Contracts;
 using BuditelPhonebook.Infrastructure.Data.Models;
-using BuditelPhonebook.Web.ViewModels.Role;
+using BuditelPhonebook.Web.ViewModels.Subject;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using static BuditelPhonebook.Common.EntityValidationMessages.Role;
+using static BuditelPhonebook.Common.EntityValidationMessages.Subject;
 
 namespace BuditelPhonebook.Web.Controllers
 {
-    public class RoleController : Controller
+    public class SubjectController : Controller
     {
-        private readonly IRoleRepository _roleRepository;
+        private readonly ISubjectRepository _subjectRepository;
 
-        public RoleController(IRoleRepository roleRepository)
+        public SubjectController(ISubjectRepository subjectRepository)
         {
-            _roleRepository = roleRepository;
+            _subjectRepository = subjectRepository;
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, Moderator")]
@@ -22,8 +22,8 @@ namespace BuditelPhonebook.Web.Controllers
         {
             try
             {
-                var roles = await _roleRepository.GetAllAsync();
-                return View(roles);
+                var subjects = await _subjectRepository.GetAllAsync();
+                return View(subjects);
             }
             catch (ApplicationException)
             {
@@ -34,7 +34,7 @@ namespace BuditelPhonebook.Web.Controllers
         [Authorize(Roles = "SuperAdmin, Admin")]
         public IActionResult Create()
         {
-            var model = new CreateRoleViewModel();
+            var model = new CreateSubjectViewModel();
 
             return View(model);
         }
@@ -42,11 +42,11 @@ namespace BuditelPhonebook.Web.Controllers
         [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateRoleViewModel model)
+        public async Task<IActionResult> Create(CreateSubjectViewModel model)
         {
             try
             {
-                var exists = _roleRepository.GetAllAttached().Any(r => r.Name == model.Name);
+                var exists = _subjectRepository.GetAllAttached().Any(s => s.Name == model.Name);
                 if (exists)
                 {
                     ModelState.AddModelError(nameof(model.Name), NameUniqueMessage);
@@ -57,12 +57,12 @@ namespace BuditelPhonebook.Web.Controllers
                     return View(model);
                 }
 
-                var role = new Role
+                var subject = new Subject
                 {
                     Name = model.Name
                 };
 
-                await _roleRepository.AddAsync(role);
+                await _subjectRepository.AddAsync(subject);
                 return RedirectToAction(nameof(Index));
             }
             catch (ApplicationException)
@@ -76,12 +76,12 @@ namespace BuditelPhonebook.Web.Controllers
         {
             try
             {
-                var role = await _roleRepository.GetByIdAsync(id);
+                var subject = await _subjectRepository.GetByIdAsync(id);
 
-                var model = new EditRoleViewModel
+                var model = new EditSubjectViewModel
                 {
                     Id = id,
-                    Name = role.Name
+                    Name = subject.Name
                 };
 
                 return View(model);
@@ -95,11 +95,11 @@ namespace BuditelPhonebook.Web.Controllers
         [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(EditRoleViewModel model)
+        public async Task<IActionResult> Edit(EditSubjectViewModel model)
         {
             try
             {
-                var exists = _roleRepository.GetAllAttached().Any(d => d.Name == model.Name);
+                var exists = _subjectRepository.GetAllAttached().Any(s => s.Name == model.Name);
                 if (exists)
                 {
                     ModelState.AddModelError(nameof(model.Name), NameUniqueMessage);
@@ -110,10 +110,10 @@ namespace BuditelPhonebook.Web.Controllers
                     return View(model);
                 }
 
-                var role = await _roleRepository.GetByIdAsync(model.Id);
-                role.Name = model.Name;
+                var subject = await _subjectRepository.GetByIdAsync(model.Id);
+                subject.Name = model.Name;
 
-                await _roleRepository.UpdateAsync(role);
+                await _subjectRepository.UpdateAsync(subject);
                 return RedirectToAction(nameof(Index));
             }
             catch (KeyNotFoundException)
@@ -131,12 +131,12 @@ namespace BuditelPhonebook.Web.Controllers
         {
             try
             {
-                var role = await _roleRepository.GetAllAttached()
-                    .Include(r => r.PeopleRoles)
-                        .ThenInclude(pr => pr.Person)
-                    .FirstOrDefaultAsync(r => r.Id == id);
+                var subject = await _subjectRepository.GetAllAttached()
+                    .Include(s => s.PeopleSubjects)
+                        .ThenInclude(ps => ps.Person)
+                    .FirstOrDefaultAsync(s => s.Id == id);
 
-                return View(role);
+                return View(subject);
             }
             catch (KeyNotFoundException)
             {
@@ -151,7 +151,7 @@ namespace BuditelPhonebook.Web.Controllers
         {
             try
             {
-                await _roleRepository.SoftDeleteAsync(id);
+                await _subjectRepository.SoftDeleteAsync(id);
                 return RedirectToAction(nameof(Index));
             }
             catch (KeyNotFoundException)
@@ -170,9 +170,9 @@ namespace BuditelPhonebook.Web.Controllers
         {
             try
             {
-                var deletedRoles = await _roleRepository.GetAllAttached().Where(r => r.IsDeleted).ToListAsync();
+                var deletedSubjects = await _subjectRepository.GetAllAttached().Where(s => s.IsDeleted).ToListAsync();
 
-                return View(deletedRoles);
+                return View(deletedSubjects);
             }
             catch (ArgumentException)
             {
@@ -190,12 +190,12 @@ namespace BuditelPhonebook.Web.Controllers
         {
             try
             {
-                var role = await _roleRepository.GetByIdAsync(id);
+                var subject = await _subjectRepository.GetByIdAsync(id);
 
-                var model = new RestoreRoleViewModel
+                var model = new RestoreSubjectViewModel
                 {
                     Id = id,
-                    Name = role.Name
+                    Name = subject.Name
                 };
 
                 return View(model);
@@ -208,15 +208,15 @@ namespace BuditelPhonebook.Web.Controllers
 
         [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpPost]
-        public async Task<IActionResult> Restore(RestoreRoleViewModel model)
+        public async Task<IActionResult> Restore(RestoreSubjectViewModel model)
         {
             try
             {
-                var role = await _roleRepository.GetByIdAsync(model.Id);
+                var subject = await _subjectRepository.GetByIdAsync(model.Id);
 
-                role.IsDeleted = false;
+                subject.IsDeleted = false;
 
-                await _roleRepository.UpdateAsync(role);
+                await _subjectRepository.UpdateAsync(subject);
 
                 return RedirectToAction(nameof(DeletedIndex));
             }

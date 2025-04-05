@@ -45,8 +45,8 @@ namespace BuditelPhonebook.Infrastructure.Data.Models
         [MaxLength(20)]
         public string? SubjectGroup { get; set; }
 
-        [MaxLength(40)]
-        public string? Subject { get; set; }
+        public ICollection<PersonSubject> PeopleSubjects { get; set; }
+            = new List<PersonSubject>();
 
         public ICollection<PersonDepartment> PeopleDepartments { get; set; }
             = new List<PersonDepartment>();

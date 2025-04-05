@@ -33,8 +33,11 @@
                     }
                     @if (Model.Roles.Contains("Учител"))
                     {
-                        <p class="card-text"><strong>Група предмети:</strong> @Model.SubjectGroup</p>
-                        <p class="card-text"><strong>Предмет:</strong> @Model.Subject</p>
+                        <p class="card-text"><strong>Група предмети: </strong>@Model.SubjectGroup</p>
+                        @foreach (var subject in Model.Subjects)
+                        {
+                            <p class="card-text"><strong>Предмет: </strong>@subject</p>
+                        }     
                     }
                     <p class="card-text"><strong>Личен телефон:</strong> @Model.PersonalPhoneNumber</p>
                     <p class="card-text"><strong>Служебен телефон:</strong> @(Model.BusinessPhoneNumber ?? "липсва")</p>

@@ -1,0 +1,55 @@
+﻿@model IEnumerable<Subject>
+
+@{
+    ViewBag.Title = "Управление на предметите";
+}
+<h1 class="h3 mb-4">Управление на предметите</h1>
+
+<div class="d-flex flex-wrap flex-column flex-md-row mb-3">
+    <div class="m-2">
+        @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+        {
+            <a asp-action="Create" class="btn btn-success main-button">Добави нов предмет</a>
+        }
+    </div>
+    <div class="m-2">
+
+        <a asp-action="DeletedIndex" class="btn btn-danger main-button">Виж изтрити</a>
+    </div>
+</div>
+
+@if (!Model.Any(r => !r.IsDeleted))
+{
+    <div class="alert alert-info">Няма налични предмети.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered align-middle table-data">
+            <thead class="table-light">
+                <tr>
+                    <th>Име</th>
+                    @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                    {
+                        <th class="action-headings-table">Действия</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var subject in Model.Where(s => !s.IsDeleted).OrderBy(s => s.Name))
+                {
+                    <tr>
+                        <td>@subject.Name</td>
+                        @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                        {
+                            <td class="d-flex justify-content-center">
+                                <a asp-action="Edit" asp-route-id="@subject.Id" class="btn btn-sm btn-primary m-1">Редактирай</a>
+                                <a asp-action="Delete" asp-route-id="@subject.Id" class="btn btn-sm btn-danger m-1">Изтрий</a>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

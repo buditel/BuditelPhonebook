@@ -71,7 +71,7 @@ namespace BuditelPhonebook.Web.Controllers
                 Departments = person.PeopleDepartments.Select(pd => pd.Department.Name).ToList(),
                 Email = person.Email,
                 SubjectGroup = person.SubjectGroup,
-                Subject = person.Subject,
+                Subjects = person.PeopleSubjects.Select(ps => ps.Subject.Name).ToList(),
                 PersonPicture = person.PersonPicture
             };
 

@@ -44,6 +44,7 @@ namespace BuditelPhonebook.Web.Controllers
 
                 model.AvailableRoles = _personRepository.GetRoles(); // Add a method in IPersonRepository
                 model.AvailableDepartments = _personRepository.GetDepartments(); // Add a method in IPersonRepository
+                model.AvailableSubjects = _personRepository.GetSubjects();
 
                 // Pass a new Person instance to the view
                 return View(model);
@@ -93,10 +94,26 @@ namespace BuditelPhonebook.Web.Controllers
                     ModelState.AddModelError(nameof(model.Roles), RoleRequiredMessage);
                 }
 
+                if (model.Subjects[0] == null && model.Subjects.Any(s => s != null))
+                {
+                    var selectedSubject = model.Subjects.FirstOrDefault(s => s != null);
+
+                    model.Subjects.Remove(selectedSubject);
+                    model.Subjects.Insert(0, selectedSubject);
+                }
+
+                var rolesToSearch = model.Roles.Where(r => r != null);
+
+                if (model.Subjects.Any() && model.Subjects[0] == null && rolesToSearch.Any(r => r.Contains("Учител")))
+                {
+                    ModelState.AddModelError(nameof(model.Subjects), SubjectRequiredMessage);
+                }
+
                 if (!ModelState.IsValid)
                 {
                     model.AvailableRoles = _personRepository.GetRoles();
                     model.AvailableDepartments = _personRepository.GetDepartments();
+                    model.AvailableSubjects = _personRepository.GetSubjects();
                     model.PersonPicture = model.PersonPicture;
 
                     return View(model);
@@ -155,11 +172,9 @@ namespace BuditelPhonebook.Web.Controllers
                     ModelState.AddModelError(nameof(model.Email), EmailUniqueMessage);
                 }
 
-                model.Departments = model.Departments.Where(d => !string.IsNullOrWhiteSpace(d)).ToList();
-
                 if (model.Departments.Any())
                 {
-                    var selectedDepartment = model.Departments.First();
+                    var selectedDepartment = model.Departments.FirstOrDefault(d => d != null);
                     model.Departments.Remove(selectedDepartment);
                     model.Departments.Insert(0, selectedDepartment);
                 }
@@ -169,10 +184,38 @@ namespace BuditelPhonebook.Web.Controllers
                     ModelState.AddModelError(nameof(model.Departments), DepartmentRequiredMessage);
                 }
 
+                if (model.Roles.Any())
+                {
+                    var selectedRole = model.Roles.FirstOrDefault(r => r != null);
+                    model.Roles.Remove(selectedRole);
+                    model.Roles.Insert(0, selectedRole);
+                }
+
+                if (model.Roles.Any() && model.Roles[0] == null)
+                {
+                    ModelState.AddModelError(nameof(model.Roles), RoleRequiredMessage);
+                }
+
+                if (model.Subjects.Any())
+                {
+                    var selectedSubject = model.Subjects.FirstOrDefault(s => s != null);
+                    model.Subjects.Remove(selectedSubject);
+                    model.Subjects.Insert(0, selectedSubject);
+                }
+
+                var rolesToSearch = model.Roles.Where(r => r != null).ToList();
+
+                if (model.Subjects.Any() && model.Subjects[0] == null && rolesToSearch.Any(r => r.Contains("Учител")))
+                {
+                    ModelState.AddModelError(nameof(model.Subjects), SubjectRequiredMessage);
+                }
+
                 if (!ModelState.IsValid)
                 {
                     model.AvailableRoles = _personRepository.GetRoles();
                     model.AvailableDepartments = _personRepository.GetDepartments();
+                    model.AvailableSubjects = _personRepository.GetSubjects();
+
                     return View(model);
                 }
 

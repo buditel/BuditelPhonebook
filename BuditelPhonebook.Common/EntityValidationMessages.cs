@@ -22,7 +22,7 @@
             public const string RoleRequiredMessage = "Трябва да изберете поне една длъжност.";
             public const string DepartmentRequiredMessage = "Трябва да изберете поне един отдел.";
             public const string SubjectGroupRequiredMessage = "Трябва да изберете група предмети.";
-            public const string SubjectRequiredMessage = "Трябва да въведете предмет, по който учителят преподава.";
+            public const string SubjectRequiredMessage = "Трябва да въведете поне един предмет, по който учителят преподава.";
             public const string SubjectLengthMessage = "Дължината на предмета трябва да е между 2 и 150 символа.";
             public const string CommentOnDeletionRequiredMessage = "Трябва да въведете причина за изтриване на контакта.";
             public const string CommentOnDeletionLengthMessage = "Коментарът за изтриване трябва да е между 5 и 150 символа.";
@@ -38,6 +38,13 @@
         public static class Department
         {
             public const string NameUniqueMessage = "Вече съществува такъв отдел.";
+            public const string NameRequiredMessage = "Трябва да въведете име.";
+            public const string NameLengthMessage = "Дължината на името трябва да е между 2 и 100 символа.";
+        }
+
+        public static class Subject
+        {
+            public const string NameUniqueMessage = "Вече съществува такъв предмет.";
             public const string NameRequiredMessage = "Трябва да въведете име.";
             public const string NameLengthMessage = "Дължината на името трябва да е между 2 и 100 символа.";
         }

@@ -79,7 +79,7 @@ namespace BuditelPhonebook.Core.Repositories
         public async Task SoftDeleteAsync(int id)
         {
             var role = await _context.Roles
-                .Include(p => p.PeopleRoles)
+                .Include(r => r.PeopleRoles)
                     .ThenInclude(pr => pr.Person)
                 .FirstOrDefaultAsync(r => r.Id == id);
 

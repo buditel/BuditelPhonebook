@@ -9,10 +9,12 @@ namespace BuditelPhonebook.Infrastructure.Data
         public DbSet<Person> People { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Department> Departments { get; set; }
+        public DbSet<Subject> Subjects { get; set; }
         public DbSet<UserRole> UsersRoles { get; set; }
         public DbSet<ChangeLog> ChangeLogs { get; set; }
         public DbSet<PersonRole> PeopleRoles { get; set; }
         public DbSet<PersonDepartment> PeopleDepartments { get; set; }
+        public DbSet<PersonSubject> PeopleSubjects { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {

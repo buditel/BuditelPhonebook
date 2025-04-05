@@ -80,6 +80,15 @@ namespace BuditelPhonebook.Infrastructure.Seed
                         birthdate += '.';
                     }
 
+                    if (subjectGroup == "общо-образователни")
+                    {
+                        subjectGroup = "Общообразователни";
+                    }
+                    else if (subjectGroup == "професионални")
+                    {
+                        subjectGroup = "Професионални";
+                    }
+
                     // Split full name into parts
                     List<string> nameParts = name.Split(' ').ToList();
 
@@ -93,11 +102,11 @@ namespace BuditelPhonebook.Infrastructure.Seed
                     string lastName = nameParts.Count > 1 ? nameParts[^1] : "";
 
                     string departmentName = string.Empty;
-                    string subject = null;
+                    string subjectName = "";
 
                     if (roleName == "Учител")
                     {
-                        subject = subjectOrDepartment;
+                        subjectName = subjectOrDepartment;
                         departmentName = "Образование";
                     }
                     else
@@ -141,6 +150,29 @@ namespace BuditelPhonebook.Infrastructure.Seed
                         await _context.SaveChangesAsync();
                     }
 
+                    Subject? subject = null;
+
+                    if (roleName.Contains("Учител"))
+                    {
+
+                        if (await _context.Subjects.AnyAsync(s => s.Name == subjectName))
+                        {
+                            subject = await _context.Subjects.FirstOrDefaultAsync(s => s.Name == subjectName);
+                        }
+                        else
+                        {
+                            subject = new Subject()
+                            {
+                                Name = subjectName,
+                                IsDeleted = false,
+                            };
+
+                            await _context.Subjects.AddAsync(subject);
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+
+
                     // Map to Person entity
                     Person person = new Person
                     {
@@ -152,7 +184,6 @@ namespace BuditelPhonebook.Infrastructure.Seed
                         BusinessPhoneNumber = string.IsNullOrWhiteSpace(businessPhone) ? null : businessPhone,
                         Birthdate = string.IsNullOrWhiteSpace(birthdate) ? null : birthdate,
                         SubjectGroup = string.IsNullOrWhiteSpace(subjectGroup) ? null : subjectGroup,
-                        Subject = string.IsNullOrWhiteSpace(subject) ? null : subject,
                         IsDeleted = false,
                         HireDate = DateTime.Now
                     };
@@ -176,6 +207,18 @@ namespace BuditelPhonebook.Infrastructure.Seed
                     await _context.PeopleRoles.AddAsync(personRole);
 
                     person.PeopleRoles.Add(personRole);
+
+                    if (roleName.Contains("Учител"))
+                    {
+                        PersonSubject? personSubject = new PersonSubject()
+                        {
+                            PersonId = person.Id,
+                            SubjectId = subject.Id
+                        };
+
+                        await _context.PeopleSubjects.AddAsync(personSubject);
+                        person.PeopleSubjects.Add(personSubject);
+                    }
 
                     await _context.People.AddAsync(person);
                     await _context.SaveChangesAsync();

@@ -119,9 +119,35 @@
             <span asp-validation-for="SubjectGroup" class="text-danger"></span>
         </div>
         <div id="subject" class="mb-3" style="display: none;">
-            <label class="form-label">Предмет</label>
-            <input type="text" class="form-control" name="Subject" value="@Model.Subject" placeholder="Въведете предмета, по който учителят преподава...">
-            <span asp-validation-for="Subject" class="text-danger"></span>
+            <label class="form-label">Предмети</label>
+            <div id="subjectContainer">
+                @{
+                    bool hasSubjects = Model.Subjects.Count > 0;
+                }
+                @if (!hasSubjects)
+                {
+                    Model.Subjects.Add(""); // Ensure at least one dropdown appears
+                }
+
+                @for (int i = 0; i < Model.Subjects.Count; i++)
+                {
+
+                    <div class="subject-group d-flex align-items-center mt-2">
+                        <select name="Subjects[@i]" asp-for="Subjects[i]" asp-items="@(new SelectList(Model.AvailableSubjects, "Name", "Name"))" class="form-control dropdown-select">
+                            <option value="">Изберете предмет...</option>
+                        </select>
+                        @if (i > 0) // Only show remove button for additional ones
+                        {
+                            <button type="button" class="btn btn-sm btn-danger ms-2 remove-subject">Премахни</button>
+                        }
+                    </div>
+                    @if (i == 0)
+                    {
+                        <span asp-validation-for="Subjects" class="text-danger"></span>
+                    }
+                }
+            </div>
+            <button type="button" class="btn btn-sm btn-success mt-2" id="addSubject">Добави още</button>
         </div>
         <div class="mb-3">
             <label class="form-label">Отдели</label>
@@ -156,7 +182,6 @@
         <input type="hidden" asp-for="Email" />
         <input type="hidden" asp-for="HireDate" />
         <input type="hidden" asp-for="SubjectGroup" />
-        <input type="hidden" asp-for="Subject" />
         @for (int i = 0; i < Model.Departments.Count; i++)
         {
             <input type="hidden" name="Departments[@i]" value="@Model.Departments[i]" />
@@ -164,6 +189,10 @@
         @for(int i = 0; i < Model.Roles.Count; i++)
         {
             <input type="hidden" name="Roles[@i]" value="@Model.Roles[i]" />
+        }
+        @for (int i = 0; i < Model.Subjects.Count; i++)
+        {
+            <input type="hidden" name="Subjects[@i]" value="@Model.Subjects[i]" />
         }
     }
 

@@ -149,3 +149,11 @@ footer {
 .pagination{
     flex-wrap:wrap;
 }
+
+#subject{
+    display:none;
+}
+
+#subjectGroup {
+    display: none;
+}

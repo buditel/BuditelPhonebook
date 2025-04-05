@@ -24,7 +24,8 @@
 
         public string? SubjectGroup { get; set; }
 
-        public string? Subject { get; set; }
+        public List<string> Subjects { get; set; }
+                    = new List<string>();
 
         public byte[]? PersonPicture { get; set; }
 

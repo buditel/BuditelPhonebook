@@ -112,19 +112,19 @@ namespace BuditelPhonebook.Core.Services
                 }
             }
 
-            if (oldPerson.Subject != newPerson.Subject)
+            if (string.Join(", ", oldPerson.PeopleSubjects.Select(ps => ps.Subject.Name)) != string.Join(", ", newPerson.Subjects))
             {
-                if (oldPerson.Subject == null)
+                if (oldPerson.PeopleSubjects.Count == 0 && newPerson.Subjects.Count > 0)
                 {
-                    changes.Add($"Добавен предмет: {newPerson.Subject}");
+                    changes.Add($"Добавени предмети: {string.Join(", ", newPerson.Subjects)}");
                 }
-                else if (newPerson.Subject == null)
+                else if (oldPerson.PeopleSubjects.Count > 0 && newPerson.Subjects.Count == 0)
                 {
-                    changes.Add($"Премахнат предмет - {oldPerson.Subject}");
+                    changes.Add($"Премахнати предмети - {string.Join(", ", oldPerson.PeopleSubjects.Select(ps => ps.Subject.Name))}");
                 }
                 else
                 {
-                    changes.Add($"Редактиран предмет: {oldPerson.Subject} -> {newPerson.Subject}");
+                    changes.Add($"Редактирани предмети: {string.Join(", ", oldPerson.PeopleSubjects.Select(ps => ps.Subject.Name))} -> {string.Join(", ", newPerson.Subjects)}");
                 }
             }
 

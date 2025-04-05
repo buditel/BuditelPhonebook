@@ -25,7 +25,8 @@
                     = new List<string>();
         public string? SubjectGroup { get; set; }
 
-        public string? Subject { get; set; }
+        public List<string> Subjects { get; set; }
+            = new List<string>();
 
         public List<string> Departments { get; set; }
             = new List<string>();

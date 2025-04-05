@@ -23,13 +23,35 @@ namespace BuditelPhonebook.Common.CustomAttributes
             }
 
             var roleValue = roleProperty.GetValue(validationContext.ObjectInstance) as List<string>;
+            roleValue = roleValue?.Where(r => r != null).ToList() ?? new List<string>();
 
-            if (roleValue != null && roleValue.Contains(_requiredRole) && string.IsNullOrWhiteSpace(value?.ToString()))
+            if (roleValue.Any(r => r.Contains(_requiredRole)))
             {
-                return new ValidationResult(ErrorMessage, new[] { validationContext.MemberName });
+                // Handle collections (Subjects)
+                if (value is IEnumerable<string> subjectValues)
+                {
+                    if (!subjectValues.Any(s => !string.IsNullOrWhiteSpace(s))) // All empty/null
+                    {
+                        return new ValidationResult(ErrorMessage, new[] { validationContext.MemberName });
+                    }
+                }
+                // Handle single value (SubjectGroup)
+                else if (value is string subjectGroupValue)
+                {
+                    if (string.IsNullOrWhiteSpace(subjectGroupValue))
+                    {
+                        return new ValidationResult(ErrorMessage, new[] { validationContext.MemberName });
+                    }
+                }
+                // Handle unexpected types (e.g., null value)
+                else if (value == null)
+                {
+                    return new ValidationResult(ErrorMessage, new[] { validationContext.MemberName });
+                }
             }
 
             return ValidationResult.Success;
         }
+
     }
 }

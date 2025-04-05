@@ -1,55 +1,55 @@
-﻿document.addEventListener("DOMContentLoaded", function () {
-    const roleContainer = document.getElementById("roleContainer");
-    const subjectGroup = document.getElementById("subjectGroup");
-    const subject = document.getElementById("subject");
+﻿//document.addEventListener("DOMContentLoaded", function () {
+//    const roleContainer = document.getElementById("roleContainer");
+//    const subjectGroup = document.getElementById("subjectGroup");
+//    const subject = document.getElementById("subject");
 
-    const subjectGroupInput = document.querySelector('[name="SubjectGroup"]');
-    const subjectInput = document.querySelector('[name="Subject"]');
+//    const subjectGroupInput = document.querySelector('[name="SubjectGroup"]');
+//    const subjectInput = document.querySelector('[name="Subject"]');
 
-    if (!roleContainer || !subjectGroup || !subject || !subjectGroupInput || !subjectInput) {
-        console.error("One or more required elements are missing. Check your HTML structure.");
-        return;
-    }
+//    if (!roleContainer || !subjectGroup || !subject || !subjectGroupInput || !subjectInput) {
+//        console.error("One or more required elements are missing. Check your HTML structure.");
+//        return;
+//    }
 
-    function updateVisibility() {
-        const roleSelects = roleContainer.querySelectorAll("select"); // Get all role dropdowns
-        let isTeacherSelected = false;
+//    function updateVisibility() {
+//        const roleSelects = roleContainer.querySelectorAll("select"); // Get all role dropdowns
+//        let isTeacherSelected = false;
 
-        roleSelects.forEach(select => {
-            const selectedText = select.options[select.selectedIndex]?.text.trim() || "";
-            if (selectedText.includes("Учител")) {
-                isTeacherSelected = true;
-            }
-        });
+//        roleSelects.forEach(select => {
+//            const selectedText = select.options[select.selectedIndex]?.text.trim() || "";
+//            if (selectedText.includes("Учител")) {
+//                isTeacherSelected = true;
+//            }
+//        });
 
-        if (isTeacherSelected) {
-            subjectGroup.style.display = "block";
-            subject.style.display = "block";
-            subjectGroupInput.setAttribute("required", "true");
-            subjectInput.setAttribute("required", "true");
-        } else {
-            subjectGroup.style.display = "none";
-            subject.style.display = "none";
-            subjectGroupInput.removeAttribute("required");
-            subjectInput.removeAttribute("required");
-        }
-    }
+//        if (isTeacherSelected) {
+//            subjectGroup.style.display = "block";
+//            subject.style.display = "block";
+//            subjectGroupInput.setAttribute("required", "true");
+//            subjectInput.setAttribute("required", "true");
+//        } else {
+//            subjectGroup.style.display = "none";
+//            subject.style.display = "none";
+//            subjectGroupInput.removeAttribute("required");
+//            subjectInput.removeAttribute("required");
+//        }
+//    }
 
-    // Run on page load (for validation error reloads)
-    updateVisibility();
+//    // Run on page load (for validation error reloads)
+//    updateVisibility();
 
-    // Attach event listener to all role dropdowns dynamically
-    roleContainer.addEventListener("change", function (event) {
-        if (event.target.tagName === "SELECT") {
-            updateVisibility();
-        }
-    });
+//    // Attach event listener to all role dropdowns dynamically
+//    roleContainer.addEventListener("change", function (event) {
+//        if (event.target.tagName === "SELECT") {
+//            updateVisibility();
+//        }
+//    });
 
-    // Ensure newly added dropdowns trigger visibility update
-    document.getElementById("addRole").addEventListener("click", function () {
-        setTimeout(updateVisibility, 50); // Small delay to ensure DOM updates
-    });
-});
+//    // Ensure newly added dropdowns trigger visibility update
+//    document.getElementById("addRole").addEventListener("click", function () {
+//        setTimeout(updateVisibility, 50); // Small delay to ensure DOM updates
+//    });
+//});
 
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -508,6 +508,247 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+//document.addEventListener("DOMContentLoaded", function () {
+//    let container = document.getElementById("subjectContainer");
+
+//    function addSubject() {
+//        let subjectGroups = container.querySelectorAll(".subject-group");
+//        let index = subjectGroups.length;
+
+//        let newGroup = document.createElement("div");
+//        newGroup.classList.add("subject-group", "d-flex", "align-items-center", "mt-2");
+
+//        let newSelect = document.createElement("select");
+//        newSelect.name = `Subjects[${index}]`;
+//        newSelect.classList.add("form-control", "dropdown-select", "me-2");
+
+//        let defaultOption = document.createElement("option");
+//        defaultOption.value = "";
+//        defaultOption.textContent = "Изберете предмет...";
+//        newSelect.appendChild(defaultOption);
+
+//        let firstSelect = container.querySelector("select");
+//        if (firstSelect) {
+//            firstSelect.querySelectorAll("option").forEach(option => {
+//                if (option.value !== "") {
+//                    let newOption = document.createElement("option");
+//                    newOption.value = option.value;
+//                    newOption.textContent = option.textContent;
+//                    newSelect.appendChild(newOption);
+//                }
+//            });
+//        }
+
+//        let removeButton = document.createElement("button");
+//        removeButton.type = "button";
+//        removeButton.classList.add("btn", "btn-sm", "btn-danger", "ms-2", "remove-subject");
+//        removeButton.textContent = "Премахни";
+//        removeButton.onclick = function () {
+//            container.removeChild(newGroup);
+//            updateSubjectIndexes();
+//        };
+
+//        newGroup.appendChild(newSelect);
+//        newGroup.appendChild(removeButton);
+//        container.appendChild(newGroup);
+//    }
+
+//    document.getElementById("addSubject").addEventListener("click", addSubject);
+
+//    function attachRemoveEvents() {
+//        container.querySelectorAll(".remove-subject").forEach(button => {
+//            button.onclick = function () {
+//                container.removeChild(this.parentElement);
+//                updateSubjectIndexes();
+//            };
+//        });
+//    }
+
+//    function updateSubjectIndexes() {
+//        let selects = container.querySelectorAll(".subject-group select");
+//        selects.forEach((select, index) => {
+//            select.name = `Subjects[${index}]`;
+//        });
+
+//        // Remove any old hidden inputs
+//        document.querySelectorAll("input[name^='Subjects']").forEach(input => input.remove());
+
+//        // Add new hidden inputs for each department
+//        selects.forEach((select, index) => {
+//            let hiddenInput = document.createElement("input");
+//            hiddenInput.type = "hidden";
+//            hiddenInput.name = `Subjects[${index}]`;
+//            hiddenInput.value = select.value;
+//            document.querySelector("form").appendChild(hiddenInput);
+//        });
+//    }
+
+//    attachRemoveEvents();
+
+//    document.querySelector("form").addEventListener("submit", function () {
+//        updateSubjectIndexes();
+//    });
+//});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const roleContainer = document.getElementById("roleContainer");
+    const subjectGroup = document.getElementById("subjectGroup");
+    const subjectParentContainer = document.getElementById("subject");
+    const subjectContainer = document.getElementById("subjectContainer");
+    const addSubjectButton = document.getElementById("addSubject");
+    const subjectGroupInput = document.querySelector('[name="SubjectGroup"]');
+
+    if (!roleContainer || !subjectGroup || !subjectContainer || !subjectGroupInput) {
+        console.error("One or more required elements are missing. Check your HTML structure.");
+        return;
+    }
+
+    // ========================== ROLE SELECTION HANDLING ==========================
+
+    function isTeacherSelected() {
+        return Array.from(roleContainer.querySelectorAll("select")).some(select =>
+            select.options[select.selectedIndex]?.text.includes("Учител")
+        );
+    }
+
+    function updateVisibility() {
+        if (isTeacherSelected()) {
+            subjectGroup.style.display = "block";
+            subjectParentContainer.style.display = "block";
+            subjectGroupInput.setAttribute("required", "true");
+            subjectContainer.querySelectorAll("select").forEach(select => select.setAttribute("required", "true"));
+        } else {
+            subjectGroup.style.display = "none";
+            subjectParentContainer.style.display = "none";
+            subjectGroupInput.removeAttribute("required");
+            subjectContainer.querySelectorAll("select").forEach(select => select.removeAttribute("required"));
+        }
+    }
+
+    updateVisibility();
+
+    roleContainer.addEventListener("change", updateVisibility);
+    document.getElementById("addRole").addEventListener("click", () => {
+        setTimeout(() => {
+            attachRoleRemoveListeners();
+            updateVisibility();
+        }, 50);
+    });
+
+    function attachRoleRemoveListeners() {
+        document.querySelectorAll(".remove-role").forEach(button => {
+            button.removeEventListener("click", handleRoleRemove);
+            button.addEventListener("click", handleRoleRemove);
+        });
+    }
+
+    function handleRoleRemove(event) {
+        event.target.closest(".role-group").remove();
+        updateVisibility();
+    }
+
+    attachRoleRemoveListeners();
+
+    // ========================== SUBJECT SELECTION HANDLING ==========================
+
+    function addSubject() {
+        let index = subjectContainer.querySelectorAll(".subject-group").length;
+
+        let newGroup = document.createElement("div");
+        newGroup.classList.add("subject-group", "d-flex", "align-items-center", "mt-2");
+
+        let newSelect = document.createElement("select");
+        newSelect.name = `Subjects[${index}]`;
+        newSelect.classList.add("form-control", "dropdown-select", "me-2");
+
+        let defaultOption = new Option("Изберете предмет...", "");
+        newSelect.appendChild(defaultOption);
+
+        let availableSubjects = getAvailableSubjects();
+        let selectedSubjects = getSelectedSubjects();
+
+        availableSubjects.forEach(subject => {
+            if (!selectedSubjects.has(subject)) {
+                newSelect.appendChild(new Option(subject, subject));
+            }
+        });
+
+        let removeButton = createRemoveButton(() => {
+            subjectContainer.removeChild(newGroup);
+            updateSubjectIndexes();
+            updateAvailableSubjects();
+            updateVisibility(); // Update visibility when subject is removed
+        });
+
+        newSelect.addEventListener("change", updateAvailableSubjects);
+        newGroup.append(newSelect, removeButton);
+        subjectContainer.appendChild(newGroup);
+
+        updateSubjectIndexes();
+        updateAvailableSubjects();
+    }
+
+    function getAvailableSubjects() {
+        return Array.from(document.querySelector("select[name='Subjects[0]']").options).map(opt => opt.value);
+    }
+
+    function getSelectedSubjects() {
+        return new Set(Array.from(subjectContainer.querySelectorAll("select")).map(select => select.value));
+    }
+
+    function createRemoveButton(onClick) {
+        let removeButton = document.createElement("button");
+        removeButton.type = "button";
+        removeButton.classList.add("btn", "btn-sm", "btn-danger", "ms-2", "remove-subject");
+        removeButton.textContent = "Премахни";
+        removeButton.addEventListener("click", onClick);
+        return removeButton;
+    }
+
+    function updateAvailableSubjects() {
+        let selectedSubjects = getSelectedSubjects();
+
+        subjectContainer.querySelectorAll("select").forEach(select => {
+            let currentSelection = select.value;
+            select.querySelectorAll("option").forEach(option => {
+                option.hidden = option.value && option.value !== currentSelection && selectedSubjects.has(option.value);
+            });
+        });
+    }
+
+    function updateSubjectIndexes() {
+        document.querySelectorAll(".subject-group select").forEach((select, index) => {
+            select.name = `Subjects[${index}]`;
+        });
+
+        document.querySelectorAll("input[name^='Subjects']").forEach(input => input.remove());
+
+        document.querySelectorAll(".subject-group select").forEach((select, index) => {
+            let hiddenInput = document.createElement("input");
+            hiddenInput.type = "hidden";
+            hiddenInput.name = `Subjects[${index}]`;
+            hiddenInput.value = select.value;
+            document.querySelector("form").appendChild(hiddenInput);
+        });
+
+        updateVisibility();
+    }
+
+    addSubjectButton.addEventListener("click", addSubject);
+
+    document.querySelectorAll(".remove-subject").forEach(button => {
+        button.addEventListener("click", function () {
+            subjectContainer.removeChild(button.parentElement);
+            updateSubjectIndexes();
+            updateAvailableSubjects();
+            updateVisibility(); // Ensure subjects update immediately when removed
+        });
+    });
+
+    subjectContainer.addEventListener("change", updateAvailableSubjects);
+    document.querySelector("form").addEventListener("submit", updateSubjectIndexes);
+    updateAvailableSubjects();
+});
 
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -518,5 +759,3 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
-
-

@@ -54,9 +54,12 @@ namespace BuditelPhonebook.Web.ViewModels.Person
         [RequiredIfTeacher("Roles", "Учител", SubjectGroupRequiredMessage)]
         public string? SubjectGroup { get; set; }
 
-        [StringLength(150, MinimumLength = 2, ErrorMessage = SubjectLengthMessage)]
         [RequiredIfTeacher("Roles", "Учител", SubjectRequiredMessage)]
-        public string? Subject { get; set; }
+        public List<string> Subjects { get; set; }
+            = new List<string>();
+
+        public IEnumerable<Infrastructure.Data.Models.Subject> AvailableSubjects { get; set; }
+            = new List<Infrastructure.Data.Models.Subject>();
 
         [Required(ErrorMessage = DepartmentRequiredMessage)]
         public List<string> Departments { get; set; }

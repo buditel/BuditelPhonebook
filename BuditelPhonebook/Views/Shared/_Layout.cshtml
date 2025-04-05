@@ -26,10 +26,13 @@
                             {
                                 <li class="nav-item m-3"><a class="nav-link" href="/Phonebook">Указател</a></li>
                                 <li class="nav-item m-3">
+                                    <a class="nav-link" asp-controller="Department" asp-action="Index">Отдели</a>
+                                </li>
+                                <li class="nav-item m-3">
                                     <a class="nav-link" asp-controller="Role" asp-action="Index">Длъжности</a>
                                 </li>
                                 <li class="nav-item m-3">
-                                    <a class="nav-link" asp-controller="Department" asp-action="Index">Отдели</a>
+                                    <a class="nav-link" asp-controller="Subject" asp-action="Index">Предмети</a>
                                 </li>
                             }
                             <li class="nav-item m-3"><a class="nav-link" href="/Account/Logout">Изход (@User.Identity.Name)</a></li>

@@ -1,0 +1,45 @@
+﻿@model IEnumerable<Subject>
+
+@{
+    ViewBag.Title = "Управление на изтритите предмети";
+}
+<h1 class="h3 mb-4">Изтрити предмети</h1>
+
+<p>
+    <a asp-action="Index" class="btn btn-success mb-3">Виж актуални</a>
+</p>
+
+@if (!Model.Any(d => d.IsDeleted))
+{
+    <div class="alert alert-info">Няма изтрити предмети.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered align-middle table-data">
+            <thead class="table-light">
+                <tr>
+                    <th>Име</th>
+                    @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                    {
+                        <th class="action-headings-table">Действия</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var subject in Model.Where(s => s.IsDeleted).OrderBy(s => s.Name))
+                {
+                    <tr>
+                        <td>@subject.Name</td>
+                        @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                        {
+                            <td class="d-flex justify-content-center">
+                                <a asp-action="Restore" asp-route-id="@subject.Id" class="btn btn-sm btn-primary m-1">Възстанови</a>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

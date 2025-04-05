@@ -20,6 +20,7 @@ namespace BuditelPhonebook.Core.Contracts
         Task<(IEnumerable<DeletedIndexPersonViewModel> People, int TotalCount)> SearchDeletedAsync(string query, int page, int pageSize);
         IEnumerable<Role> GetRoles();
         IEnumerable<Department> GetDepartments();
+        IEnumerable<Subject> GetSubjects();
         Task<Person> CreateANewPerson(CreatePersonViewModel model);
         Task<EditPersonViewModel> MapPersonForEditById(int id);
 
