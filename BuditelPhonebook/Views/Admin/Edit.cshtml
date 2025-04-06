@@ -93,7 +93,7 @@
                 {
 
                     <div class="role-group d-flex align-items-center mt-2">
-                        <select name="Roles[@i]" asp-for="Roles[i]" asp-items="@(new SelectList(Model.AvailableRoles, "Name", "Name"))" class="form-control dropdown-select">
+                        <select name="Roles[@i]" asp-for="Roles[i]" asp-items="@(new SelectList(Model.AvailableRoles.OrderBy(r => r.Name), "Name", "Name"))" class="form-control dropdown-select">
                             <option value="">Изберете длъжност...</option>
                         </select>
                         @if (i > 0) // Only show remove button for additional ones
@@ -133,7 +133,7 @@
                 {
 
                     <div class="subject-group d-flex align-items-center mt-2">
-                        <select name="Subjects[@i]" asp-for="Subjects[i]" asp-items="@(new SelectList(Model.AvailableSubjects, "Name", "Name"))" class="form-control dropdown-select">
+                        <select name="Subjects[@i]" asp-for="Subjects[i]" asp-items="@(new SelectList(Model.AvailableSubjects.OrderBy(s => s.Name), "Name", "Name"))" class="form-control dropdown-select">
                             <option value="">Изберете предмет...</option>
                         </select>
                         @if (i > 0) // Only show remove button for additional ones
@@ -156,7 +156,7 @@
                 {
 
                     <div class="department-group d-flex align-items-center mt-2">
-                        <select name="Departments[@i]" asp-for="Departments[i]" asp-items="@(new SelectList(Model.AvailableDepartments, "Name", "Name"))" class="form-control dropdown-select">
+                        <select name="Departments[@i]" asp-for="Departments[i]" asp-items="@(new SelectList(Model.AvailableDepartments.OrderBy(d => d.Name), "Name", "Name"))" class="form-control dropdown-select">
                             <option value="">Изберете отдел...</option>
                         </select>
                         @if (i > 0) // Only show remove button for additional ones

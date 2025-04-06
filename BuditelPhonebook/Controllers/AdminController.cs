@@ -172,7 +172,7 @@ namespace BuditelPhonebook.Web.Controllers
                     ModelState.AddModelError(nameof(model.Email), EmailUniqueMessage);
                 }
 
-                if (model.Departments.Any())
+                if (model.Departments[0] == null && model.Departments.Any(d => d != null))
                 {
                     var selectedDepartment = model.Departments.FirstOrDefault(d => d != null);
                     model.Departments.Remove(selectedDepartment);
@@ -184,7 +184,7 @@ namespace BuditelPhonebook.Web.Controllers
                     ModelState.AddModelError(nameof(model.Departments), DepartmentRequiredMessage);
                 }
 
-                if (model.Roles.Any())
+                if (model.Roles[0] == null && model.Roles.Any(r => r != null))
                 {
                     var selectedRole = model.Roles.FirstOrDefault(r => r != null);
                     model.Roles.Remove(selectedRole);
@@ -196,7 +196,7 @@ namespace BuditelPhonebook.Web.Controllers
                     ModelState.AddModelError(nameof(model.Roles), RoleRequiredMessage);
                 }
 
-                if (model.Subjects.Any())
+                if (model.Subjects[0] == null && model.Subjects.Any(s => s != null))
                 {
                     var selectedSubject = model.Subjects.FirstOrDefault(s => s != null);
                     model.Subjects.Remove(selectedSubject);
