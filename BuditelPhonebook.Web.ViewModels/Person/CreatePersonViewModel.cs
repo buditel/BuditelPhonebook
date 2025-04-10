@@ -23,9 +23,8 @@ namespace BuditelPhonebook.Web.ViewModels.Person
         public string Email { get; set; } = null!;
 
 
-        [Required(ErrorMessage = PersonalPhoneNumberRequiredMessage)]
         [RegularExpression(PhoneNumberRegexPattern, ErrorMessage = PersonalPhoneNumberLengthMessage)]
-        public string PersonalPhoneNumber { get; set; } = null!;
+        public string? PersonalPhoneNumber { get; set; }
 
         [RegularExpression(PhoneNumberRegexPattern, ErrorMessage = BusinessPhoneNumberLengthMessage)]
         public string? BusinessPhoneNumber { get; set; }

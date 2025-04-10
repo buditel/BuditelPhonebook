@@ -341,7 +341,7 @@ namespace BuditelPhonebook.Core.Repositories
                 personPictureData = memoryStream.ToArray();
             }
 
-            if (model.PersonalPhoneNumber.StartsWith("+359"))
+            if (model.PersonalPhoneNumber != null && model.PersonalPhoneNumber.StartsWith("+359"))
             {
                 model.PersonalPhoneNumber = model.PersonalPhoneNumber.Replace("+359", "0");
             }
@@ -487,7 +487,7 @@ namespace BuditelPhonebook.Core.Repositories
                 person.PersonPicture = personPictureData;
             }
 
-            if (model.PersonalPhoneNumber.StartsWith("+359"))
+            if (model.PersonalPhoneNumber != null && model.PersonalPhoneNumber.StartsWith("+359"))
             {
                 model.PersonalPhoneNumber = model.PersonalPhoneNumber.Replace("+359", "0");
             }
