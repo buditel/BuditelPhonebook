@@ -43,17 +43,24 @@
                                 }
                                 <p class="card-text">
                                     <strong>Личен телефон:</strong>
-                                    <a href="tel:@person.PersonalPhoneNumber">@person.PersonalPhoneNumber</a>
+                                    @{
+                                        var sanitizedPersonalPhoneNumber = person.PersonalPhoneNumber != null && Regex.IsMatch(person.PersonalPhoneNumber, @"[0-9]+")
+                                        ? person.PersonalPhoneNumber
+                                        : null;
+                                    }
+                                    @(sanitizedPersonalPhoneNumber != null
+                                        ? Html.Raw($"<a href=\"tel:{sanitizedPersonalPhoneNumber}\">{sanitizedPersonalPhoneNumber}</a>")
+                                        : "липсва")
                                 </p>
                                 <p class="card-text">
                                     <strong>Служебен телефон:</strong>
                                     @{
-                                        var sanitizedPhoneNumber = person.BusinessPhoneNumber != null && Regex.IsMatch(person.BusinessPhoneNumber, @"[0-9]+")
+                                        var sanitizedBusinessPhoneNumber = person.BusinessPhoneNumber != null && Regex.IsMatch(person.BusinessPhoneNumber, @"[0-9]+")
                                         ? person.BusinessPhoneNumber
                                         : null;
                                     }
-                                    @(sanitizedPhoneNumber != null
-                                        ? Html.Raw($"<a href=\"tel:{sanitizedPhoneNumber}\">{sanitizedPhoneNumber}</a>")
+                                    @(sanitizedBusinessPhoneNumber != null
+                                        ? Html.Raw($"<a href=\"tel:{sanitizedBusinessPhoneNumber}\">{sanitizedBusinessPhoneNumber}</a>")
                                         : "липсва")
                                 </p>
                                 <p class="card-text">
